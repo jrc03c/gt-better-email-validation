@@ -7,10 +7,14 @@ async function build(){
 	alpha.split("").forEach(a => upperToLower[a] = a.toLowerCase())
 	upperToLower = gt.object.toAssociation(upperToLower).split(" ").join("")
 
-	let topLevelDomains = fs.readFileSync("top-level-domains.txt", "utf8").split("\n")
-	let temp = {}
-	topLevelDomains.forEach(tld => temp[tld.toLowerCase()] = 1)
-	topLevelDomains = gt.object.toAssociation(temp).split(" ").join("")
+	let topLevelDomains = fs.readFileSync("top-level-domains.txt", "utf8").split("\n").filter(tld => tld.length > 0).map(tld => tld.toLowerCase())
+
+	let topLevelConditionals = topLevelDomains.map(function(tld){
+		return `
+			*if: betterEmailValidationDomainExtension = "${tld}"
+				>> betterEmailValidationDomainExtensionIsTopLevelDomain = "yes"
+		`.trim()
+	}).join("\n")
 
 	let testEmails = {
 		"someone@example.com": true,
@@ -54,7 +58,7 @@ async function build(){
 
 	let data = {
 		upperToLower,
-		topLevelDomains,
+		topLevelConditionals,
 		tests,
 	}
 

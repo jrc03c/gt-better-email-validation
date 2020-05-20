@@ -10,8 +10,6 @@
 
 >> betterEmailValidatorUpperToLower = {{ upperToLower }}
 
->> betterEmailValidationTopLevelDomains = {{ topLevelDomains }}
-
 *if: not betterEmailValidationInput
 	>> betterEmailValidationInput = "someone@example.com"
 
@@ -77,7 +75,7 @@
 	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
 	*return
 
--- make sure that the extension is in the list of top level domains (after first converting the extension to lowercase)
+-- convert extension to lowercase
 >> betterEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
 >> betterEmailValidationCounter = 1
 >> betterEmailValidationDomainExtensionTemp = ""
@@ -91,7 +89,12 @@
 
 >> betterEmailValidationDomainExtension = betterEmailValidationDomainExtensionTemp
 
-*if: not betterEmailValidationTopLevelDomains[betterEmailValidationDomainExtension]
+-- confirm that the extension is a valid top-level domain
+>> betterEmailValidationDomainExtensionIsTopLevelDomain = "no"
+
+{{ topLevelConditionals }}
+
+*if: betterEmailValidationDomainExtensionIsTopLevelDomain = "no"
 	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "domain"
 	>> betterEmailValidationFailIndex = 1
