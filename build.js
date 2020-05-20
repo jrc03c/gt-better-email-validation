@@ -7,11 +7,6 @@ async function build(){
 	topLevelDomains.forEach(tld => temp[tld] = 1)
 	topLevelDomains = gt.object.toAssociation(temp).split(" ").join("")
 
-	let invalidDomainPrefixes = "`~!@#$%^&*()_-+=[{]}\\|;:'<,>.?/]`"
-	temp = {}
-	invalidDomainPrefixes.split("").forEach(affix => temp[affix] = 1)
-	invalidDomainPrefixes = gt.object.toAssociation(temp).split(" ").join("")
-
 	let tests = ""
 	let testEmails = {
 		"someone@example.com": true,
@@ -48,7 +43,6 @@ async function build(){
 
 	let data = {
 		topLevelDomains,
-		invalidDomainPrefixes,
 		tests,
 	}
 
