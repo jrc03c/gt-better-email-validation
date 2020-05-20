@@ -2,16 +2,15 @@ let fs = require("fs")
 let gt = require("gt-helpers")
 
 async function build(){
-	let handleValids = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_+"
-	let domainValids = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-"
-
+	let topLevelDomains = fs.readFileSync("top-level-domains.txt", "utf8").split("\n")
 	let temp = {}
-	handleValids.split("").forEach(v => temp[v] = 1)
-	handleValids = gt.object.toAssociation(temp)
+	topLevelDomains.forEach(tld => temp[tld] = 1)
+	topLevelDomains = gt.object.toAssociation(temp).split(" ").join("")
 
+	let invalidDomainPrefixes = "`~!@#$%^&*()_-+=[{]}\\|;:'<,>.?/]`"
 	temp = {}
-	domainValids.split("").forEach(v => temp[v] = 1)
-	domainValids = gt.object.toAssociation(temp)
+	invalidDomainPrefixes.split("").forEach(affix => temp[affix] = 1)
+	invalidDomainPrefixes = gt.object.toAssociation(temp).split(" ").join("")
 
 	let tests = ""
 	let testEmails = {
@@ -19,15 +18,13 @@ async function build(){
 		"s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m": true,
 		"someone+test@example.com": true,
 		"someone@example+test.com": false,
-		"someone_test@example.com": true,
-		"someone@example_test.com": false,
-		"someone@example-test.com": true,
-		"_someone@example.com": false,
-		"someone_@example.com": false,
-		"someone@-example.com": false,
-		"someone@example-.com": false,
 		"someone@example": false,
-		"someone.com": false,
+		"someone@雨.com": true,
+		"雨@example.com": true,
+		"雨@雨.雨": true,
+		"someone@1.2.3.4": true,
+		"@example.com": false,
+
 	}
 
 	Object.keys(testEmails).forEach(function(email){
@@ -44,12 +41,13 @@ async function build(){
 				*component
 					*classes: alert alert-danger
 					FAILED "${email}"!
+					({betterEmailValidationMessage})
 		`
 	})
 
 	let data = {
-		handleValids,
-		domainValids,
+		topLevelDomains,
+		invalidDomainPrefixes,
 		tests,
 	}
 

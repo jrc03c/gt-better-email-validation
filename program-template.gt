@@ -1,59 +1,44 @@
->> handleValids = {{ handleValids }}
->> domainValids = {{ domainValids }}
+---------------------------------------------------
+-- RULES (given the form "handle@domain.extension")
+---------------------------------------------------
+-- the whole address must contain @ and .
+-- the handle must contain at least one character
+-- the domain must have at least one .
+-- any characters are valid in the handle
+-- any characters are valid in the domain
+-- the domain cannot begin with punctuation characters
+-- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
 
 *if: not betterEmailValidationInput
 	>> betterEmailValidationInput = "someone@example.com"
 
->> i = 1
->> phase = "left"
+>> betterEmailValidationCounter = 1
+>> betterEmailValidationHandle = ""
+>> betterEmailValidationDomain = ""
+>> betterEmailValidationPhase = "handle"
 >> betterEmailValidationOutput = "yes"
->> failPhase = "none"
->> failIndex = -1
->> failChar = ""
->> failMessage = ""
+>> betterEmailValidationFailPhase = "none"
+>> betterEmailValidationFailIndex = -1
+>> betterEmailValidationFailChar = ""
+>> betterEmailValidationFailMessage = ""
 
-*while: i <= betterEmailValidationInput.size
-	>> char = betterEmailValidationInput[i]
-	>> nextPhase = phase
+*while: betterEmailValidationCounter <= betterEmailValidationInput.size
+	>> betterEmailValidationCurrentChar = betterEmailValidationInput[betterEmailValidationCounter]
+	>> betterEmailValidationNextPhase = betterEmailValidationPhase
 
-	*if: phase = "left"
-		*if: char = "@"
-			>> nextPhase = "middle"
+	*if: betterEmailValidationPhase = "handle"
+		*if: betterEmailValidationCurrentChar = "@"
+			>> betterEmailValidationNextPhase = "domain"
 
-		*if: not (char = "@")
-			*if: not handleValids[char]
-				>> betterEmailValidationOutput = "no"
-				>> failPhase = "left"
-				>> failIndex = i
-				>> failChar = char
-				>> failMessage = "The '{failChar}' character at index {failIndex} is not valid in the {failPhase} part of an email address!"
-				>> i = i + betterEmailValidationInput.size
+		*if: not (betterEmailValidationCurrentChar = "@")
+			>> betterEmailValidationHandle = "{betterEmailValidationHandle}{betterEmailValidationCurrentChar}"
 
-	*if: phase = "middle"
-		*if: char = "."
-			>> nextPhase = "right"
+	*if: betterEmailValidationPhase = "domain"
+		>> betterEmailValidationDomain = "{betterEmailValidationDomain}{betterEmailValidationCurrentChar}"
 
-		*if: not (char = ".")
-			*if: not domainValids[char]
-				>> betterEmailValidationOutput = "no"
-				>> failPhase = "middle"
-				>> failIndex = i
-				>> failChar = char
-				>> failMessage = "The '{failChar}' character at index {failIndex} is not valid in the {failPhase} part of an email address!"
-				>> i = i + betterEmailValidationInput.size
+	>> betterEmailValidationPhase = betterEmailValidationNextPhase
+	>> betterEmailValidationCounter = betterEmailValidationCounter + 1
 
-	*if: phase = "right"
-		*if: not domainValids[char]
-			>> betterEmailValidationOutput = "no"
-			>> failPhase = "right"
-			>> failIndex = i
-			>> failChar = char
-			>> failMessage = "The '{failChar}' character at index {failIndex} is not valid in the {failPhase} part of an email address!"
-			>> i = i + betterEmailValidationInput.size
-
-	>> phase = nextPhase
-	>> i = i + 1
-
-*if: not (phase = "right")
-	>> betterEmailValidationOutput = "no"
-	>> failMessage = "This email address lacks a period on the right-hand side of the '@' symbol."
+Handle: {betterEmailValidationHandle}
+Domain: {betterEmailValidationDomain}
+*button: Okay
