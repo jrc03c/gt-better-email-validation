@@ -90,14 +90,11 @@
 >> betterEmailValidationDomainExtension = betterEmailValidationDomainExtensionTemp
 
 -- confirm that the extension is a valid top-level domain
->> betterEmailValidationDomainExtensionIsTopLevelDomain = "no"
-
 {{ topLevelConditionals }}
 
-*if: betterEmailValidationDomainExtensionIsTopLevelDomain = "no"
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
-	*return
+>> betterEmailValidationOutput = "no"
+>> betterEmailValidationFailPhase = "domain"
+>> betterEmailValidationFailIndex = 1
+>> betterEmailValidationFailChar = ""
+>> betterEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+*return

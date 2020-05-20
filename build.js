@@ -12,7 +12,7 @@ async function build(){
 	let topLevelConditionals = topLevelDomains.map(function(tld){
 		return `
 			*if: betterEmailValidationDomainExtension = "${tld}"
-				>> betterEmailValidationDomainExtensionIsTopLevelDomain = "yes"
+				*return
 		`.trim()
 	}).join("\n")
 
