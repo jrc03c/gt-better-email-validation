@@ -17,14 +17,14 @@ async function build(){
 		"someone@example.com": true,
 		"s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m": true,
 		"someone+test@example.com": true,
-		"someone@example+test.com": false,
+		"someone@example+test.com": true,
 		"someone@example": false,
 		"someone@雨.com": true,
 		"雨@example.com": true,
 		"雨@雨.雨": true,
 		"someone@1.2.3.4": true,
 		"@example.com": false,
-
+		"someone@": false,
 	}
 
 	Object.keys(testEmails).forEach(function(email){
@@ -41,7 +41,7 @@ async function build(){
 				*component
 					*classes: alert alert-danger
 					FAILED "${email}"!
-					({betterEmailValidationMessage})
+					({betterEmailValidationFailMessage})
 		`
 	})
 

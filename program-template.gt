@@ -22,23 +22,37 @@
 >> betterEmailValidationFailChar = ""
 >> betterEmailValidationFailMessage = ""
 
-*while: betterEmailValidationCounter <= betterEmailValidationInput.size
-	>> betterEmailValidationCurrentChar = betterEmailValidationInput[betterEmailValidationCounter]
-	>> betterEmailValidationNextPhase = betterEmailValidationPhase
+-- break address into handle and domain
+>> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> "@"}
+*program: String Splitter
 
-	*if: betterEmailValidationPhase = "handle"
-		*if: betterEmailValidationCurrentChar = "@"
-			>> betterEmailValidationNextPhase = "domain"
+*if: stringSplitterOutput.size < 2
+	>> betterEmailValidationFailPhase = "all"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered did not contain an '@' character."
+	*return
 
-		*if: not (betterEmailValidationCurrentChar = "@")
-			>> betterEmailValidationHandle = "{betterEmailValidationHandle}{betterEmailValidationCurrentChar}"
+*if: stringSplitterOutput.size > 2
+	>> betterEmailValidationFailPhase = "all"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered contained more than one '@' character."
+	*return
 
-	*if: betterEmailValidationPhase = "domain"
-		>> betterEmailValidationDomain = "{betterEmailValidationDomain}{betterEmailValidationCurrentChar}"
+>> betterEmailValidationHandle = stringSplitterOutput[1]
+>> betterEmailValidationDomain = stringSplitterOutput[2]
 
-	>> betterEmailValidationPhase = betterEmailValidationNextPhase
-	>> betterEmailValidationCounter = betterEmailValidationCounter + 1
+*if: betterEmailValidationHandle.size = 0
+	>> betterEmailValidationFailPhase = "handle"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "The handle of an email address (the part before the '@' character) must contain at least one character."
+	*return
 
-Handle: {betterEmailValidationHandle}
-Domain: {betterEmailValidationDomain}
-*button: Okay
+*if: betterEmailValidationDomain.size < 3
+	>> betterEmailValidationFailPhase = "domain"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
+	*return

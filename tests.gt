@@ -1,123 +1,135 @@
 
-			>> betterEmailValidationInput = "someone@example.com"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "someone@example.com"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "someone@example.com"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "someone+test@example.com"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "someone+test@example.com"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "someone+test@example.com"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "someone@example+test.com"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "no"
-				*component
-					*classes: alert alert-success
-					PASSED "someone@example+test.com"!
-			*if: not (betterEmailValidationOutput = "no")
-				*component
-					*classes: alert alert-danger
-					FAILED "someone@example+test.com"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "someone@example"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "no"
-				*component
-					*classes: alert alert-success
-					PASSED "someone@example"!
-			*if: not (betterEmailValidationOutput = "no")
-				*component
-					*classes: alert alert-danger
-					FAILED "someone@example"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "someone@雨.com"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "someone@雨.com"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "someone@雨.com"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "雨@example.com"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "雨@example.com"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "雨@example.com"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "雨@雨.雨"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "雨@雨.雨"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "雨@雨.雨"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "someone@1.2.3.4"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "yes"
-				*component
-					*classes: alert alert-success
-					PASSED "someone@1.2.3.4"!
-			*if: not (betterEmailValidationOutput = "yes")
-				*component
-					*classes: alert alert-danger
-					FAILED "someone@1.2.3.4"!
-					({betterEmailValidationMessage})
-		
-			>> betterEmailValidationInput = "@example.com"
-			*program: Better Email Validation
-			*if: betterEmailValidationOutput = "no"
-				*component
-					*classes: alert alert-success
-					PASSED "@example.com"!
-			*if: not (betterEmailValidationOutput = "no")
-				*component
-					*classes: alert alert-danger
-					FAILED "@example.com"!
-					({betterEmailValidationMessage})
-		
+>> betterEmailValidationInput = "someone@example.com"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example.com"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example.com"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "someone+test@example.com"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "someone+test@example.com"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone+test@example.com"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "someone@example+test.com"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example+test.com"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example+test.com"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "someone@example"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "no"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example"!
+*if: not (betterEmailValidationOutput = "no")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "someone@雨.com"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@雨.com"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@雨.com"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "雨@example.com"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "雨@example.com"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "雨@example.com"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "雨@雨.雨"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "雨@雨.雨"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "雨@雨.雨"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "someone@1.2.3.4"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "yes"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@1.2.3.4"!
+*if: not (betterEmailValidationOutput = "yes")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@1.2.3.4"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "@example.com"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "no"
+	*component
+		*classes: alert alert-success
+		PASSED "@example.com"!
+*if: not (betterEmailValidationOutput = "no")
+	*component
+		*classes: alert alert-danger
+		FAILED "@example.com"!
+		({betterEmailValidationFailMessage})
+
+>> betterEmailValidationInput = "someone@"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "no"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@"!
+*if: not (betterEmailValidationOutput = "no")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@"!
+		({betterEmailValidationFailMessage})
+
 
 *button: Okay
