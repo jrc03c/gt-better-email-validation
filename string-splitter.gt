@@ -1,0 +1,28 @@
+-- requires stringSplitterInput = {"string" -> "...", "delimiter" -> "..."}
+
+*if: not stringSplitterInput or not stringSplitterInput["string"] or not stringSplitterInput["delimiter"]
+	*page
+		*component
+			*classes: alert alert-danger
+			ERROR: The "String Splitter" program requires a stringSplitterInput input in the form: {"string" -> "...", "delimiter" -> "..."}
+	*return
+
+>> stringSplitterString = stringSplitterInput["string"]
+>> stringSplitterDelimiter = stringSplitterInput["delimiter"]
+>> stringSplitterTemp = ""
+>> stringSplitterOutput = []
+>> stringSplitterCounter = 1
+
+*while: stringSplitterCounter <= stringSplitterString.size
+	>> stringSplitterCurrentChar = stringSplitterString[stringSplitterCounter]
+
+	*if: stringSplitterCurrentChar = stringSplitterDelimiter or stringSplitterDelimiter.size = 0
+		>> stringSplitterOutput.add(stringSplitterTemp)
+		>> stringSplitterTemp = ""
+
+	*if: not (stringSplitterCurrentChar = stringSplitterDelimiter)
+		>> stringSplitterTemp = "{stringSplitterTemp}{stringSplitterCurrentChar}"
+
+	>> stringSplitterCounter = stringSplitterCounter + 1
+
+>> stringSplitterOutput.add(stringSplitterTemp)
