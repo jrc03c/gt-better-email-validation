@@ -25,6 +25,7 @@ async function build(){
 		"someone@1.2.3.4": true,
 		"@example.com": false,
 		"someone@": false,
+		"someone@example.thisshouldfail": false,
 	}
 
 	Object.keys(testEmails).forEach(function(email){

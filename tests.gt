@@ -131,5 +131,17 @@
 		FAILED "someone@"!
 		({betterEmailValidationFailMessage})
 
+>> betterEmailValidationInput = "someone@example.thisshouldfail"
+*program: Better Email Validation
+*if: betterEmailValidationOutput = "no"
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example.thisshouldfail"!
+*if: not (betterEmailValidationOutput = "no")
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example.thisshouldfail"!
+		({betterEmailValidationFailMessage})
+
 
 *button: Okay

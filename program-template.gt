@@ -9,12 +9,15 @@
 -- the domain cannot begin with punctuation characters
 -- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
 
+>> betterEmailValidationTopLevelDomains = {{ topLevelDomains }}
+
 *if: not betterEmailValidationInput
 	>> betterEmailValidationInput = "someone@example.com"
 
 >> betterEmailValidationCounter = 1
 >> betterEmailValidationHandle = ""
 >> betterEmailValidationDomain = ""
+>> betterEmailValidationDomainExtension = ""
 >> betterEmailValidationPhase = "handle"
 >> betterEmailValidationOutput = "yes"
 >> betterEmailValidationFailPhase = "none"
@@ -55,4 +58,25 @@
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
 	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
+	*return
+
+-- break domain into subdomain(s) + domain and extension
+>> stringSplitterInput = {"string" -> betterEmailValidationDomain, "delimiter" -> "."}
+*program: String Splitter
+
+*if: stringSplitterOutput.size < 2
+	>> betterEmailValidationFailPhase = "domain"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
+	*return
+
+-- make sure that the extension is in the list of top level domains
+>> betterEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
+
+*if: not betterEmailValidationTopLevelDomains[betterEmailValidationDomainExtension]
+	>> betterEmailValidationFailPhase = "domain"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
 	*return
