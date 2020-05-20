@@ -1,147 +1,273 @@
 
->> betterEmailValidationInput = "someone@example.com"
+>> email = "someone@example.com"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
 *program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
-	*component
-		*classes: alert alert-success
-		PASSED "someone@example.com"!
-*if: not (betterEmailValidationOutput = "yes")
-	*component
-		*classes: alert alert-danger
-		FAILED "someone@example.com"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
+*if: betterEmailValidationOutput = shouldPass
 	*component
 		*classes: alert alert-success
-		PASSED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"!
-*if: not (betterEmailValidationOutput = "yes")
-	*component
-		*classes: alert alert-danger
-		FAILED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m"!
-		({betterEmailValidationFailMessage})
+		PASSED "someone@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 
->> betterEmailValidationInput = "someone+test@example.com"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
-	*component
-		*classes: alert alert-success
-		PASSED "someone+test@example.com"!
-*if: not (betterEmailValidationOutput = "yes")
+*if: not (betterEmailValidationOutput = shouldPass)
 	*component
 		*classes: alert alert-danger
-		FAILED "someone+test@example.com"!
-		({betterEmailValidationFailMessage})
+		FAILED "someone@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 
->> betterEmailValidationInput = "someone@example+test.com"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
-	*component
-		*classes: alert alert-success
-		PASSED "someone@example+test.com"!
-*if: not (betterEmailValidationOutput = "yes")
-	*component
-		*classes: alert alert-danger
-		FAILED "someone@example+test.com"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "someone@example"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "no"
-	*component
-		*classes: alert alert-success
-		PASSED "someone@example"!
-*if: not (betterEmailValidationOutput = "no")
-	*component
-		*classes: alert alert-danger
-		FAILED "someone@example"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "someone@雨.com"
+>> email = "s.o.m.e.o.n.e@e.x.a.m.p.l.e.com"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
 *program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
-	*component
-		*classes: alert alert-success
-		PASSED "someone@雨.com"!
-*if: not (betterEmailValidationOutput = "yes")
-	*component
-		*classes: alert alert-danger
-		FAILED "someone@雨.com"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "雨@example.com"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
+*if: betterEmailValidationOutput = shouldPass
 	*component
 		*classes: alert alert-success
-		PASSED "雨@example.com"!
-*if: not (betterEmailValidationOutput = "yes")
-	*component
-		*classes: alert alert-danger
-		FAILED "雨@example.com"!
-		({betterEmailValidationFailMessage})
+		PASSED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 
->> betterEmailValidationInput = "雨@雨.雨"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
-	*component
-		*classes: alert alert-success
-		PASSED "雨@雨.雨"!
-*if: not (betterEmailValidationOutput = "yes")
+*if: not (betterEmailValidationOutput = shouldPass)
 	*component
 		*classes: alert alert-danger
-		FAILED "雨@雨.雨"!
-		({betterEmailValidationFailMessage})
+		FAILED "s.o.m.e.o.n.e@e.x.a.m.p.l.e.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 
->> betterEmailValidationInput = "someone@1.2.3.4"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "yes"
-	*component
-		*classes: alert alert-success
-		PASSED "someone@1.2.3.4"!
-*if: not (betterEmailValidationOutput = "yes")
-	*component
-		*classes: alert alert-danger
-		FAILED "someone@1.2.3.4"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "@example.com"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "no"
-	*component
-		*classes: alert alert-success
-		PASSED "@example.com"!
-*if: not (betterEmailValidationOutput = "no")
-	*component
-		*classes: alert alert-danger
-		FAILED "@example.com"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "someone@"
+>> email = "someone+test@example.com"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
 *program: Better Email Validation
-*if: betterEmailValidationOutput = "no"
-	*component
-		*classes: alert alert-success
-		PASSED "someone@"!
-*if: not (betterEmailValidationOutput = "no")
-	*component
-		*classes: alert alert-danger
-		FAILED "someone@"!
-		({betterEmailValidationFailMessage})
 
->> betterEmailValidationInput = "someone@example.thisshouldfail"
-*program: Better Email Validation
-*if: betterEmailValidationOutput = "no"
+*if: betterEmailValidationOutput = shouldPass
 	*component
 		*classes: alert alert-success
-		PASSED "someone@example.thisshouldfail"!
-*if: not (betterEmailValidationOutput = "no")
+		PASSED "someone+test@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
 	*component
 		*classes: alert alert-danger
-		FAILED "someone@example.thisshouldfail"!
-		({betterEmailValidationFailMessage})
+		FAILED "someone+test@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@example+test.com"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example+test.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example+test.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@example"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@雨.com"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@雨.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@雨.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "雨@example.com"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "雨@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "雨@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "雨@雨.雨"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "雨@雨.雨"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "雨@雨.雨"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@1.2.3.4"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@1.2.3.4"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@1.2.3.4"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "@example.com"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "@example.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@example.thisshouldfail"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example.thisshouldfail"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example.thisshouldfail"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someoneexamplecom"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someoneexamplecom"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someoneexamplecom"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone.example@com"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone.example@com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone.example@com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "someone@123.456.789"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@123.456.789"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@123.456.789"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
+
+>> email = "SOMEONE@EXAMPLE.COM"
+>> shouldPass = "yes"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "SOMEONE@EXAMPLE.COM"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "SOMEONE@EXAMPLE.COM"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 
 
 *button: Okay

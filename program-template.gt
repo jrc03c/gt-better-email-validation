@@ -6,8 +6,9 @@
 -- the domain must have at least one .
 -- any characters are valid in the handle
 -- any characters are valid in the domain
--- the domain cannot begin with punctuation characters
 -- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
+
+>> betterEmailValidatorUpperToLower = {{ upperToLower }}
 
 >> betterEmailValidationTopLevelDomains = {{ topLevelDomains }}
 
@@ -30,6 +31,7 @@
 *program: String Splitter
 
 *if: stringSplitterOutput.size < 2
+	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "all"
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
@@ -37,6 +39,7 @@
 	*return
 
 *if: stringSplitterOutput.size > 2
+	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "all"
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
@@ -47,6 +50,7 @@
 >> betterEmailValidationDomain = stringSplitterOutput[2]
 
 *if: betterEmailValidationHandle.size = 0
+	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "handle"
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
@@ -54,6 +58,7 @@
 	*return
 
 *if: betterEmailValidationDomain.size < 3
+	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "domain"
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
@@ -65,16 +70,29 @@
 *program: String Splitter
 
 *if: stringSplitterOutput.size < 2
+	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "domain"
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
 	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
 	*return
 
--- make sure that the extension is in the list of top level domains
+-- make sure that the extension is in the list of top level domains (after first converting the extension to lowercase)
 >> betterEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
+>> betterEmailValidationCounter = 1
+>> betterEmailValidationDomainExtensionTemp = ""
+
+*while: betterEmailValidationCounter <= betterEmailValidationDomainExtension.size
+	*if: betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]]
+		>> betterEmailValidationDomainExtensionTemp = "{betterEmailValidationDomainExtensionTemp}{betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]]}"
+	*if: not (betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]])
+		>> betterEmailValidationDomainExtensionTemp = "{betterEmailValidationDomainExtensionTemp}{betterEmailValidationDomainExtension[betterEmailValidationCounter]}"
+	>> betterEmailValidationCounter = betterEmailValidationCounter + 1
+
+>> betterEmailValidationDomainExtension = betterEmailValidationDomainExtensionTemp
 
 *if: not betterEmailValidationTopLevelDomains[betterEmailValidationDomainExtension]
+	>> betterEmailValidationOutput = "no"
 	>> betterEmailValidationFailPhase = "domain"
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""

@@ -2,46 +2,58 @@ let fs = require("fs")
 let gt = require("gt-helpers")
 
 async function build(){
+	let upperToLower = {}
+	let alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	alpha.split("").forEach(a => upperToLower[a] = a.toLowerCase())
+	upperToLower = gt.object.toAssociation(upperToLower).split(" ").join("")
+
 	let topLevelDomains = fs.readFileSync("top-level-domains.txt", "utf8").split("\n")
 	let temp = {}
-	topLevelDomains.forEach(tld => temp[tld] = 1)
+	topLevelDomains.forEach(tld => temp[tld.toLowerCase()] = 1)
 	topLevelDomains = gt.object.toAssociation(temp).split(" ").join("")
 
-	let tests = ""
 	let testEmails = {
 		"someone@example.com": true,
-		"s.o.m.e.o.n.e@e.x.a.m.p.l.e.c.o.m": true,
+		"s.o.m.e.o.n.e@e.x.a.m.p.l.e.com": true,
 		"someone+test@example.com": true,
 		"someone@example+test.com": true,
 		"someone@example": false,
 		"someone@雨.com": true,
 		"雨@example.com": true,
-		"雨@雨.雨": true,
-		"someone@1.2.3.4": true,
+		"雨@雨.雨": false,
+		"someone@1.2.3.4": false,
 		"@example.com": false,
 		"someone@": false,
 		"someone@example.thisshouldfail": false,
+		"someoneexamplecom": false,
+		"someone.example@com": false,
+		"someone@123.456.789": false,
+		"SOMEONE@EXAMPLE.COM": true,
 	}
 
-	Object.keys(testEmails).forEach(function(email){
+	let tests = Object.keys(testEmails).map(function(email){
 		let shouldPass = testEmails[email]
 
-		tests += `
-			>> betterEmailValidationInput = "${email}"
+		return `
+			>> email = "${email}"
+			>> shouldPass = "${shouldPass ? "yes" : "no"}"
+			>> betterEmailValidationInput = email
 			*program: Better Email Validation
-			*if: betterEmailValidationOutput = ${shouldPass ? '"yes"' : '"no"'}
+
+			*if: betterEmailValidationOutput = shouldPass
 				*component
 					*classes: alert alert-success
-					PASSED "${email}"!
-			*if: not (betterEmailValidationOutput = ${shouldPass ? '"yes"' : '"no"'})
+					PASSED "${email}"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+			*if: not (betterEmailValidationOutput = shouldPass)
 				*component
 					*classes: alert alert-danger
-					FAILED "${email}"!
-					({betterEmailValidationFailMessage})
+					FAILED "${email}"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 		`
-	})
+	}).join("\n\n")
 
 	let data = {
+		upperToLower,
 		topLevelDomains,
 		tests,
 	}
