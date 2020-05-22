@@ -33,6 +33,7 @@ async function build(){
 		"someone.example@com": false,
 		"someone@123.456.789": false,
 		"SOMEONE@EXAMPLE.COM": true,
+		"someone@.com": false,
 	}
 
 	let tests = Object.keys(testEmails).map(function(email){

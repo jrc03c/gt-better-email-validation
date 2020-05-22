@@ -3,7 +3,8 @@
 ---------------------------------------------------
 -- the whole address must contain @ and .
 -- the handle must contain at least one character
--- the domain must have at least one .
+-- the domain must contain at least one character
+-- the domain must contain at least one .
 -- any characters are valid in the handle
 -- any characters are valid in the domain
 -- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
@@ -73,6 +74,14 @@
 	>> betterEmailValidationFailIndex = 1
 	>> betterEmailValidationFailChar = ""
 	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
+	*return
+
+*if: stringSplitterOutput[1].size = 0
+	>> betterEmailValidationOutput = "no"
+	>> betterEmailValidationFailPhase = "domain"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "The second-level domain of an email address (the part after the '@' character that comes before the final extension (like '.com' or '.org')) must be at least one character in length."
 	*return
 
 -- convert extension to lowercase
