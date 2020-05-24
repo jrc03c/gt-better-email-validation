@@ -287,4 +287,21 @@
 		FAILED "someone@.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
 
 
+
+>> email = "someone@example test.com"
+>> shouldPass = "no"
+>> betterEmailValidationInput = email
+*program: Better Email Validation
+
+*if: betterEmailValidationOutput = shouldPass
+	*component
+		*classes: alert alert-success
+		PASSED "someone@example test.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+*if: not (betterEmailValidationOutput = shouldPass)
+	*component
+		*classes: alert alert-danger
+		FAILED "someone@example test.com"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+
+
 *button: Okay

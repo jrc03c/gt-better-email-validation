@@ -25,6 +25,18 @@
 >> betterEmailValidationFailChar = ""
 >> betterEmailValidationFailMessage = ""
 
+-- check that there are no spaces in the address
+>> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> " "}
+*program: String Splitter
+
+*if: stringSplitterOutput.size > 1
+	>> betterEmailValidationOutput = "no"
+	>> betterEmailValidationFailPhase = "all"
+	>> betterEmailValidationFailIndex = 1
+	>> betterEmailValidationFailChar = ""
+	>> betterEmailValidationFailMessage = "Email addresses cannot contain spaces."
+	*return
+
 -- break address into handle and domain
 >> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> "@"}
 *program: String Splitter
