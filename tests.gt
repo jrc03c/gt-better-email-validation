@@ -2,7 +2,7 @@
 >> email = "someone@example.com"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -19,7 +19,7 @@
 >> email = "s.o.m.e.o.n.e@e.x.a.m.p.l.e.com"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -36,7 +36,7 @@
 >> email = "someone+test@example.com"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -53,7 +53,7 @@
 >> email = "someone@example+test.com"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -70,7 +70,7 @@
 >> email = "someone@example"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -87,7 +87,7 @@
 >> email = "someone@雨.com"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -104,7 +104,7 @@
 >> email = "雨@example.com"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -121,7 +121,7 @@
 >> email = "雨@雨.雨"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -138,7 +138,7 @@
 >> email = "someone@1.2.3.4"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -155,7 +155,7 @@
 >> email = "@example.com"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -172,7 +172,7 @@
 >> email = "someone@"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -189,7 +189,7 @@
 >> email = "someone@example.thisshouldfail"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -206,7 +206,7 @@
 >> email = "someoneexamplecom"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -223,7 +223,7 @@
 >> email = "someone.example@com"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -240,7 +240,7 @@
 >> email = "someone@123.456.789"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -257,7 +257,7 @@
 >> email = "SOMEONE@EXAMPLE.COM"
 >> shouldPass = "yes"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -274,7 +274,7 @@
 >> email = "someone@.com"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component
@@ -291,7 +291,7 @@
 >> email = "someone@example test.com"
 >> shouldPass = "no"
 >> thoroughEmailValidationInput = email
-*program: Thorough Email Validation (COPY)
+*program: Thorough Email Validation
 
 *if: thoroughEmailValidationOutput = shouldPass
 	*component

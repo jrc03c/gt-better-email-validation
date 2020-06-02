@@ -44,7 +44,7 @@ async function build(){
 			>> email = "${email}"
 			>> shouldPass = "${shouldPass ? "yes" : "no"}"
 			>> thoroughEmailValidationInput = email
-			*program: Thorough Email Validation (COPY)
+			*program: Thorough Email Validation
 
 			*if: thoroughEmailValidationOutput = shouldPass
 				*component
