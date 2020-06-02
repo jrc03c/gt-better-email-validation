@@ -5,117 +5,128 @@
 -- the handle must contain at least one character
 -- the domain must contain at least one character
 -- the domain must contain at least one .
--- any characters are valid in the handle
--- any characters are valid in the domain
+-- any characters are valid in the handle (except spaces)
+-- any characters are valid in the domain (except spaces)
 -- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
 
->> betterEmailValidatorUpperToLower = {{ upperToLower }}
+>> thoroughEmailValidatorUpperToLower = {{ upperToLower }}
 
-*if: not betterEmailValidationInput
-	>> betterEmailValidationInput = "someone@example.com"
+*if: not thoroughEmailValidationInput
+	*page
+		*component
+			*classes: alert alert-warning
+			ERROR: An email address is required for validation!
 
->> betterEmailValidationCounter = 1
->> betterEmailValidationHandle = ""
->> betterEmailValidationDomain = ""
->> betterEmailValidationDomainExtension = ""
->> betterEmailValidationPhase = "handle"
->> betterEmailValidationOutput = "yes"
->> betterEmailValidationFailPhase = "none"
->> betterEmailValidationFailIndex = -1
->> betterEmailValidationFailChar = ""
->> betterEmailValidationFailMessage = ""
+>> thoroughEmailValidationCounter = 1
+>> thoroughEmailValidationHandle = ""
+>> thoroughEmailValidationDomain = ""
+>> thoroughEmailValidationDomainExtension = ""
+>> thoroughEmailValidationPhase = "handle"
+>> thoroughEmailValidationOutput = "yes"
+>> thoroughEmailValidationFailPhase = "none"
+>> thoroughEmailValidationFailIndex = -1
+>> thoroughEmailValidationFailChar = ""
+>> thoroughEmailValidationFailMessage = ""
 
 -- check that there are no spaces in the address
->> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> " "}
+>> stringSplitterInput = {"string" -> thoroughEmailValidationInput, "delimiter" -> " "}
 *program: String Splitter
 
 *if: stringSplitterOutput.size > 1
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "all"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "Email addresses cannot contain spaces."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "Email addresses cannot contain spaces."
 	*return
 
 -- break address into handle and domain
->> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> "@"}
+>> stringSplitterInput = {"string" -> thoroughEmailValidationInput, "delimiter" -> "@"}
 *program: String Splitter
 
 *if: stringSplitterOutput.size < 2
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "all"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered did not contain an '@' character."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered did not contain an '@' character."
 	*return
 
 *if: stringSplitterOutput.size > 2
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "all"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered contained more than one '@' character."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered contained more than one '@' character."
 	*return
 
->> betterEmailValidationHandle = stringSplitterOutput[1]
->> betterEmailValidationDomain = stringSplitterOutput[2]
+>> thoroughEmailValidationHandle = stringSplitterOutput[1]
+>> thoroughEmailValidationDomain = stringSplitterOutput[2]
 
-*if: betterEmailValidationHandle.size = 0
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "handle"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The handle of an email address (the part before the '@' character) must contain at least one character."
+*if: thoroughEmailValidationHandle.size = 0
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "handle"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The handle of an email address (the part before the '@' character) must contain at least one character."
 	*return
 
-*if: betterEmailValidationDomain.size < 3
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
+*if: thoroughEmailValidationDomain.size < 3
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
 	*return
 
 -- break domain into subdomain(s) + domain and extension
->> stringSplitterInput = {"string" -> betterEmailValidationDomain, "delimiter" -> "."}
+>> stringSplitterInput = {"string" -> thoroughEmailValidationDomain, "delimiter" -> "."}
 *program: String Splitter
 
 *if: stringSplitterOutput.size < 2
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
 	*return
 
 *if: stringSplitterOutput[1].size = 0
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The second-level domain of an email address (the part after the '@' character that comes before the final extension (like '.com' or '.org')) must be at least one character in length."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The second-level domain of an email address (the part after the '@' character that comes before the final extension (like '.com' or '.org')) must be at least one character in length."
 	*return
 
 -- convert extension to lowercase
->> betterEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
->> betterEmailValidationCounter = 1
->> betterEmailValidationDomainExtensionTemp = ""
+>> thoroughEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
+>> thoroughEmailValidationCounter = 1
+>> thoroughEmailValidationDomainExtensionTemp = ""
 
-*while: betterEmailValidationCounter <= betterEmailValidationDomainExtension.size
-	*if: betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]]
-		>> betterEmailValidationDomainExtensionTemp = "{betterEmailValidationDomainExtensionTemp}{betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]]}"
-	*if: not (betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]])
-		>> betterEmailValidationDomainExtensionTemp = "{betterEmailValidationDomainExtensionTemp}{betterEmailValidationDomainExtension[betterEmailValidationCounter]}"
-	>> betterEmailValidationCounter = betterEmailValidationCounter + 1
+*while: thoroughEmailValidationCounter <= thoroughEmailValidationDomainExtension.size
+	*if: thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]]
+		>> thoroughEmailValidationDomainExtensionTemp = "{thoroughEmailValidationDomainExtensionTemp}{thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]]}"
+	*if: not (thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]])
+		>> thoroughEmailValidationDomainExtensionTemp = "{thoroughEmailValidationDomainExtensionTemp}{thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]}"
+	>> thoroughEmailValidationCounter = thoroughEmailValidationCounter + 1
 
->> betterEmailValidationDomainExtension = betterEmailValidationDomainExtensionTemp
+>> thoroughEmailValidationDomainExtension = thoroughEmailValidationDomainExtensionTemp
 
 -- confirm that the extension is a valid top-level domain
 {{ topLevelConditionals }}
 
->> betterEmailValidationOutput = "no"
->> betterEmailValidationFailPhase = "domain"
->> betterEmailValidationFailIndex = 1
->> betterEmailValidationFailChar = ""
->> betterEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+>> thoroughEmailValidatorUpperToLower = ""
+>> thoroughEmailValidationOutput = "no"
+>> thoroughEmailValidationFailPhase = "domain"
+>> thoroughEmailValidationFailIndex = 1
+>> thoroughEmailValidationFailChar = ""
+>> thoroughEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
 *return

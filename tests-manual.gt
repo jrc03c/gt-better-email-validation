@@ -1,23 +1,23 @@
 *while: 0 < 1
 	*clear
-	
+
 	*question: Email address to test:
 		*type: text
 		*save: email
 
 	Validating...
 
-	>> betterEmailValidationInput = email
-	*program: Better Email Validation
+	>> thoroughEmailValidationInput = email
+	*program: Thorough Email Validation
 
-	*if: betterEmailValidationOutput = "yes"
+	*if: thoroughEmailValidationOutput = "yes"
 		*component
 			*classes: alert alert-success
 			The email address "{email}" is valid!
 
-	*if: betterEmailValidationOutput = "no"
+	*if: thoroughEmailValidationOutput = "no"
 		*component
 			*classes: alert alert-danger
-			The email address "{email}" is invalid! {betterEmailValidationFailMessage}
+			The email address "{email}" is invalid! {thoroughEmailValidationFailMessage}
 
 	*button: Validate another address

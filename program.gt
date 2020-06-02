@@ -5,3142 +5,3153 @@
 -- the handle must contain at least one character
 -- the domain must contain at least one character
 -- the domain must contain at least one .
--- any characters are valid in the handle
--- any characters are valid in the domain
+-- any characters are valid in the handle (except spaces)
+-- any characters are valid in the domain (except spaces)
 -- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
 
->> betterEmailValidatorUpperToLower = {"A"->"a","B"->"b","C"->"c","D"->"d","E"->"e","F"->"f","G"->"g","H"->"h","I"->"i","J"->"j","K"->"k","L"->"l","M"->"m","N"->"n","O"->"o","P"->"p","Q"->"q","R"->"r","S"->"s","T"->"t","U"->"u","V"->"v","W"->"w","X"->"x","Y"->"y","Z"->"z"}
+>> thoroughEmailValidatorUpperToLower = {"A"->"a","B"->"b","C"->"c","D"->"d","E"->"e","F"->"f","G"->"g","H"->"h","I"->"i","J"->"j","K"->"k","L"->"l","M"->"m","N"->"n","O"->"o","P"->"p","Q"->"q","R"->"r","S"->"s","T"->"t","U"->"u","V"->"v","W"->"w","X"->"x","Y"->"y","Z"->"z"}
 
-*if: not betterEmailValidationInput
-	>> betterEmailValidationInput = "someone@example.com"
+*if: not thoroughEmailValidationInput
+	*page
+		*component
+			*classes: alert alert-warning
+			ERROR: An email address is required for validation!
 
->> betterEmailValidationCounter = 1
->> betterEmailValidationHandle = ""
->> betterEmailValidationDomain = ""
->> betterEmailValidationDomainExtension = ""
->> betterEmailValidationPhase = "handle"
->> betterEmailValidationOutput = "yes"
->> betterEmailValidationFailPhase = "none"
->> betterEmailValidationFailIndex = -1
->> betterEmailValidationFailChar = ""
->> betterEmailValidationFailMessage = ""
+>> thoroughEmailValidationCounter = 1
+>> thoroughEmailValidationHandle = ""
+>> thoroughEmailValidationDomain = ""
+>> thoroughEmailValidationDomainExtension = ""
+>> thoroughEmailValidationPhase = "handle"
+>> thoroughEmailValidationOutput = "yes"
+>> thoroughEmailValidationFailPhase = "none"
+>> thoroughEmailValidationFailIndex = -1
+>> thoroughEmailValidationFailChar = ""
+>> thoroughEmailValidationFailMessage = ""
 
 -- check that there are no spaces in the address
->> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> " "}
+>> stringSplitterInput = {"string" -> thoroughEmailValidationInput, "delimiter" -> " "}
 *program: String Splitter
 
 *if: stringSplitterOutput.size > 1
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "all"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "Email addresses cannot contain spaces."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "Email addresses cannot contain spaces."
 	*return
 
 -- break address into handle and domain
->> stringSplitterInput = {"string" -> betterEmailValidationInput, "delimiter" -> "@"}
+>> stringSplitterInput = {"string" -> thoroughEmailValidationInput, "delimiter" -> "@"}
 *program: String Splitter
 
 *if: stringSplitterOutput.size < 2
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "all"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered did not contain an '@' character."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered did not contain an '@' character."
 	*return
 
 *if: stringSplitterOutput.size > 2
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "all"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered contained more than one '@' character."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered contained more than one '@' character."
 	*return
 
->> betterEmailValidationHandle = stringSplitterOutput[1]
->> betterEmailValidationDomain = stringSplitterOutput[2]
+>> thoroughEmailValidationHandle = stringSplitterOutput[1]
+>> thoroughEmailValidationDomain = stringSplitterOutput[2]
 
-*if: betterEmailValidationHandle.size = 0
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "handle"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The handle of an email address (the part before the '@' character) must contain at least one character."
+*if: thoroughEmailValidationHandle.size = 0
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "handle"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The handle of an email address (the part before the '@' character) must contain at least one character."
 	*return
 
-*if: betterEmailValidationDomain.size < 3
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
+*if: thoroughEmailValidationDomain.size < 3
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
 	*return
 
 -- break domain into subdomain(s) + domain and extension
->> stringSplitterInput = {"string" -> betterEmailValidationDomain, "delimiter" -> "."}
+>> stringSplitterInput = {"string" -> thoroughEmailValidationDomain, "delimiter" -> "."}
 *program: String Splitter
 
 *if: stringSplitterOutput.size < 2
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
 	*return
 
 *if: stringSplitterOutput[1].size = 0
-	>> betterEmailValidationOutput = "no"
-	>> betterEmailValidationFailPhase = "domain"
-	>> betterEmailValidationFailIndex = 1
-	>> betterEmailValidationFailChar = ""
-	>> betterEmailValidationFailMessage = "The second-level domain of an email address (the part after the '@' character that comes before the final extension (like '.com' or '.org')) must be at least one character in length."
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The second-level domain of an email address (the part after the '@' character that comes before the final extension (like '.com' or '.org')) must be at least one character in length."
 	*return
 
 -- convert extension to lowercase
->> betterEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
->> betterEmailValidationCounter = 1
->> betterEmailValidationDomainExtensionTemp = ""
+>> thoroughEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
+>> thoroughEmailValidationCounter = 1
+>> thoroughEmailValidationDomainExtensionTemp = ""
 
-*while: betterEmailValidationCounter <= betterEmailValidationDomainExtension.size
-	*if: betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]]
-		>> betterEmailValidationDomainExtensionTemp = "{betterEmailValidationDomainExtensionTemp}{betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]]}"
-	*if: not (betterEmailValidatorUpperToLower[betterEmailValidationDomainExtension[betterEmailValidationCounter]])
-		>> betterEmailValidationDomainExtensionTemp = "{betterEmailValidationDomainExtensionTemp}{betterEmailValidationDomainExtension[betterEmailValidationCounter]}"
-	>> betterEmailValidationCounter = betterEmailValidationCounter + 1
+*while: thoroughEmailValidationCounter <= thoroughEmailValidationDomainExtension.size
+	*if: thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]]
+		>> thoroughEmailValidationDomainExtensionTemp = "{thoroughEmailValidationDomainExtensionTemp}{thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]]}"
+	*if: not (thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]])
+		>> thoroughEmailValidationDomainExtensionTemp = "{thoroughEmailValidationDomainExtensionTemp}{thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]}"
+	>> thoroughEmailValidationCounter = thoroughEmailValidationCounter + 1
 
->> betterEmailValidationDomainExtension = betterEmailValidationDomainExtensionTemp
+>> thoroughEmailValidationDomainExtension = thoroughEmailValidationDomainExtensionTemp
 
 -- confirm that the extension is a valid top-level domain
-*if: betterEmailValidationDomainExtension = "aaa"
+*if: thoroughEmailValidationDomainExtension = "aaa"
 	*return
-*if: betterEmailValidationDomainExtension = "aarp"
+*if: thoroughEmailValidationDomainExtension = "aarp"
 	*return
-*if: betterEmailValidationDomainExtension = "abarth"
+*if: thoroughEmailValidationDomainExtension = "abarth"
 	*return
-*if: betterEmailValidationDomainExtension = "abb"
+*if: thoroughEmailValidationDomainExtension = "abb"
 	*return
-*if: betterEmailValidationDomainExtension = "abbott"
+*if: thoroughEmailValidationDomainExtension = "abbott"
 	*return
-*if: betterEmailValidationDomainExtension = "abbvie"
+*if: thoroughEmailValidationDomainExtension = "abbvie"
 	*return
-*if: betterEmailValidationDomainExtension = "abc"
+*if: thoroughEmailValidationDomainExtension = "abc"
 	*return
-*if: betterEmailValidationDomainExtension = "able"
+*if: thoroughEmailValidationDomainExtension = "able"
 	*return
-*if: betterEmailValidationDomainExtension = "abogado"
+*if: thoroughEmailValidationDomainExtension = "abogado"
 	*return
-*if: betterEmailValidationDomainExtension = "abudhabi"
+*if: thoroughEmailValidationDomainExtension = "abudhabi"
 	*return
-*if: betterEmailValidationDomainExtension = "ac"
+*if: thoroughEmailValidationDomainExtension = "ac"
 	*return
-*if: betterEmailValidationDomainExtension = "academy"
+*if: thoroughEmailValidationDomainExtension = "academy"
 	*return
-*if: betterEmailValidationDomainExtension = "accenture"
+*if: thoroughEmailValidationDomainExtension = "accenture"
 	*return
-*if: betterEmailValidationDomainExtension = "accountant"
+*if: thoroughEmailValidationDomainExtension = "accountant"
 	*return
-*if: betterEmailValidationDomainExtension = "accountants"
+*if: thoroughEmailValidationDomainExtension = "accountants"
 	*return
-*if: betterEmailValidationDomainExtension = "aco"
+*if: thoroughEmailValidationDomainExtension = "aco"
 	*return
-*if: betterEmailValidationDomainExtension = "actor"
+*if: thoroughEmailValidationDomainExtension = "actor"
 	*return
-*if: betterEmailValidationDomainExtension = "ad"
+*if: thoroughEmailValidationDomainExtension = "ad"
 	*return
-*if: betterEmailValidationDomainExtension = "adac"
+*if: thoroughEmailValidationDomainExtension = "adac"
 	*return
-*if: betterEmailValidationDomainExtension = "ads"
+*if: thoroughEmailValidationDomainExtension = "ads"
 	*return
-*if: betterEmailValidationDomainExtension = "adult"
+*if: thoroughEmailValidationDomainExtension = "adult"
 	*return
-*if: betterEmailValidationDomainExtension = "ae"
+*if: thoroughEmailValidationDomainExtension = "ae"
 	*return
-*if: betterEmailValidationDomainExtension = "aeg"
+*if: thoroughEmailValidationDomainExtension = "aeg"
 	*return
-*if: betterEmailValidationDomainExtension = "aero"
+*if: thoroughEmailValidationDomainExtension = "aero"
 	*return
-*if: betterEmailValidationDomainExtension = "aetna"
+*if: thoroughEmailValidationDomainExtension = "aetna"
 	*return
-*if: betterEmailValidationDomainExtension = "af"
+*if: thoroughEmailValidationDomainExtension = "af"
 	*return
-*if: betterEmailValidationDomainExtension = "afamilycompany"
+*if: thoroughEmailValidationDomainExtension = "afamilycompany"
 	*return
-*if: betterEmailValidationDomainExtension = "afl"
+*if: thoroughEmailValidationDomainExtension = "afl"
 	*return
-*if: betterEmailValidationDomainExtension = "africa"
+*if: thoroughEmailValidationDomainExtension = "africa"
 	*return
-*if: betterEmailValidationDomainExtension = "ag"
+*if: thoroughEmailValidationDomainExtension = "ag"
 	*return
-*if: betterEmailValidationDomainExtension = "agakhan"
+*if: thoroughEmailValidationDomainExtension = "agakhan"
 	*return
-*if: betterEmailValidationDomainExtension = "agency"
+*if: thoroughEmailValidationDomainExtension = "agency"
 	*return
-*if: betterEmailValidationDomainExtension = "ai"
+*if: thoroughEmailValidationDomainExtension = "ai"
 	*return
-*if: betterEmailValidationDomainExtension = "aig"
+*if: thoroughEmailValidationDomainExtension = "aig"
 	*return
-*if: betterEmailValidationDomainExtension = "aigo"
+*if: thoroughEmailValidationDomainExtension = "aigo"
 	*return
-*if: betterEmailValidationDomainExtension = "airbus"
+*if: thoroughEmailValidationDomainExtension = "airbus"
 	*return
-*if: betterEmailValidationDomainExtension = "airforce"
+*if: thoroughEmailValidationDomainExtension = "airforce"
 	*return
-*if: betterEmailValidationDomainExtension = "airtel"
+*if: thoroughEmailValidationDomainExtension = "airtel"
 	*return
-*if: betterEmailValidationDomainExtension = "akdn"
+*if: thoroughEmailValidationDomainExtension = "akdn"
 	*return
-*if: betterEmailValidationDomainExtension = "al"
+*if: thoroughEmailValidationDomainExtension = "al"
 	*return
-*if: betterEmailValidationDomainExtension = "alfaromeo"
+*if: thoroughEmailValidationDomainExtension = "alfaromeo"
 	*return
-*if: betterEmailValidationDomainExtension = "alibaba"
+*if: thoroughEmailValidationDomainExtension = "alibaba"
 	*return
-*if: betterEmailValidationDomainExtension = "alipay"
+*if: thoroughEmailValidationDomainExtension = "alipay"
 	*return
-*if: betterEmailValidationDomainExtension = "allfinanz"
+*if: thoroughEmailValidationDomainExtension = "allfinanz"
 	*return
-*if: betterEmailValidationDomainExtension = "allstate"
+*if: thoroughEmailValidationDomainExtension = "allstate"
 	*return
-*if: betterEmailValidationDomainExtension = "ally"
+*if: thoroughEmailValidationDomainExtension = "ally"
 	*return
-*if: betterEmailValidationDomainExtension = "alsace"
+*if: thoroughEmailValidationDomainExtension = "alsace"
 	*return
-*if: betterEmailValidationDomainExtension = "alstom"
+*if: thoroughEmailValidationDomainExtension = "alstom"
 	*return
-*if: betterEmailValidationDomainExtension = "am"
+*if: thoroughEmailValidationDomainExtension = "am"
 	*return
-*if: betterEmailValidationDomainExtension = "americanexpress"
+*if: thoroughEmailValidationDomainExtension = "americanexpress"
 	*return
-*if: betterEmailValidationDomainExtension = "americanfamily"
+*if: thoroughEmailValidationDomainExtension = "americanfamily"
 	*return
-*if: betterEmailValidationDomainExtension = "amex"
+*if: thoroughEmailValidationDomainExtension = "amex"
 	*return
-*if: betterEmailValidationDomainExtension = "amfam"
+*if: thoroughEmailValidationDomainExtension = "amfam"
 	*return
-*if: betterEmailValidationDomainExtension = "amica"
+*if: thoroughEmailValidationDomainExtension = "amica"
 	*return
-*if: betterEmailValidationDomainExtension = "amsterdam"
+*if: thoroughEmailValidationDomainExtension = "amsterdam"
 	*return
-*if: betterEmailValidationDomainExtension = "analytics"
+*if: thoroughEmailValidationDomainExtension = "analytics"
 	*return
-*if: betterEmailValidationDomainExtension = "android"
+*if: thoroughEmailValidationDomainExtension = "android"
 	*return
-*if: betterEmailValidationDomainExtension = "anquan"
+*if: thoroughEmailValidationDomainExtension = "anquan"
 	*return
-*if: betterEmailValidationDomainExtension = "anz"
+*if: thoroughEmailValidationDomainExtension = "anz"
 	*return
-*if: betterEmailValidationDomainExtension = "ao"
+*if: thoroughEmailValidationDomainExtension = "ao"
 	*return
-*if: betterEmailValidationDomainExtension = "aol"
+*if: thoroughEmailValidationDomainExtension = "aol"
 	*return
-*if: betterEmailValidationDomainExtension = "apartments"
+*if: thoroughEmailValidationDomainExtension = "apartments"
 	*return
-*if: betterEmailValidationDomainExtension = "app"
+*if: thoroughEmailValidationDomainExtension = "app"
 	*return
-*if: betterEmailValidationDomainExtension = "apple"
+*if: thoroughEmailValidationDomainExtension = "apple"
 	*return
-*if: betterEmailValidationDomainExtension = "aq"
+*if: thoroughEmailValidationDomainExtension = "aq"
 	*return
-*if: betterEmailValidationDomainExtension = "aquarelle"
+*if: thoroughEmailValidationDomainExtension = "aquarelle"
 	*return
-*if: betterEmailValidationDomainExtension = "ar"
+*if: thoroughEmailValidationDomainExtension = "ar"
 	*return
-*if: betterEmailValidationDomainExtension = "arab"
+*if: thoroughEmailValidationDomainExtension = "arab"
 	*return
-*if: betterEmailValidationDomainExtension = "aramco"
+*if: thoroughEmailValidationDomainExtension = "aramco"
 	*return
-*if: betterEmailValidationDomainExtension = "archi"
+*if: thoroughEmailValidationDomainExtension = "archi"
 	*return
-*if: betterEmailValidationDomainExtension = "army"
+*if: thoroughEmailValidationDomainExtension = "army"
 	*return
-*if: betterEmailValidationDomainExtension = "arpa"
+*if: thoroughEmailValidationDomainExtension = "arpa"
 	*return
-*if: betterEmailValidationDomainExtension = "art"
+*if: thoroughEmailValidationDomainExtension = "art"
 	*return
-*if: betterEmailValidationDomainExtension = "arte"
+*if: thoroughEmailValidationDomainExtension = "arte"
 	*return
-*if: betterEmailValidationDomainExtension = "as"
+*if: thoroughEmailValidationDomainExtension = "as"
 	*return
-*if: betterEmailValidationDomainExtension = "asda"
+*if: thoroughEmailValidationDomainExtension = "asda"
 	*return
-*if: betterEmailValidationDomainExtension = "asia"
+*if: thoroughEmailValidationDomainExtension = "asia"
 	*return
-*if: betterEmailValidationDomainExtension = "associates"
+*if: thoroughEmailValidationDomainExtension = "associates"
 	*return
-*if: betterEmailValidationDomainExtension = "at"
+*if: thoroughEmailValidationDomainExtension = "at"
 	*return
-*if: betterEmailValidationDomainExtension = "athleta"
+*if: thoroughEmailValidationDomainExtension = "athleta"
 	*return
-*if: betterEmailValidationDomainExtension = "attorney"
+*if: thoroughEmailValidationDomainExtension = "attorney"
 	*return
-*if: betterEmailValidationDomainExtension = "au"
+*if: thoroughEmailValidationDomainExtension = "au"
 	*return
-*if: betterEmailValidationDomainExtension = "auction"
+*if: thoroughEmailValidationDomainExtension = "auction"
 	*return
-*if: betterEmailValidationDomainExtension = "audi"
+*if: thoroughEmailValidationDomainExtension = "audi"
 	*return
-*if: betterEmailValidationDomainExtension = "audible"
+*if: thoroughEmailValidationDomainExtension = "audible"
 	*return
-*if: betterEmailValidationDomainExtension = "audio"
+*if: thoroughEmailValidationDomainExtension = "audio"
 	*return
-*if: betterEmailValidationDomainExtension = "auspost"
+*if: thoroughEmailValidationDomainExtension = "auspost"
 	*return
-*if: betterEmailValidationDomainExtension = "author"
+*if: thoroughEmailValidationDomainExtension = "author"
 	*return
-*if: betterEmailValidationDomainExtension = "auto"
+*if: thoroughEmailValidationDomainExtension = "auto"
 	*return
-*if: betterEmailValidationDomainExtension = "autos"
+*if: thoroughEmailValidationDomainExtension = "autos"
 	*return
-*if: betterEmailValidationDomainExtension = "avianca"
+*if: thoroughEmailValidationDomainExtension = "avianca"
 	*return
-*if: betterEmailValidationDomainExtension = "aw"
+*if: thoroughEmailValidationDomainExtension = "aw"
 	*return
-*if: betterEmailValidationDomainExtension = "aws"
+*if: thoroughEmailValidationDomainExtension = "aws"
 	*return
-*if: betterEmailValidationDomainExtension = "ax"
+*if: thoroughEmailValidationDomainExtension = "ax"
 	*return
-*if: betterEmailValidationDomainExtension = "axa"
+*if: thoroughEmailValidationDomainExtension = "axa"
 	*return
-*if: betterEmailValidationDomainExtension = "az"
+*if: thoroughEmailValidationDomainExtension = "az"
 	*return
-*if: betterEmailValidationDomainExtension = "azure"
+*if: thoroughEmailValidationDomainExtension = "azure"
 	*return
-*if: betterEmailValidationDomainExtension = "ba"
+*if: thoroughEmailValidationDomainExtension = "ba"
 	*return
-*if: betterEmailValidationDomainExtension = "baby"
+*if: thoroughEmailValidationDomainExtension = "baby"
 	*return
-*if: betterEmailValidationDomainExtension = "baidu"
+*if: thoroughEmailValidationDomainExtension = "baidu"
 	*return
-*if: betterEmailValidationDomainExtension = "banamex"
+*if: thoroughEmailValidationDomainExtension = "banamex"
 	*return
-*if: betterEmailValidationDomainExtension = "bananarepublic"
+*if: thoroughEmailValidationDomainExtension = "bananarepublic"
 	*return
-*if: betterEmailValidationDomainExtension = "band"
+*if: thoroughEmailValidationDomainExtension = "band"
 	*return
-*if: betterEmailValidationDomainExtension = "bank"
+*if: thoroughEmailValidationDomainExtension = "bank"
 	*return
-*if: betterEmailValidationDomainExtension = "bar"
+*if: thoroughEmailValidationDomainExtension = "bar"
 	*return
-*if: betterEmailValidationDomainExtension = "barcelona"
+*if: thoroughEmailValidationDomainExtension = "barcelona"
 	*return
-*if: betterEmailValidationDomainExtension = "barclaycard"
+*if: thoroughEmailValidationDomainExtension = "barclaycard"
 	*return
-*if: betterEmailValidationDomainExtension = "barclays"
+*if: thoroughEmailValidationDomainExtension = "barclays"
 	*return
-*if: betterEmailValidationDomainExtension = "barefoot"
+*if: thoroughEmailValidationDomainExtension = "barefoot"
 	*return
-*if: betterEmailValidationDomainExtension = "bargains"
+*if: thoroughEmailValidationDomainExtension = "bargains"
 	*return
-*if: betterEmailValidationDomainExtension = "baseball"
+*if: thoroughEmailValidationDomainExtension = "baseball"
 	*return
-*if: betterEmailValidationDomainExtension = "basketball"
+*if: thoroughEmailValidationDomainExtension = "basketball"
 	*return
-*if: betterEmailValidationDomainExtension = "bauhaus"
+*if: thoroughEmailValidationDomainExtension = "bauhaus"
 	*return
-*if: betterEmailValidationDomainExtension = "bayern"
+*if: thoroughEmailValidationDomainExtension = "bayern"
 	*return
-*if: betterEmailValidationDomainExtension = "bb"
+*if: thoroughEmailValidationDomainExtension = "bb"
 	*return
-*if: betterEmailValidationDomainExtension = "bbc"
+*if: thoroughEmailValidationDomainExtension = "bbc"
 	*return
-*if: betterEmailValidationDomainExtension = "bbt"
+*if: thoroughEmailValidationDomainExtension = "bbt"
 	*return
-*if: betterEmailValidationDomainExtension = "bbva"
+*if: thoroughEmailValidationDomainExtension = "bbva"
 	*return
-*if: betterEmailValidationDomainExtension = "bcg"
+*if: thoroughEmailValidationDomainExtension = "bcg"
 	*return
-*if: betterEmailValidationDomainExtension = "bcn"
+*if: thoroughEmailValidationDomainExtension = "bcn"
 	*return
-*if: betterEmailValidationDomainExtension = "bd"
+*if: thoroughEmailValidationDomainExtension = "bd"
 	*return
-*if: betterEmailValidationDomainExtension = "be"
+*if: thoroughEmailValidationDomainExtension = "be"
 	*return
-*if: betterEmailValidationDomainExtension = "beats"
+*if: thoroughEmailValidationDomainExtension = "beats"
 	*return
-*if: betterEmailValidationDomainExtension = "beauty"
+*if: thoroughEmailValidationDomainExtension = "beauty"
 	*return
-*if: betterEmailValidationDomainExtension = "beer"
+*if: thoroughEmailValidationDomainExtension = "beer"
 	*return
-*if: betterEmailValidationDomainExtension = "bentley"
+*if: thoroughEmailValidationDomainExtension = "bentley"
 	*return
-*if: betterEmailValidationDomainExtension = "berlin"
+*if: thoroughEmailValidationDomainExtension = "berlin"
 	*return
-*if: betterEmailValidationDomainExtension = "best"
+*if: thoroughEmailValidationDomainExtension = "best"
 	*return
-*if: betterEmailValidationDomainExtension = "bestbuy"
+*if: thoroughEmailValidationDomainExtension = "bestbuy"
 	*return
-*if: betterEmailValidationDomainExtension = "bet"
+*if: thoroughEmailValidationDomainExtension = "bet"
 	*return
-*if: betterEmailValidationDomainExtension = "bf"
+*if: thoroughEmailValidationDomainExtension = "bf"
 	*return
-*if: betterEmailValidationDomainExtension = "bg"
+*if: thoroughEmailValidationDomainExtension = "bg"
 	*return
-*if: betterEmailValidationDomainExtension = "bh"
+*if: thoroughEmailValidationDomainExtension = "bh"
 	*return
-*if: betterEmailValidationDomainExtension = "bharti"
+*if: thoroughEmailValidationDomainExtension = "bharti"
 	*return
-*if: betterEmailValidationDomainExtension = "bi"
+*if: thoroughEmailValidationDomainExtension = "bi"
 	*return
-*if: betterEmailValidationDomainExtension = "bible"
+*if: thoroughEmailValidationDomainExtension = "bible"
 	*return
-*if: betterEmailValidationDomainExtension = "bid"
+*if: thoroughEmailValidationDomainExtension = "bid"
 	*return
-*if: betterEmailValidationDomainExtension = "bike"
+*if: thoroughEmailValidationDomainExtension = "bike"
 	*return
-*if: betterEmailValidationDomainExtension = "bing"
+*if: thoroughEmailValidationDomainExtension = "bing"
 	*return
-*if: betterEmailValidationDomainExtension = "bingo"
+*if: thoroughEmailValidationDomainExtension = "bingo"
 	*return
-*if: betterEmailValidationDomainExtension = "bio"
+*if: thoroughEmailValidationDomainExtension = "bio"
 	*return
-*if: betterEmailValidationDomainExtension = "biz"
+*if: thoroughEmailValidationDomainExtension = "biz"
 	*return
-*if: betterEmailValidationDomainExtension = "bj"
+*if: thoroughEmailValidationDomainExtension = "bj"
 	*return
-*if: betterEmailValidationDomainExtension = "black"
+*if: thoroughEmailValidationDomainExtension = "black"
 	*return
-*if: betterEmailValidationDomainExtension = "blackfriday"
+*if: thoroughEmailValidationDomainExtension = "blackfriday"
 	*return
-*if: betterEmailValidationDomainExtension = "blockbuster"
+*if: thoroughEmailValidationDomainExtension = "blockbuster"
 	*return
-*if: betterEmailValidationDomainExtension = "blog"
+*if: thoroughEmailValidationDomainExtension = "blog"
 	*return
-*if: betterEmailValidationDomainExtension = "bloomberg"
+*if: thoroughEmailValidationDomainExtension = "bloomberg"
 	*return
-*if: betterEmailValidationDomainExtension = "blue"
+*if: thoroughEmailValidationDomainExtension = "blue"
 	*return
-*if: betterEmailValidationDomainExtension = "bm"
+*if: thoroughEmailValidationDomainExtension = "bm"
 	*return
-*if: betterEmailValidationDomainExtension = "bms"
+*if: thoroughEmailValidationDomainExtension = "bms"
 	*return
-*if: betterEmailValidationDomainExtension = "bmw"
+*if: thoroughEmailValidationDomainExtension = "bmw"
 	*return
-*if: betterEmailValidationDomainExtension = "bn"
+*if: thoroughEmailValidationDomainExtension = "bn"
 	*return
-*if: betterEmailValidationDomainExtension = "bnpparibas"
+*if: thoroughEmailValidationDomainExtension = "bnpparibas"
 	*return
-*if: betterEmailValidationDomainExtension = "bo"
+*if: thoroughEmailValidationDomainExtension = "bo"
 	*return
-*if: betterEmailValidationDomainExtension = "boats"
+*if: thoroughEmailValidationDomainExtension = "boats"
 	*return
-*if: betterEmailValidationDomainExtension = "boehringer"
+*if: thoroughEmailValidationDomainExtension = "boehringer"
 	*return
-*if: betterEmailValidationDomainExtension = "bofa"
+*if: thoroughEmailValidationDomainExtension = "bofa"
 	*return
-*if: betterEmailValidationDomainExtension = "bom"
+*if: thoroughEmailValidationDomainExtension = "bom"
 	*return
-*if: betterEmailValidationDomainExtension = "bond"
+*if: thoroughEmailValidationDomainExtension = "bond"
 	*return
-*if: betterEmailValidationDomainExtension = "boo"
+*if: thoroughEmailValidationDomainExtension = "boo"
 	*return
-*if: betterEmailValidationDomainExtension = "book"
+*if: thoroughEmailValidationDomainExtension = "book"
 	*return
-*if: betterEmailValidationDomainExtension = "booking"
+*if: thoroughEmailValidationDomainExtension = "booking"
 	*return
-*if: betterEmailValidationDomainExtension = "bosch"
+*if: thoroughEmailValidationDomainExtension = "bosch"
 	*return
-*if: betterEmailValidationDomainExtension = "bostik"
+*if: thoroughEmailValidationDomainExtension = "bostik"
 	*return
-*if: betterEmailValidationDomainExtension = "boston"
+*if: thoroughEmailValidationDomainExtension = "boston"
 	*return
-*if: betterEmailValidationDomainExtension = "bot"
+*if: thoroughEmailValidationDomainExtension = "bot"
 	*return
-*if: betterEmailValidationDomainExtension = "boutique"
+*if: thoroughEmailValidationDomainExtension = "boutique"
 	*return
-*if: betterEmailValidationDomainExtension = "box"
+*if: thoroughEmailValidationDomainExtension = "box"
 	*return
-*if: betterEmailValidationDomainExtension = "br"
+*if: thoroughEmailValidationDomainExtension = "br"
 	*return
-*if: betterEmailValidationDomainExtension = "bradesco"
+*if: thoroughEmailValidationDomainExtension = "bradesco"
 	*return
-*if: betterEmailValidationDomainExtension = "bridgestone"
+*if: thoroughEmailValidationDomainExtension = "bridgestone"
 	*return
-*if: betterEmailValidationDomainExtension = "broadway"
+*if: thoroughEmailValidationDomainExtension = "broadway"
 	*return
-*if: betterEmailValidationDomainExtension = "broker"
+*if: thoroughEmailValidationDomainExtension = "broker"
 	*return
-*if: betterEmailValidationDomainExtension = "brother"
+*if: thoroughEmailValidationDomainExtension = "brother"
 	*return
-*if: betterEmailValidationDomainExtension = "brussels"
+*if: thoroughEmailValidationDomainExtension = "brussels"
 	*return
-*if: betterEmailValidationDomainExtension = "bs"
+*if: thoroughEmailValidationDomainExtension = "bs"
 	*return
-*if: betterEmailValidationDomainExtension = "bt"
+*if: thoroughEmailValidationDomainExtension = "bt"
 	*return
-*if: betterEmailValidationDomainExtension = "budapest"
+*if: thoroughEmailValidationDomainExtension = "budapest"
 	*return
-*if: betterEmailValidationDomainExtension = "bugatti"
+*if: thoroughEmailValidationDomainExtension = "bugatti"
 	*return
-*if: betterEmailValidationDomainExtension = "build"
+*if: thoroughEmailValidationDomainExtension = "build"
 	*return
-*if: betterEmailValidationDomainExtension = "builders"
+*if: thoroughEmailValidationDomainExtension = "builders"
 	*return
-*if: betterEmailValidationDomainExtension = "business"
+*if: thoroughEmailValidationDomainExtension = "business"
 	*return
-*if: betterEmailValidationDomainExtension = "buy"
+*if: thoroughEmailValidationDomainExtension = "buy"
 	*return
-*if: betterEmailValidationDomainExtension = "buzz"
+*if: thoroughEmailValidationDomainExtension = "buzz"
 	*return
-*if: betterEmailValidationDomainExtension = "bv"
+*if: thoroughEmailValidationDomainExtension = "bv"
 	*return
-*if: betterEmailValidationDomainExtension = "bw"
+*if: thoroughEmailValidationDomainExtension = "bw"
 	*return
-*if: betterEmailValidationDomainExtension = "by"
+*if: thoroughEmailValidationDomainExtension = "by"
 	*return
-*if: betterEmailValidationDomainExtension = "bz"
+*if: thoroughEmailValidationDomainExtension = "bz"
 	*return
-*if: betterEmailValidationDomainExtension = "bzh"
+*if: thoroughEmailValidationDomainExtension = "bzh"
 	*return
-*if: betterEmailValidationDomainExtension = "ca"
+*if: thoroughEmailValidationDomainExtension = "ca"
 	*return
-*if: betterEmailValidationDomainExtension = "cab"
+*if: thoroughEmailValidationDomainExtension = "cab"
 	*return
-*if: betterEmailValidationDomainExtension = "cafe"
+*if: thoroughEmailValidationDomainExtension = "cafe"
 	*return
-*if: betterEmailValidationDomainExtension = "cal"
+*if: thoroughEmailValidationDomainExtension = "cal"
 	*return
-*if: betterEmailValidationDomainExtension = "call"
+*if: thoroughEmailValidationDomainExtension = "call"
 	*return
-*if: betterEmailValidationDomainExtension = "calvinklein"
+*if: thoroughEmailValidationDomainExtension = "calvinklein"
 	*return
-*if: betterEmailValidationDomainExtension = "cam"
+*if: thoroughEmailValidationDomainExtension = "cam"
 	*return
-*if: betterEmailValidationDomainExtension = "camera"
+*if: thoroughEmailValidationDomainExtension = "camera"
 	*return
-*if: betterEmailValidationDomainExtension = "camp"
+*if: thoroughEmailValidationDomainExtension = "camp"
 	*return
-*if: betterEmailValidationDomainExtension = "cancerresearch"
+*if: thoroughEmailValidationDomainExtension = "cancerresearch"
 	*return
-*if: betterEmailValidationDomainExtension = "canon"
+*if: thoroughEmailValidationDomainExtension = "canon"
 	*return
-*if: betterEmailValidationDomainExtension = "capetown"
+*if: thoroughEmailValidationDomainExtension = "capetown"
 	*return
-*if: betterEmailValidationDomainExtension = "capital"
+*if: thoroughEmailValidationDomainExtension = "capital"
 	*return
-*if: betterEmailValidationDomainExtension = "capitalone"
+*if: thoroughEmailValidationDomainExtension = "capitalone"
 	*return
-*if: betterEmailValidationDomainExtension = "car"
+*if: thoroughEmailValidationDomainExtension = "car"
 	*return
-*if: betterEmailValidationDomainExtension = "caravan"
+*if: thoroughEmailValidationDomainExtension = "caravan"
 	*return
-*if: betterEmailValidationDomainExtension = "cards"
+*if: thoroughEmailValidationDomainExtension = "cards"
 	*return
-*if: betterEmailValidationDomainExtension = "care"
+*if: thoroughEmailValidationDomainExtension = "care"
 	*return
-*if: betterEmailValidationDomainExtension = "career"
+*if: thoroughEmailValidationDomainExtension = "career"
 	*return
-*if: betterEmailValidationDomainExtension = "careers"
+*if: thoroughEmailValidationDomainExtension = "careers"
 	*return
-*if: betterEmailValidationDomainExtension = "cars"
+*if: thoroughEmailValidationDomainExtension = "cars"
 	*return
-*if: betterEmailValidationDomainExtension = "casa"
+*if: thoroughEmailValidationDomainExtension = "casa"
 	*return
-*if: betterEmailValidationDomainExtension = "case"
+*if: thoroughEmailValidationDomainExtension = "case"
 	*return
-*if: betterEmailValidationDomainExtension = "caseih"
+*if: thoroughEmailValidationDomainExtension = "caseih"
 	*return
-*if: betterEmailValidationDomainExtension = "cash"
+*if: thoroughEmailValidationDomainExtension = "cash"
 	*return
-*if: betterEmailValidationDomainExtension = "casino"
+*if: thoroughEmailValidationDomainExtension = "casino"
 	*return
-*if: betterEmailValidationDomainExtension = "cat"
+*if: thoroughEmailValidationDomainExtension = "cat"
 	*return
-*if: betterEmailValidationDomainExtension = "catering"
+*if: thoroughEmailValidationDomainExtension = "catering"
 	*return
-*if: betterEmailValidationDomainExtension = "catholic"
+*if: thoroughEmailValidationDomainExtension = "catholic"
 	*return
-*if: betterEmailValidationDomainExtension = "cba"
+*if: thoroughEmailValidationDomainExtension = "cba"
 	*return
-*if: betterEmailValidationDomainExtension = "cbn"
+*if: thoroughEmailValidationDomainExtension = "cbn"
 	*return
-*if: betterEmailValidationDomainExtension = "cbre"
+*if: thoroughEmailValidationDomainExtension = "cbre"
 	*return
-*if: betterEmailValidationDomainExtension = "cbs"
+*if: thoroughEmailValidationDomainExtension = "cbs"
 	*return
-*if: betterEmailValidationDomainExtension = "cc"
+*if: thoroughEmailValidationDomainExtension = "cc"
 	*return
-*if: betterEmailValidationDomainExtension = "cd"
+*if: thoroughEmailValidationDomainExtension = "cd"
 	*return
-*if: betterEmailValidationDomainExtension = "ceb"
+*if: thoroughEmailValidationDomainExtension = "ceb"
 	*return
-*if: betterEmailValidationDomainExtension = "center"
+*if: thoroughEmailValidationDomainExtension = "center"
 	*return
-*if: betterEmailValidationDomainExtension = "ceo"
+*if: thoroughEmailValidationDomainExtension = "ceo"
 	*return
-*if: betterEmailValidationDomainExtension = "cern"
+*if: thoroughEmailValidationDomainExtension = "cern"
 	*return
-*if: betterEmailValidationDomainExtension = "cf"
+*if: thoroughEmailValidationDomainExtension = "cf"
 	*return
-*if: betterEmailValidationDomainExtension = "cfa"
+*if: thoroughEmailValidationDomainExtension = "cfa"
 	*return
-*if: betterEmailValidationDomainExtension = "cfd"
+*if: thoroughEmailValidationDomainExtension = "cfd"
 	*return
-*if: betterEmailValidationDomainExtension = "cg"
+*if: thoroughEmailValidationDomainExtension = "cg"
 	*return
-*if: betterEmailValidationDomainExtension = "ch"
+*if: thoroughEmailValidationDomainExtension = "ch"
 	*return
-*if: betterEmailValidationDomainExtension = "chanel"
+*if: thoroughEmailValidationDomainExtension = "chanel"
 	*return
-*if: betterEmailValidationDomainExtension = "channel"
+*if: thoroughEmailValidationDomainExtension = "channel"
 	*return
-*if: betterEmailValidationDomainExtension = "charity"
+*if: thoroughEmailValidationDomainExtension = "charity"
 	*return
-*if: betterEmailValidationDomainExtension = "chase"
+*if: thoroughEmailValidationDomainExtension = "chase"
 	*return
-*if: betterEmailValidationDomainExtension = "chat"
+*if: thoroughEmailValidationDomainExtension = "chat"
 	*return
-*if: betterEmailValidationDomainExtension = "cheap"
+*if: thoroughEmailValidationDomainExtension = "cheap"
 	*return
-*if: betterEmailValidationDomainExtension = "chintai"
+*if: thoroughEmailValidationDomainExtension = "chintai"
 	*return
-*if: betterEmailValidationDomainExtension = "christmas"
+*if: thoroughEmailValidationDomainExtension = "christmas"
 	*return
-*if: betterEmailValidationDomainExtension = "chrome"
+*if: thoroughEmailValidationDomainExtension = "chrome"
 	*return
-*if: betterEmailValidationDomainExtension = "church"
+*if: thoroughEmailValidationDomainExtension = "church"
 	*return
-*if: betterEmailValidationDomainExtension = "ci"
+*if: thoroughEmailValidationDomainExtension = "ci"
 	*return
-*if: betterEmailValidationDomainExtension = "cipriani"
+*if: thoroughEmailValidationDomainExtension = "cipriani"
 	*return
-*if: betterEmailValidationDomainExtension = "circle"
+*if: thoroughEmailValidationDomainExtension = "circle"
 	*return
-*if: betterEmailValidationDomainExtension = "cisco"
+*if: thoroughEmailValidationDomainExtension = "cisco"
 	*return
-*if: betterEmailValidationDomainExtension = "citadel"
+*if: thoroughEmailValidationDomainExtension = "citadel"
 	*return
-*if: betterEmailValidationDomainExtension = "citi"
+*if: thoroughEmailValidationDomainExtension = "citi"
 	*return
-*if: betterEmailValidationDomainExtension = "citic"
+*if: thoroughEmailValidationDomainExtension = "citic"
 	*return
-*if: betterEmailValidationDomainExtension = "city"
+*if: thoroughEmailValidationDomainExtension = "city"
 	*return
-*if: betterEmailValidationDomainExtension = "cityeats"
+*if: thoroughEmailValidationDomainExtension = "cityeats"
 	*return
-*if: betterEmailValidationDomainExtension = "ck"
+*if: thoroughEmailValidationDomainExtension = "ck"
 	*return
-*if: betterEmailValidationDomainExtension = "cl"
+*if: thoroughEmailValidationDomainExtension = "cl"
 	*return
-*if: betterEmailValidationDomainExtension = "claims"
+*if: thoroughEmailValidationDomainExtension = "claims"
 	*return
-*if: betterEmailValidationDomainExtension = "cleaning"
+*if: thoroughEmailValidationDomainExtension = "cleaning"
 	*return
-*if: betterEmailValidationDomainExtension = "click"
+*if: thoroughEmailValidationDomainExtension = "click"
 	*return
-*if: betterEmailValidationDomainExtension = "clinic"
+*if: thoroughEmailValidationDomainExtension = "clinic"
 	*return
-*if: betterEmailValidationDomainExtension = "clinique"
+*if: thoroughEmailValidationDomainExtension = "clinique"
 	*return
-*if: betterEmailValidationDomainExtension = "clothing"
+*if: thoroughEmailValidationDomainExtension = "clothing"
 	*return
-*if: betterEmailValidationDomainExtension = "cloud"
+*if: thoroughEmailValidationDomainExtension = "cloud"
 	*return
-*if: betterEmailValidationDomainExtension = "club"
+*if: thoroughEmailValidationDomainExtension = "club"
 	*return
-*if: betterEmailValidationDomainExtension = "clubmed"
+*if: thoroughEmailValidationDomainExtension = "clubmed"
 	*return
-*if: betterEmailValidationDomainExtension = "cm"
+*if: thoroughEmailValidationDomainExtension = "cm"
 	*return
-*if: betterEmailValidationDomainExtension = "cn"
+*if: thoroughEmailValidationDomainExtension = "cn"
 	*return
-*if: betterEmailValidationDomainExtension = "co"
+*if: thoroughEmailValidationDomainExtension = "co"
 	*return
-*if: betterEmailValidationDomainExtension = "coach"
+*if: thoroughEmailValidationDomainExtension = "coach"
 	*return
-*if: betterEmailValidationDomainExtension = "codes"
+*if: thoroughEmailValidationDomainExtension = "codes"
 	*return
-*if: betterEmailValidationDomainExtension = "coffee"
+*if: thoroughEmailValidationDomainExtension = "coffee"
 	*return
-*if: betterEmailValidationDomainExtension = "college"
+*if: thoroughEmailValidationDomainExtension = "college"
 	*return
-*if: betterEmailValidationDomainExtension = "cologne"
+*if: thoroughEmailValidationDomainExtension = "cologne"
 	*return
-*if: betterEmailValidationDomainExtension = "com"
+*if: thoroughEmailValidationDomainExtension = "com"
 	*return
-*if: betterEmailValidationDomainExtension = "comcast"
+*if: thoroughEmailValidationDomainExtension = "comcast"
 	*return
-*if: betterEmailValidationDomainExtension = "commbank"
+*if: thoroughEmailValidationDomainExtension = "commbank"
 	*return
-*if: betterEmailValidationDomainExtension = "community"
+*if: thoroughEmailValidationDomainExtension = "community"
 	*return
-*if: betterEmailValidationDomainExtension = "company"
+*if: thoroughEmailValidationDomainExtension = "company"
 	*return
-*if: betterEmailValidationDomainExtension = "compare"
+*if: thoroughEmailValidationDomainExtension = "compare"
 	*return
-*if: betterEmailValidationDomainExtension = "computer"
+*if: thoroughEmailValidationDomainExtension = "computer"
 	*return
-*if: betterEmailValidationDomainExtension = "comsec"
+*if: thoroughEmailValidationDomainExtension = "comsec"
 	*return
-*if: betterEmailValidationDomainExtension = "condos"
+*if: thoroughEmailValidationDomainExtension = "condos"
 	*return
-*if: betterEmailValidationDomainExtension = "construction"
+*if: thoroughEmailValidationDomainExtension = "construction"
 	*return
-*if: betterEmailValidationDomainExtension = "consulting"
+*if: thoroughEmailValidationDomainExtension = "consulting"
 	*return
-*if: betterEmailValidationDomainExtension = "contact"
+*if: thoroughEmailValidationDomainExtension = "contact"
 	*return
-*if: betterEmailValidationDomainExtension = "contractors"
+*if: thoroughEmailValidationDomainExtension = "contractors"
 	*return
-*if: betterEmailValidationDomainExtension = "cooking"
+*if: thoroughEmailValidationDomainExtension = "cooking"
 	*return
-*if: betterEmailValidationDomainExtension = "cookingchannel"
+*if: thoroughEmailValidationDomainExtension = "cookingchannel"
 	*return
-*if: betterEmailValidationDomainExtension = "cool"
+*if: thoroughEmailValidationDomainExtension = "cool"
 	*return
-*if: betterEmailValidationDomainExtension = "coop"
+*if: thoroughEmailValidationDomainExtension = "coop"
 	*return
-*if: betterEmailValidationDomainExtension = "corsica"
+*if: thoroughEmailValidationDomainExtension = "corsica"
 	*return
-*if: betterEmailValidationDomainExtension = "country"
+*if: thoroughEmailValidationDomainExtension = "country"
 	*return
-*if: betterEmailValidationDomainExtension = "coupon"
+*if: thoroughEmailValidationDomainExtension = "coupon"
 	*return
-*if: betterEmailValidationDomainExtension = "coupons"
+*if: thoroughEmailValidationDomainExtension = "coupons"
 	*return
-*if: betterEmailValidationDomainExtension = "courses"
+*if: thoroughEmailValidationDomainExtension = "courses"
 	*return
-*if: betterEmailValidationDomainExtension = "cpa"
+*if: thoroughEmailValidationDomainExtension = "cpa"
 	*return
-*if: betterEmailValidationDomainExtension = "cr"
+*if: thoroughEmailValidationDomainExtension = "cr"
 	*return
-*if: betterEmailValidationDomainExtension = "credit"
+*if: thoroughEmailValidationDomainExtension = "credit"
 	*return
-*if: betterEmailValidationDomainExtension = "creditcard"
+*if: thoroughEmailValidationDomainExtension = "creditcard"
 	*return
-*if: betterEmailValidationDomainExtension = "creditunion"
+*if: thoroughEmailValidationDomainExtension = "creditunion"
 	*return
-*if: betterEmailValidationDomainExtension = "cricket"
+*if: thoroughEmailValidationDomainExtension = "cricket"
 	*return
-*if: betterEmailValidationDomainExtension = "crown"
+*if: thoroughEmailValidationDomainExtension = "crown"
 	*return
-*if: betterEmailValidationDomainExtension = "crs"
+*if: thoroughEmailValidationDomainExtension = "crs"
 	*return
-*if: betterEmailValidationDomainExtension = "cruise"
+*if: thoroughEmailValidationDomainExtension = "cruise"
 	*return
-*if: betterEmailValidationDomainExtension = "cruises"
+*if: thoroughEmailValidationDomainExtension = "cruises"
 	*return
-*if: betterEmailValidationDomainExtension = "csc"
+*if: thoroughEmailValidationDomainExtension = "csc"
 	*return
-*if: betterEmailValidationDomainExtension = "cu"
+*if: thoroughEmailValidationDomainExtension = "cu"
 	*return
-*if: betterEmailValidationDomainExtension = "cuisinella"
+*if: thoroughEmailValidationDomainExtension = "cuisinella"
 	*return
-*if: betterEmailValidationDomainExtension = "cv"
+*if: thoroughEmailValidationDomainExtension = "cv"
 	*return
-*if: betterEmailValidationDomainExtension = "cw"
+*if: thoroughEmailValidationDomainExtension = "cw"
 	*return
-*if: betterEmailValidationDomainExtension = "cx"
+*if: thoroughEmailValidationDomainExtension = "cx"
 	*return
-*if: betterEmailValidationDomainExtension = "cy"
+*if: thoroughEmailValidationDomainExtension = "cy"
 	*return
-*if: betterEmailValidationDomainExtension = "cymru"
+*if: thoroughEmailValidationDomainExtension = "cymru"
 	*return
-*if: betterEmailValidationDomainExtension = "cyou"
+*if: thoroughEmailValidationDomainExtension = "cyou"
 	*return
-*if: betterEmailValidationDomainExtension = "cz"
+*if: thoroughEmailValidationDomainExtension = "cz"
 	*return
-*if: betterEmailValidationDomainExtension = "dabur"
+*if: thoroughEmailValidationDomainExtension = "dabur"
 	*return
-*if: betterEmailValidationDomainExtension = "dad"
+*if: thoroughEmailValidationDomainExtension = "dad"
 	*return
-*if: betterEmailValidationDomainExtension = "dance"
+*if: thoroughEmailValidationDomainExtension = "dance"
 	*return
-*if: betterEmailValidationDomainExtension = "data"
+*if: thoroughEmailValidationDomainExtension = "data"
 	*return
-*if: betterEmailValidationDomainExtension = "date"
+*if: thoroughEmailValidationDomainExtension = "date"
 	*return
-*if: betterEmailValidationDomainExtension = "dating"
+*if: thoroughEmailValidationDomainExtension = "dating"
 	*return
-*if: betterEmailValidationDomainExtension = "datsun"
+*if: thoroughEmailValidationDomainExtension = "datsun"
 	*return
-*if: betterEmailValidationDomainExtension = "day"
+*if: thoroughEmailValidationDomainExtension = "day"
 	*return
-*if: betterEmailValidationDomainExtension = "dclk"
+*if: thoroughEmailValidationDomainExtension = "dclk"
 	*return
-*if: betterEmailValidationDomainExtension = "dds"
+*if: thoroughEmailValidationDomainExtension = "dds"
 	*return
-*if: betterEmailValidationDomainExtension = "de"
+*if: thoroughEmailValidationDomainExtension = "de"
 	*return
-*if: betterEmailValidationDomainExtension = "deal"
+*if: thoroughEmailValidationDomainExtension = "deal"
 	*return
-*if: betterEmailValidationDomainExtension = "dealer"
+*if: thoroughEmailValidationDomainExtension = "dealer"
 	*return
-*if: betterEmailValidationDomainExtension = "deals"
+*if: thoroughEmailValidationDomainExtension = "deals"
 	*return
-*if: betterEmailValidationDomainExtension = "degree"
+*if: thoroughEmailValidationDomainExtension = "degree"
 	*return
-*if: betterEmailValidationDomainExtension = "delivery"
+*if: thoroughEmailValidationDomainExtension = "delivery"
 	*return
-*if: betterEmailValidationDomainExtension = "dell"
+*if: thoroughEmailValidationDomainExtension = "dell"
 	*return
-*if: betterEmailValidationDomainExtension = "deloitte"
+*if: thoroughEmailValidationDomainExtension = "deloitte"
 	*return
-*if: betterEmailValidationDomainExtension = "delta"
+*if: thoroughEmailValidationDomainExtension = "delta"
 	*return
-*if: betterEmailValidationDomainExtension = "democrat"
+*if: thoroughEmailValidationDomainExtension = "democrat"
 	*return
-*if: betterEmailValidationDomainExtension = "dental"
+*if: thoroughEmailValidationDomainExtension = "dental"
 	*return
-*if: betterEmailValidationDomainExtension = "dentist"
+*if: thoroughEmailValidationDomainExtension = "dentist"
 	*return
-*if: betterEmailValidationDomainExtension = "desi"
+*if: thoroughEmailValidationDomainExtension = "desi"
 	*return
-*if: betterEmailValidationDomainExtension = "design"
+*if: thoroughEmailValidationDomainExtension = "design"
 	*return
-*if: betterEmailValidationDomainExtension = "dev"
+*if: thoroughEmailValidationDomainExtension = "dev"
 	*return
-*if: betterEmailValidationDomainExtension = "dhl"
+*if: thoroughEmailValidationDomainExtension = "dhl"
 	*return
-*if: betterEmailValidationDomainExtension = "diamonds"
+*if: thoroughEmailValidationDomainExtension = "diamonds"
 	*return
-*if: betterEmailValidationDomainExtension = "diet"
+*if: thoroughEmailValidationDomainExtension = "diet"
 	*return
-*if: betterEmailValidationDomainExtension = "digital"
+*if: thoroughEmailValidationDomainExtension = "digital"
 	*return
-*if: betterEmailValidationDomainExtension = "direct"
+*if: thoroughEmailValidationDomainExtension = "direct"
 	*return
-*if: betterEmailValidationDomainExtension = "directory"
+*if: thoroughEmailValidationDomainExtension = "directory"
 	*return
-*if: betterEmailValidationDomainExtension = "discount"
+*if: thoroughEmailValidationDomainExtension = "discount"
 	*return
-*if: betterEmailValidationDomainExtension = "discover"
+*if: thoroughEmailValidationDomainExtension = "discover"
 	*return
-*if: betterEmailValidationDomainExtension = "dish"
+*if: thoroughEmailValidationDomainExtension = "dish"
 	*return
-*if: betterEmailValidationDomainExtension = "diy"
+*if: thoroughEmailValidationDomainExtension = "diy"
 	*return
-*if: betterEmailValidationDomainExtension = "dj"
+*if: thoroughEmailValidationDomainExtension = "dj"
 	*return
-*if: betterEmailValidationDomainExtension = "dk"
+*if: thoroughEmailValidationDomainExtension = "dk"
 	*return
-*if: betterEmailValidationDomainExtension = "dm"
+*if: thoroughEmailValidationDomainExtension = "dm"
 	*return
-*if: betterEmailValidationDomainExtension = "dnp"
+*if: thoroughEmailValidationDomainExtension = "dnp"
 	*return
-*if: betterEmailValidationDomainExtension = "do"
+*if: thoroughEmailValidationDomainExtension = "do"
 	*return
-*if: betterEmailValidationDomainExtension = "docs"
+*if: thoroughEmailValidationDomainExtension = "docs"
 	*return
-*if: betterEmailValidationDomainExtension = "doctor"
+*if: thoroughEmailValidationDomainExtension = "doctor"
 	*return
-*if: betterEmailValidationDomainExtension = "dog"
+*if: thoroughEmailValidationDomainExtension = "dog"
 	*return
-*if: betterEmailValidationDomainExtension = "domains"
+*if: thoroughEmailValidationDomainExtension = "domains"
 	*return
-*if: betterEmailValidationDomainExtension = "dot"
+*if: thoroughEmailValidationDomainExtension = "dot"
 	*return
-*if: betterEmailValidationDomainExtension = "download"
+*if: thoroughEmailValidationDomainExtension = "download"
 	*return
-*if: betterEmailValidationDomainExtension = "drive"
+*if: thoroughEmailValidationDomainExtension = "drive"
 	*return
-*if: betterEmailValidationDomainExtension = "dtv"
+*if: thoroughEmailValidationDomainExtension = "dtv"
 	*return
-*if: betterEmailValidationDomainExtension = "dubai"
+*if: thoroughEmailValidationDomainExtension = "dubai"
 	*return
-*if: betterEmailValidationDomainExtension = "duck"
+*if: thoroughEmailValidationDomainExtension = "duck"
 	*return
-*if: betterEmailValidationDomainExtension = "dunlop"
+*if: thoroughEmailValidationDomainExtension = "dunlop"
 	*return
-*if: betterEmailValidationDomainExtension = "dupont"
+*if: thoroughEmailValidationDomainExtension = "dupont"
 	*return
-*if: betterEmailValidationDomainExtension = "durban"
+*if: thoroughEmailValidationDomainExtension = "durban"
 	*return
-*if: betterEmailValidationDomainExtension = "dvag"
+*if: thoroughEmailValidationDomainExtension = "dvag"
 	*return
-*if: betterEmailValidationDomainExtension = "dvr"
+*if: thoroughEmailValidationDomainExtension = "dvr"
 	*return
-*if: betterEmailValidationDomainExtension = "dz"
+*if: thoroughEmailValidationDomainExtension = "dz"
 	*return
-*if: betterEmailValidationDomainExtension = "earth"
+*if: thoroughEmailValidationDomainExtension = "earth"
 	*return
-*if: betterEmailValidationDomainExtension = "eat"
+*if: thoroughEmailValidationDomainExtension = "eat"
 	*return
-*if: betterEmailValidationDomainExtension = "ec"
+*if: thoroughEmailValidationDomainExtension = "ec"
 	*return
-*if: betterEmailValidationDomainExtension = "eco"
+*if: thoroughEmailValidationDomainExtension = "eco"
 	*return
-*if: betterEmailValidationDomainExtension = "edeka"
+*if: thoroughEmailValidationDomainExtension = "edeka"
 	*return
-*if: betterEmailValidationDomainExtension = "edu"
+*if: thoroughEmailValidationDomainExtension = "edu"
 	*return
-*if: betterEmailValidationDomainExtension = "education"
+*if: thoroughEmailValidationDomainExtension = "education"
 	*return
-*if: betterEmailValidationDomainExtension = "ee"
+*if: thoroughEmailValidationDomainExtension = "ee"
 	*return
-*if: betterEmailValidationDomainExtension = "eg"
+*if: thoroughEmailValidationDomainExtension = "eg"
 	*return
-*if: betterEmailValidationDomainExtension = "email"
+*if: thoroughEmailValidationDomainExtension = "email"
 	*return
-*if: betterEmailValidationDomainExtension = "emerck"
+*if: thoroughEmailValidationDomainExtension = "emerck"
 	*return
-*if: betterEmailValidationDomainExtension = "energy"
+*if: thoroughEmailValidationDomainExtension = "energy"
 	*return
-*if: betterEmailValidationDomainExtension = "engineer"
+*if: thoroughEmailValidationDomainExtension = "engineer"
 	*return
-*if: betterEmailValidationDomainExtension = "engineering"
+*if: thoroughEmailValidationDomainExtension = "engineering"
 	*return
-*if: betterEmailValidationDomainExtension = "enterprises"
+*if: thoroughEmailValidationDomainExtension = "enterprises"
 	*return
-*if: betterEmailValidationDomainExtension = "epson"
+*if: thoroughEmailValidationDomainExtension = "epson"
 	*return
-*if: betterEmailValidationDomainExtension = "equipment"
+*if: thoroughEmailValidationDomainExtension = "equipment"
 	*return
-*if: betterEmailValidationDomainExtension = "er"
+*if: thoroughEmailValidationDomainExtension = "er"
 	*return
-*if: betterEmailValidationDomainExtension = "ericsson"
+*if: thoroughEmailValidationDomainExtension = "ericsson"
 	*return
-*if: betterEmailValidationDomainExtension = "erni"
+*if: thoroughEmailValidationDomainExtension = "erni"
 	*return
-*if: betterEmailValidationDomainExtension = "es"
+*if: thoroughEmailValidationDomainExtension = "es"
 	*return
-*if: betterEmailValidationDomainExtension = "esq"
+*if: thoroughEmailValidationDomainExtension = "esq"
 	*return
-*if: betterEmailValidationDomainExtension = "estate"
+*if: thoroughEmailValidationDomainExtension = "estate"
 	*return
-*if: betterEmailValidationDomainExtension = "esurance"
+*if: thoroughEmailValidationDomainExtension = "esurance"
 	*return
-*if: betterEmailValidationDomainExtension = "et"
+*if: thoroughEmailValidationDomainExtension = "et"
 	*return
-*if: betterEmailValidationDomainExtension = "etisalat"
+*if: thoroughEmailValidationDomainExtension = "etisalat"
 	*return
-*if: betterEmailValidationDomainExtension = "eu"
+*if: thoroughEmailValidationDomainExtension = "eu"
 	*return
-*if: betterEmailValidationDomainExtension = "eurovision"
+*if: thoroughEmailValidationDomainExtension = "eurovision"
 	*return
-*if: betterEmailValidationDomainExtension = "eus"
+*if: thoroughEmailValidationDomainExtension = "eus"
 	*return
-*if: betterEmailValidationDomainExtension = "events"
+*if: thoroughEmailValidationDomainExtension = "events"
 	*return
-*if: betterEmailValidationDomainExtension = "exchange"
+*if: thoroughEmailValidationDomainExtension = "exchange"
 	*return
-*if: betterEmailValidationDomainExtension = "expert"
+*if: thoroughEmailValidationDomainExtension = "expert"
 	*return
-*if: betterEmailValidationDomainExtension = "exposed"
+*if: thoroughEmailValidationDomainExtension = "exposed"
 	*return
-*if: betterEmailValidationDomainExtension = "express"
+*if: thoroughEmailValidationDomainExtension = "express"
 	*return
-*if: betterEmailValidationDomainExtension = "extraspace"
+*if: thoroughEmailValidationDomainExtension = "extraspace"
 	*return
-*if: betterEmailValidationDomainExtension = "fage"
+*if: thoroughEmailValidationDomainExtension = "fage"
 	*return
-*if: betterEmailValidationDomainExtension = "fail"
+*if: thoroughEmailValidationDomainExtension = "fail"
 	*return
-*if: betterEmailValidationDomainExtension = "fairwinds"
+*if: thoroughEmailValidationDomainExtension = "fairwinds"
 	*return
-*if: betterEmailValidationDomainExtension = "faith"
+*if: thoroughEmailValidationDomainExtension = "faith"
 	*return
-*if: betterEmailValidationDomainExtension = "family"
+*if: thoroughEmailValidationDomainExtension = "family"
 	*return
-*if: betterEmailValidationDomainExtension = "fan"
+*if: thoroughEmailValidationDomainExtension = "fan"
 	*return
-*if: betterEmailValidationDomainExtension = "fans"
+*if: thoroughEmailValidationDomainExtension = "fans"
 	*return
-*if: betterEmailValidationDomainExtension = "farm"
+*if: thoroughEmailValidationDomainExtension = "farm"
 	*return
-*if: betterEmailValidationDomainExtension = "farmers"
+*if: thoroughEmailValidationDomainExtension = "farmers"
 	*return
-*if: betterEmailValidationDomainExtension = "fashion"
+*if: thoroughEmailValidationDomainExtension = "fashion"
 	*return
-*if: betterEmailValidationDomainExtension = "fast"
+*if: thoroughEmailValidationDomainExtension = "fast"
 	*return
-*if: betterEmailValidationDomainExtension = "fedex"
+*if: thoroughEmailValidationDomainExtension = "fedex"
 	*return
-*if: betterEmailValidationDomainExtension = "feedback"
+*if: thoroughEmailValidationDomainExtension = "feedback"
 	*return
-*if: betterEmailValidationDomainExtension = "ferrari"
+*if: thoroughEmailValidationDomainExtension = "ferrari"
 	*return
-*if: betterEmailValidationDomainExtension = "ferrero"
+*if: thoroughEmailValidationDomainExtension = "ferrero"
 	*return
-*if: betterEmailValidationDomainExtension = "fi"
+*if: thoroughEmailValidationDomainExtension = "fi"
 	*return
-*if: betterEmailValidationDomainExtension = "fiat"
+*if: thoroughEmailValidationDomainExtension = "fiat"
 	*return
-*if: betterEmailValidationDomainExtension = "fidelity"
+*if: thoroughEmailValidationDomainExtension = "fidelity"
 	*return
-*if: betterEmailValidationDomainExtension = "fido"
+*if: thoroughEmailValidationDomainExtension = "fido"
 	*return
-*if: betterEmailValidationDomainExtension = "film"
+*if: thoroughEmailValidationDomainExtension = "film"
 	*return
-*if: betterEmailValidationDomainExtension = "final"
+*if: thoroughEmailValidationDomainExtension = "final"
 	*return
-*if: betterEmailValidationDomainExtension = "finance"
+*if: thoroughEmailValidationDomainExtension = "finance"
 	*return
-*if: betterEmailValidationDomainExtension = "financial"
+*if: thoroughEmailValidationDomainExtension = "financial"
 	*return
-*if: betterEmailValidationDomainExtension = "fire"
+*if: thoroughEmailValidationDomainExtension = "fire"
 	*return
-*if: betterEmailValidationDomainExtension = "firestone"
+*if: thoroughEmailValidationDomainExtension = "firestone"
 	*return
-*if: betterEmailValidationDomainExtension = "firmdale"
+*if: thoroughEmailValidationDomainExtension = "firmdale"
 	*return
-*if: betterEmailValidationDomainExtension = "fish"
+*if: thoroughEmailValidationDomainExtension = "fish"
 	*return
-*if: betterEmailValidationDomainExtension = "fishing"
+*if: thoroughEmailValidationDomainExtension = "fishing"
 	*return
-*if: betterEmailValidationDomainExtension = "fit"
+*if: thoroughEmailValidationDomainExtension = "fit"
 	*return
-*if: betterEmailValidationDomainExtension = "fitness"
+*if: thoroughEmailValidationDomainExtension = "fitness"
 	*return
-*if: betterEmailValidationDomainExtension = "fj"
+*if: thoroughEmailValidationDomainExtension = "fj"
 	*return
-*if: betterEmailValidationDomainExtension = "fk"
+*if: thoroughEmailValidationDomainExtension = "fk"
 	*return
-*if: betterEmailValidationDomainExtension = "flickr"
+*if: thoroughEmailValidationDomainExtension = "flickr"
 	*return
-*if: betterEmailValidationDomainExtension = "flights"
+*if: thoroughEmailValidationDomainExtension = "flights"
 	*return
-*if: betterEmailValidationDomainExtension = "flir"
+*if: thoroughEmailValidationDomainExtension = "flir"
 	*return
-*if: betterEmailValidationDomainExtension = "florist"
+*if: thoroughEmailValidationDomainExtension = "florist"
 	*return
-*if: betterEmailValidationDomainExtension = "flowers"
+*if: thoroughEmailValidationDomainExtension = "flowers"
 	*return
-*if: betterEmailValidationDomainExtension = "fly"
+*if: thoroughEmailValidationDomainExtension = "fly"
 	*return
-*if: betterEmailValidationDomainExtension = "fm"
+*if: thoroughEmailValidationDomainExtension = "fm"
 	*return
-*if: betterEmailValidationDomainExtension = "fo"
+*if: thoroughEmailValidationDomainExtension = "fo"
 	*return
-*if: betterEmailValidationDomainExtension = "foo"
+*if: thoroughEmailValidationDomainExtension = "foo"
 	*return
-*if: betterEmailValidationDomainExtension = "food"
+*if: thoroughEmailValidationDomainExtension = "food"
 	*return
-*if: betterEmailValidationDomainExtension = "foodnetwork"
+*if: thoroughEmailValidationDomainExtension = "foodnetwork"
 	*return
-*if: betterEmailValidationDomainExtension = "football"
+*if: thoroughEmailValidationDomainExtension = "football"
 	*return
-*if: betterEmailValidationDomainExtension = "ford"
+*if: thoroughEmailValidationDomainExtension = "ford"
 	*return
-*if: betterEmailValidationDomainExtension = "forex"
+*if: thoroughEmailValidationDomainExtension = "forex"
 	*return
-*if: betterEmailValidationDomainExtension = "forsale"
+*if: thoroughEmailValidationDomainExtension = "forsale"
 	*return
-*if: betterEmailValidationDomainExtension = "forum"
+*if: thoroughEmailValidationDomainExtension = "forum"
 	*return
-*if: betterEmailValidationDomainExtension = "foundation"
+*if: thoroughEmailValidationDomainExtension = "foundation"
 	*return
-*if: betterEmailValidationDomainExtension = "fox"
+*if: thoroughEmailValidationDomainExtension = "fox"
 	*return
-*if: betterEmailValidationDomainExtension = "fr"
+*if: thoroughEmailValidationDomainExtension = "fr"
 	*return
-*if: betterEmailValidationDomainExtension = "free"
+*if: thoroughEmailValidationDomainExtension = "free"
 	*return
-*if: betterEmailValidationDomainExtension = "fresenius"
+*if: thoroughEmailValidationDomainExtension = "fresenius"
 	*return
-*if: betterEmailValidationDomainExtension = "frl"
+*if: thoroughEmailValidationDomainExtension = "frl"
 	*return
-*if: betterEmailValidationDomainExtension = "frogans"
+*if: thoroughEmailValidationDomainExtension = "frogans"
 	*return
-*if: betterEmailValidationDomainExtension = "frontdoor"
+*if: thoroughEmailValidationDomainExtension = "frontdoor"
 	*return
-*if: betterEmailValidationDomainExtension = "frontier"
+*if: thoroughEmailValidationDomainExtension = "frontier"
 	*return
-*if: betterEmailValidationDomainExtension = "ftr"
+*if: thoroughEmailValidationDomainExtension = "ftr"
 	*return
-*if: betterEmailValidationDomainExtension = "fujitsu"
+*if: thoroughEmailValidationDomainExtension = "fujitsu"
 	*return
-*if: betterEmailValidationDomainExtension = "fujixerox"
+*if: thoroughEmailValidationDomainExtension = "fujixerox"
 	*return
-*if: betterEmailValidationDomainExtension = "fun"
+*if: thoroughEmailValidationDomainExtension = "fun"
 	*return
-*if: betterEmailValidationDomainExtension = "fund"
+*if: thoroughEmailValidationDomainExtension = "fund"
 	*return
-*if: betterEmailValidationDomainExtension = "furniture"
+*if: thoroughEmailValidationDomainExtension = "furniture"
 	*return
-*if: betterEmailValidationDomainExtension = "futbol"
+*if: thoroughEmailValidationDomainExtension = "futbol"
 	*return
-*if: betterEmailValidationDomainExtension = "fyi"
+*if: thoroughEmailValidationDomainExtension = "fyi"
 	*return
-*if: betterEmailValidationDomainExtension = "ga"
+*if: thoroughEmailValidationDomainExtension = "ga"
 	*return
-*if: betterEmailValidationDomainExtension = "gal"
+*if: thoroughEmailValidationDomainExtension = "gal"
 	*return
-*if: betterEmailValidationDomainExtension = "gallery"
+*if: thoroughEmailValidationDomainExtension = "gallery"
 	*return
-*if: betterEmailValidationDomainExtension = "gallo"
+*if: thoroughEmailValidationDomainExtension = "gallo"
 	*return
-*if: betterEmailValidationDomainExtension = "gallup"
+*if: thoroughEmailValidationDomainExtension = "gallup"
 	*return
-*if: betterEmailValidationDomainExtension = "game"
+*if: thoroughEmailValidationDomainExtension = "game"
 	*return
-*if: betterEmailValidationDomainExtension = "games"
+*if: thoroughEmailValidationDomainExtension = "games"
 	*return
-*if: betterEmailValidationDomainExtension = "gap"
+*if: thoroughEmailValidationDomainExtension = "gap"
 	*return
-*if: betterEmailValidationDomainExtension = "garden"
+*if: thoroughEmailValidationDomainExtension = "garden"
 	*return
-*if: betterEmailValidationDomainExtension = "gay"
+*if: thoroughEmailValidationDomainExtension = "gay"
 	*return
-*if: betterEmailValidationDomainExtension = "gb"
+*if: thoroughEmailValidationDomainExtension = "gb"
 	*return
-*if: betterEmailValidationDomainExtension = "gbiz"
+*if: thoroughEmailValidationDomainExtension = "gbiz"
 	*return
-*if: betterEmailValidationDomainExtension = "gd"
+*if: thoroughEmailValidationDomainExtension = "gd"
 	*return
-*if: betterEmailValidationDomainExtension = "gdn"
+*if: thoroughEmailValidationDomainExtension = "gdn"
 	*return
-*if: betterEmailValidationDomainExtension = "ge"
+*if: thoroughEmailValidationDomainExtension = "ge"
 	*return
-*if: betterEmailValidationDomainExtension = "gea"
+*if: thoroughEmailValidationDomainExtension = "gea"
 	*return
-*if: betterEmailValidationDomainExtension = "gent"
+*if: thoroughEmailValidationDomainExtension = "gent"
 	*return
-*if: betterEmailValidationDomainExtension = "genting"
+*if: thoroughEmailValidationDomainExtension = "genting"
 	*return
-*if: betterEmailValidationDomainExtension = "george"
+*if: thoroughEmailValidationDomainExtension = "george"
 	*return
-*if: betterEmailValidationDomainExtension = "gf"
+*if: thoroughEmailValidationDomainExtension = "gf"
 	*return
-*if: betterEmailValidationDomainExtension = "gg"
+*if: thoroughEmailValidationDomainExtension = "gg"
 	*return
-*if: betterEmailValidationDomainExtension = "ggee"
+*if: thoroughEmailValidationDomainExtension = "ggee"
 	*return
-*if: betterEmailValidationDomainExtension = "gh"
+*if: thoroughEmailValidationDomainExtension = "gh"
 	*return
-*if: betterEmailValidationDomainExtension = "gi"
+*if: thoroughEmailValidationDomainExtension = "gi"
 	*return
-*if: betterEmailValidationDomainExtension = "gift"
+*if: thoroughEmailValidationDomainExtension = "gift"
 	*return
-*if: betterEmailValidationDomainExtension = "gifts"
+*if: thoroughEmailValidationDomainExtension = "gifts"
 	*return
-*if: betterEmailValidationDomainExtension = "gives"
+*if: thoroughEmailValidationDomainExtension = "gives"
 	*return
-*if: betterEmailValidationDomainExtension = "giving"
+*if: thoroughEmailValidationDomainExtension = "giving"
 	*return
-*if: betterEmailValidationDomainExtension = "gl"
+*if: thoroughEmailValidationDomainExtension = "gl"
 	*return
-*if: betterEmailValidationDomainExtension = "glade"
+*if: thoroughEmailValidationDomainExtension = "glade"
 	*return
-*if: betterEmailValidationDomainExtension = "glass"
+*if: thoroughEmailValidationDomainExtension = "glass"
 	*return
-*if: betterEmailValidationDomainExtension = "gle"
+*if: thoroughEmailValidationDomainExtension = "gle"
 	*return
-*if: betterEmailValidationDomainExtension = "global"
+*if: thoroughEmailValidationDomainExtension = "global"
 	*return
-*if: betterEmailValidationDomainExtension = "globo"
+*if: thoroughEmailValidationDomainExtension = "globo"
 	*return
-*if: betterEmailValidationDomainExtension = "gm"
+*if: thoroughEmailValidationDomainExtension = "gm"
 	*return
-*if: betterEmailValidationDomainExtension = "gmail"
+*if: thoroughEmailValidationDomainExtension = "gmail"
 	*return
-*if: betterEmailValidationDomainExtension = "gmbh"
+*if: thoroughEmailValidationDomainExtension = "gmbh"
 	*return
-*if: betterEmailValidationDomainExtension = "gmo"
+*if: thoroughEmailValidationDomainExtension = "gmo"
 	*return
-*if: betterEmailValidationDomainExtension = "gmx"
+*if: thoroughEmailValidationDomainExtension = "gmx"
 	*return
-*if: betterEmailValidationDomainExtension = "gn"
+*if: thoroughEmailValidationDomainExtension = "gn"
 	*return
-*if: betterEmailValidationDomainExtension = "godaddy"
+*if: thoroughEmailValidationDomainExtension = "godaddy"
 	*return
-*if: betterEmailValidationDomainExtension = "gold"
+*if: thoroughEmailValidationDomainExtension = "gold"
 	*return
-*if: betterEmailValidationDomainExtension = "goldpoint"
+*if: thoroughEmailValidationDomainExtension = "goldpoint"
 	*return
-*if: betterEmailValidationDomainExtension = "golf"
+*if: thoroughEmailValidationDomainExtension = "golf"
 	*return
-*if: betterEmailValidationDomainExtension = "goo"
+*if: thoroughEmailValidationDomainExtension = "goo"
 	*return
-*if: betterEmailValidationDomainExtension = "goodyear"
+*if: thoroughEmailValidationDomainExtension = "goodyear"
 	*return
-*if: betterEmailValidationDomainExtension = "goog"
+*if: thoroughEmailValidationDomainExtension = "goog"
 	*return
-*if: betterEmailValidationDomainExtension = "google"
+*if: thoroughEmailValidationDomainExtension = "google"
 	*return
-*if: betterEmailValidationDomainExtension = "gop"
+*if: thoroughEmailValidationDomainExtension = "gop"
 	*return
-*if: betterEmailValidationDomainExtension = "got"
+*if: thoroughEmailValidationDomainExtension = "got"
 	*return
-*if: betterEmailValidationDomainExtension = "gov"
+*if: thoroughEmailValidationDomainExtension = "gov"
 	*return
-*if: betterEmailValidationDomainExtension = "gp"
+*if: thoroughEmailValidationDomainExtension = "gp"
 	*return
-*if: betterEmailValidationDomainExtension = "gq"
+*if: thoroughEmailValidationDomainExtension = "gq"
 	*return
-*if: betterEmailValidationDomainExtension = "gr"
+*if: thoroughEmailValidationDomainExtension = "gr"
 	*return
-*if: betterEmailValidationDomainExtension = "grainger"
+*if: thoroughEmailValidationDomainExtension = "grainger"
 	*return
-*if: betterEmailValidationDomainExtension = "graphics"
+*if: thoroughEmailValidationDomainExtension = "graphics"
 	*return
-*if: betterEmailValidationDomainExtension = "gratis"
+*if: thoroughEmailValidationDomainExtension = "gratis"
 	*return
-*if: betterEmailValidationDomainExtension = "green"
+*if: thoroughEmailValidationDomainExtension = "green"
 	*return
-*if: betterEmailValidationDomainExtension = "gripe"
+*if: thoroughEmailValidationDomainExtension = "gripe"
 	*return
-*if: betterEmailValidationDomainExtension = "grocery"
+*if: thoroughEmailValidationDomainExtension = "grocery"
 	*return
-*if: betterEmailValidationDomainExtension = "group"
+*if: thoroughEmailValidationDomainExtension = "group"
 	*return
-*if: betterEmailValidationDomainExtension = "gs"
+*if: thoroughEmailValidationDomainExtension = "gs"
 	*return
-*if: betterEmailValidationDomainExtension = "gt"
+*if: thoroughEmailValidationDomainExtension = "gt"
 	*return
-*if: betterEmailValidationDomainExtension = "gu"
+*if: thoroughEmailValidationDomainExtension = "gu"
 	*return
-*if: betterEmailValidationDomainExtension = "guardian"
+*if: thoroughEmailValidationDomainExtension = "guardian"
 	*return
-*if: betterEmailValidationDomainExtension = "gucci"
+*if: thoroughEmailValidationDomainExtension = "gucci"
 	*return
-*if: betterEmailValidationDomainExtension = "guge"
+*if: thoroughEmailValidationDomainExtension = "guge"
 	*return
-*if: betterEmailValidationDomainExtension = "guide"
+*if: thoroughEmailValidationDomainExtension = "guide"
 	*return
-*if: betterEmailValidationDomainExtension = "guitars"
+*if: thoroughEmailValidationDomainExtension = "guitars"
 	*return
-*if: betterEmailValidationDomainExtension = "guru"
+*if: thoroughEmailValidationDomainExtension = "guru"
 	*return
-*if: betterEmailValidationDomainExtension = "gw"
+*if: thoroughEmailValidationDomainExtension = "gw"
 	*return
-*if: betterEmailValidationDomainExtension = "gy"
+*if: thoroughEmailValidationDomainExtension = "gy"
 	*return
-*if: betterEmailValidationDomainExtension = "hair"
+*if: thoroughEmailValidationDomainExtension = "hair"
 	*return
-*if: betterEmailValidationDomainExtension = "hamburg"
+*if: thoroughEmailValidationDomainExtension = "hamburg"
 	*return
-*if: betterEmailValidationDomainExtension = "hangout"
+*if: thoroughEmailValidationDomainExtension = "hangout"
 	*return
-*if: betterEmailValidationDomainExtension = "haus"
+*if: thoroughEmailValidationDomainExtension = "haus"
 	*return
-*if: betterEmailValidationDomainExtension = "hbo"
+*if: thoroughEmailValidationDomainExtension = "hbo"
 	*return
-*if: betterEmailValidationDomainExtension = "hdfc"
+*if: thoroughEmailValidationDomainExtension = "hdfc"
 	*return
-*if: betterEmailValidationDomainExtension = "hdfcbank"
+*if: thoroughEmailValidationDomainExtension = "hdfcbank"
 	*return
-*if: betterEmailValidationDomainExtension = "health"
+*if: thoroughEmailValidationDomainExtension = "health"
 	*return
-*if: betterEmailValidationDomainExtension = "healthcare"
+*if: thoroughEmailValidationDomainExtension = "healthcare"
 	*return
-*if: betterEmailValidationDomainExtension = "help"
+*if: thoroughEmailValidationDomainExtension = "help"
 	*return
-*if: betterEmailValidationDomainExtension = "helsinki"
+*if: thoroughEmailValidationDomainExtension = "helsinki"
 	*return
-*if: betterEmailValidationDomainExtension = "here"
+*if: thoroughEmailValidationDomainExtension = "here"
 	*return
-*if: betterEmailValidationDomainExtension = "hermes"
+*if: thoroughEmailValidationDomainExtension = "hermes"
 	*return
-*if: betterEmailValidationDomainExtension = "hgtv"
+*if: thoroughEmailValidationDomainExtension = "hgtv"
 	*return
-*if: betterEmailValidationDomainExtension = "hiphop"
+*if: thoroughEmailValidationDomainExtension = "hiphop"
 	*return
-*if: betterEmailValidationDomainExtension = "hisamitsu"
+*if: thoroughEmailValidationDomainExtension = "hisamitsu"
 	*return
-*if: betterEmailValidationDomainExtension = "hitachi"
+*if: thoroughEmailValidationDomainExtension = "hitachi"
 	*return
-*if: betterEmailValidationDomainExtension = "hiv"
+*if: thoroughEmailValidationDomainExtension = "hiv"
 	*return
-*if: betterEmailValidationDomainExtension = "hk"
+*if: thoroughEmailValidationDomainExtension = "hk"
 	*return
-*if: betterEmailValidationDomainExtension = "hkt"
+*if: thoroughEmailValidationDomainExtension = "hkt"
 	*return
-*if: betterEmailValidationDomainExtension = "hm"
+*if: thoroughEmailValidationDomainExtension = "hm"
 	*return
-*if: betterEmailValidationDomainExtension = "hn"
+*if: thoroughEmailValidationDomainExtension = "hn"
 	*return
-*if: betterEmailValidationDomainExtension = "hockey"
+*if: thoroughEmailValidationDomainExtension = "hockey"
 	*return
-*if: betterEmailValidationDomainExtension = "holdings"
+*if: thoroughEmailValidationDomainExtension = "holdings"
 	*return
-*if: betterEmailValidationDomainExtension = "holiday"
+*if: thoroughEmailValidationDomainExtension = "holiday"
 	*return
-*if: betterEmailValidationDomainExtension = "homedepot"
+*if: thoroughEmailValidationDomainExtension = "homedepot"
 	*return
-*if: betterEmailValidationDomainExtension = "homegoods"
+*if: thoroughEmailValidationDomainExtension = "homegoods"
 	*return
-*if: betterEmailValidationDomainExtension = "homes"
+*if: thoroughEmailValidationDomainExtension = "homes"
 	*return
-*if: betterEmailValidationDomainExtension = "homesense"
+*if: thoroughEmailValidationDomainExtension = "homesense"
 	*return
-*if: betterEmailValidationDomainExtension = "honda"
+*if: thoroughEmailValidationDomainExtension = "honda"
 	*return
-*if: betterEmailValidationDomainExtension = "horse"
+*if: thoroughEmailValidationDomainExtension = "horse"
 	*return
-*if: betterEmailValidationDomainExtension = "hospital"
+*if: thoroughEmailValidationDomainExtension = "hospital"
 	*return
-*if: betterEmailValidationDomainExtension = "host"
+*if: thoroughEmailValidationDomainExtension = "host"
 	*return
-*if: betterEmailValidationDomainExtension = "hosting"
+*if: thoroughEmailValidationDomainExtension = "hosting"
 	*return
-*if: betterEmailValidationDomainExtension = "hot"
+*if: thoroughEmailValidationDomainExtension = "hot"
 	*return
-*if: betterEmailValidationDomainExtension = "hoteles"
+*if: thoroughEmailValidationDomainExtension = "hoteles"
 	*return
-*if: betterEmailValidationDomainExtension = "hotels"
+*if: thoroughEmailValidationDomainExtension = "hotels"
 	*return
-*if: betterEmailValidationDomainExtension = "hotmail"
+*if: thoroughEmailValidationDomainExtension = "hotmail"
 	*return
-*if: betterEmailValidationDomainExtension = "house"
+*if: thoroughEmailValidationDomainExtension = "house"
 	*return
-*if: betterEmailValidationDomainExtension = "how"
+*if: thoroughEmailValidationDomainExtension = "how"
 	*return
-*if: betterEmailValidationDomainExtension = "hr"
+*if: thoroughEmailValidationDomainExtension = "hr"
 	*return
-*if: betterEmailValidationDomainExtension = "hsbc"
+*if: thoroughEmailValidationDomainExtension = "hsbc"
 	*return
-*if: betterEmailValidationDomainExtension = "ht"
+*if: thoroughEmailValidationDomainExtension = "ht"
 	*return
-*if: betterEmailValidationDomainExtension = "hu"
+*if: thoroughEmailValidationDomainExtension = "hu"
 	*return
-*if: betterEmailValidationDomainExtension = "hughes"
+*if: thoroughEmailValidationDomainExtension = "hughes"
 	*return
-*if: betterEmailValidationDomainExtension = "hyatt"
+*if: thoroughEmailValidationDomainExtension = "hyatt"
 	*return
-*if: betterEmailValidationDomainExtension = "hyundai"
+*if: thoroughEmailValidationDomainExtension = "hyundai"
 	*return
-*if: betterEmailValidationDomainExtension = "ibm"
+*if: thoroughEmailValidationDomainExtension = "ibm"
 	*return
-*if: betterEmailValidationDomainExtension = "icbc"
+*if: thoroughEmailValidationDomainExtension = "icbc"
 	*return
-*if: betterEmailValidationDomainExtension = "ice"
+*if: thoroughEmailValidationDomainExtension = "ice"
 	*return
-*if: betterEmailValidationDomainExtension = "icu"
+*if: thoroughEmailValidationDomainExtension = "icu"
 	*return
-*if: betterEmailValidationDomainExtension = "id"
+*if: thoroughEmailValidationDomainExtension = "id"
 	*return
-*if: betterEmailValidationDomainExtension = "ie"
+*if: thoroughEmailValidationDomainExtension = "ie"
 	*return
-*if: betterEmailValidationDomainExtension = "ieee"
+*if: thoroughEmailValidationDomainExtension = "ieee"
 	*return
-*if: betterEmailValidationDomainExtension = "ifm"
+*if: thoroughEmailValidationDomainExtension = "ifm"
 	*return
-*if: betterEmailValidationDomainExtension = "ikano"
+*if: thoroughEmailValidationDomainExtension = "ikano"
 	*return
-*if: betterEmailValidationDomainExtension = "il"
+*if: thoroughEmailValidationDomainExtension = "il"
 	*return
-*if: betterEmailValidationDomainExtension = "im"
+*if: thoroughEmailValidationDomainExtension = "im"
 	*return
-*if: betterEmailValidationDomainExtension = "imamat"
+*if: thoroughEmailValidationDomainExtension = "imamat"
 	*return
-*if: betterEmailValidationDomainExtension = "imdb"
+*if: thoroughEmailValidationDomainExtension = "imdb"
 	*return
-*if: betterEmailValidationDomainExtension = "immo"
+*if: thoroughEmailValidationDomainExtension = "immo"
 	*return
-*if: betterEmailValidationDomainExtension = "immobilien"
+*if: thoroughEmailValidationDomainExtension = "immobilien"
 	*return
-*if: betterEmailValidationDomainExtension = "in"
+*if: thoroughEmailValidationDomainExtension = "in"
 	*return
-*if: betterEmailValidationDomainExtension = "inc"
+*if: thoroughEmailValidationDomainExtension = "inc"
 	*return
-*if: betterEmailValidationDomainExtension = "industries"
+*if: thoroughEmailValidationDomainExtension = "industries"
 	*return
-*if: betterEmailValidationDomainExtension = "infiniti"
+*if: thoroughEmailValidationDomainExtension = "infiniti"
 	*return
-*if: betterEmailValidationDomainExtension = "info"
+*if: thoroughEmailValidationDomainExtension = "info"
 	*return
-*if: betterEmailValidationDomainExtension = "ing"
+*if: thoroughEmailValidationDomainExtension = "ing"
 	*return
-*if: betterEmailValidationDomainExtension = "ink"
+*if: thoroughEmailValidationDomainExtension = "ink"
 	*return
-*if: betterEmailValidationDomainExtension = "institute"
+*if: thoroughEmailValidationDomainExtension = "institute"
 	*return
-*if: betterEmailValidationDomainExtension = "insurance"
+*if: thoroughEmailValidationDomainExtension = "insurance"
 	*return
-*if: betterEmailValidationDomainExtension = "insure"
+*if: thoroughEmailValidationDomainExtension = "insure"
 	*return
-*if: betterEmailValidationDomainExtension = "int"
+*if: thoroughEmailValidationDomainExtension = "int"
 	*return
-*if: betterEmailValidationDomainExtension = "intel"
+*if: thoroughEmailValidationDomainExtension = "intel"
 	*return
-*if: betterEmailValidationDomainExtension = "international"
+*if: thoroughEmailValidationDomainExtension = "international"
 	*return
-*if: betterEmailValidationDomainExtension = "intuit"
+*if: thoroughEmailValidationDomainExtension = "intuit"
 	*return
-*if: betterEmailValidationDomainExtension = "investments"
+*if: thoroughEmailValidationDomainExtension = "investments"
 	*return
-*if: betterEmailValidationDomainExtension = "io"
+*if: thoroughEmailValidationDomainExtension = "io"
 	*return
-*if: betterEmailValidationDomainExtension = "ipiranga"
+*if: thoroughEmailValidationDomainExtension = "ipiranga"
 	*return
-*if: betterEmailValidationDomainExtension = "iq"
+*if: thoroughEmailValidationDomainExtension = "iq"
 	*return
-*if: betterEmailValidationDomainExtension = "ir"
+*if: thoroughEmailValidationDomainExtension = "ir"
 	*return
-*if: betterEmailValidationDomainExtension = "irish"
+*if: thoroughEmailValidationDomainExtension = "irish"
 	*return
-*if: betterEmailValidationDomainExtension = "is"
+*if: thoroughEmailValidationDomainExtension = "is"
 	*return
-*if: betterEmailValidationDomainExtension = "ismaili"
+*if: thoroughEmailValidationDomainExtension = "ismaili"
 	*return
-*if: betterEmailValidationDomainExtension = "ist"
+*if: thoroughEmailValidationDomainExtension = "ist"
 	*return
-*if: betterEmailValidationDomainExtension = "istanbul"
+*if: thoroughEmailValidationDomainExtension = "istanbul"
 	*return
-*if: betterEmailValidationDomainExtension = "it"
+*if: thoroughEmailValidationDomainExtension = "it"
 	*return
-*if: betterEmailValidationDomainExtension = "itau"
+*if: thoroughEmailValidationDomainExtension = "itau"
 	*return
-*if: betterEmailValidationDomainExtension = "itv"
+*if: thoroughEmailValidationDomainExtension = "itv"
 	*return
-*if: betterEmailValidationDomainExtension = "iveco"
+*if: thoroughEmailValidationDomainExtension = "iveco"
 	*return
-*if: betterEmailValidationDomainExtension = "jaguar"
+*if: thoroughEmailValidationDomainExtension = "jaguar"
 	*return
-*if: betterEmailValidationDomainExtension = "java"
+*if: thoroughEmailValidationDomainExtension = "java"
 	*return
-*if: betterEmailValidationDomainExtension = "jcb"
+*if: thoroughEmailValidationDomainExtension = "jcb"
 	*return
-*if: betterEmailValidationDomainExtension = "jcp"
+*if: thoroughEmailValidationDomainExtension = "jcp"
 	*return
-*if: betterEmailValidationDomainExtension = "je"
+*if: thoroughEmailValidationDomainExtension = "je"
 	*return
-*if: betterEmailValidationDomainExtension = "jeep"
+*if: thoroughEmailValidationDomainExtension = "jeep"
 	*return
-*if: betterEmailValidationDomainExtension = "jetzt"
+*if: thoroughEmailValidationDomainExtension = "jetzt"
 	*return
-*if: betterEmailValidationDomainExtension = "jewelry"
+*if: thoroughEmailValidationDomainExtension = "jewelry"
 	*return
-*if: betterEmailValidationDomainExtension = "jio"
+*if: thoroughEmailValidationDomainExtension = "jio"
 	*return
-*if: betterEmailValidationDomainExtension = "jll"
+*if: thoroughEmailValidationDomainExtension = "jll"
 	*return
-*if: betterEmailValidationDomainExtension = "jm"
+*if: thoroughEmailValidationDomainExtension = "jm"
 	*return
-*if: betterEmailValidationDomainExtension = "jmp"
+*if: thoroughEmailValidationDomainExtension = "jmp"
 	*return
-*if: betterEmailValidationDomainExtension = "jnj"
+*if: thoroughEmailValidationDomainExtension = "jnj"
 	*return
-*if: betterEmailValidationDomainExtension = "jo"
+*if: thoroughEmailValidationDomainExtension = "jo"
 	*return
-*if: betterEmailValidationDomainExtension = "jobs"
+*if: thoroughEmailValidationDomainExtension = "jobs"
 	*return
-*if: betterEmailValidationDomainExtension = "joburg"
+*if: thoroughEmailValidationDomainExtension = "joburg"
 	*return
-*if: betterEmailValidationDomainExtension = "jot"
+*if: thoroughEmailValidationDomainExtension = "jot"
 	*return
-*if: betterEmailValidationDomainExtension = "joy"
+*if: thoroughEmailValidationDomainExtension = "joy"
 	*return
-*if: betterEmailValidationDomainExtension = "jp"
+*if: thoroughEmailValidationDomainExtension = "jp"
 	*return
-*if: betterEmailValidationDomainExtension = "jpmorgan"
+*if: thoroughEmailValidationDomainExtension = "jpmorgan"
 	*return
-*if: betterEmailValidationDomainExtension = "jprs"
+*if: thoroughEmailValidationDomainExtension = "jprs"
 	*return
-*if: betterEmailValidationDomainExtension = "juegos"
+*if: thoroughEmailValidationDomainExtension = "juegos"
 	*return
-*if: betterEmailValidationDomainExtension = "juniper"
+*if: thoroughEmailValidationDomainExtension = "juniper"
 	*return
-*if: betterEmailValidationDomainExtension = "kaufen"
+*if: thoroughEmailValidationDomainExtension = "kaufen"
 	*return
-*if: betterEmailValidationDomainExtension = "kddi"
+*if: thoroughEmailValidationDomainExtension = "kddi"
 	*return
-*if: betterEmailValidationDomainExtension = "ke"
+*if: thoroughEmailValidationDomainExtension = "ke"
 	*return
-*if: betterEmailValidationDomainExtension = "kerryhotels"
+*if: thoroughEmailValidationDomainExtension = "kerryhotels"
 	*return
-*if: betterEmailValidationDomainExtension = "kerrylogistics"
+*if: thoroughEmailValidationDomainExtension = "kerrylogistics"
 	*return
-*if: betterEmailValidationDomainExtension = "kerryproperties"
+*if: thoroughEmailValidationDomainExtension = "kerryproperties"
 	*return
-*if: betterEmailValidationDomainExtension = "kfh"
+*if: thoroughEmailValidationDomainExtension = "kfh"
 	*return
-*if: betterEmailValidationDomainExtension = "kg"
+*if: thoroughEmailValidationDomainExtension = "kg"
 	*return
-*if: betterEmailValidationDomainExtension = "kh"
+*if: thoroughEmailValidationDomainExtension = "kh"
 	*return
-*if: betterEmailValidationDomainExtension = "ki"
+*if: thoroughEmailValidationDomainExtension = "ki"
 	*return
-*if: betterEmailValidationDomainExtension = "kia"
+*if: thoroughEmailValidationDomainExtension = "kia"
 	*return
-*if: betterEmailValidationDomainExtension = "kim"
+*if: thoroughEmailValidationDomainExtension = "kim"
 	*return
-*if: betterEmailValidationDomainExtension = "kinder"
+*if: thoroughEmailValidationDomainExtension = "kinder"
 	*return
-*if: betterEmailValidationDomainExtension = "kindle"
+*if: thoroughEmailValidationDomainExtension = "kindle"
 	*return
-*if: betterEmailValidationDomainExtension = "kitchen"
+*if: thoroughEmailValidationDomainExtension = "kitchen"
 	*return
-*if: betterEmailValidationDomainExtension = "kiwi"
+*if: thoroughEmailValidationDomainExtension = "kiwi"
 	*return
-*if: betterEmailValidationDomainExtension = "km"
+*if: thoroughEmailValidationDomainExtension = "km"
 	*return
-*if: betterEmailValidationDomainExtension = "kn"
+*if: thoroughEmailValidationDomainExtension = "kn"
 	*return
-*if: betterEmailValidationDomainExtension = "koeln"
+*if: thoroughEmailValidationDomainExtension = "koeln"
 	*return
-*if: betterEmailValidationDomainExtension = "komatsu"
+*if: thoroughEmailValidationDomainExtension = "komatsu"
 	*return
-*if: betterEmailValidationDomainExtension = "kosher"
+*if: thoroughEmailValidationDomainExtension = "kosher"
 	*return
-*if: betterEmailValidationDomainExtension = "kp"
+*if: thoroughEmailValidationDomainExtension = "kp"
 	*return
-*if: betterEmailValidationDomainExtension = "kpmg"
+*if: thoroughEmailValidationDomainExtension = "kpmg"
 	*return
-*if: betterEmailValidationDomainExtension = "kpn"
+*if: thoroughEmailValidationDomainExtension = "kpn"
 	*return
-*if: betterEmailValidationDomainExtension = "kr"
+*if: thoroughEmailValidationDomainExtension = "kr"
 	*return
-*if: betterEmailValidationDomainExtension = "krd"
+*if: thoroughEmailValidationDomainExtension = "krd"
 	*return
-*if: betterEmailValidationDomainExtension = "kred"
+*if: thoroughEmailValidationDomainExtension = "kred"
 	*return
-*if: betterEmailValidationDomainExtension = "kuokgroup"
+*if: thoroughEmailValidationDomainExtension = "kuokgroup"
 	*return
-*if: betterEmailValidationDomainExtension = "kw"
+*if: thoroughEmailValidationDomainExtension = "kw"
 	*return
-*if: betterEmailValidationDomainExtension = "ky"
+*if: thoroughEmailValidationDomainExtension = "ky"
 	*return
-*if: betterEmailValidationDomainExtension = "kyoto"
+*if: thoroughEmailValidationDomainExtension = "kyoto"
 	*return
-*if: betterEmailValidationDomainExtension = "kz"
+*if: thoroughEmailValidationDomainExtension = "kz"
 	*return
-*if: betterEmailValidationDomainExtension = "la"
+*if: thoroughEmailValidationDomainExtension = "la"
 	*return
-*if: betterEmailValidationDomainExtension = "lacaixa"
+*if: thoroughEmailValidationDomainExtension = "lacaixa"
 	*return
-*if: betterEmailValidationDomainExtension = "lamborghini"
+*if: thoroughEmailValidationDomainExtension = "lamborghini"
 	*return
-*if: betterEmailValidationDomainExtension = "lamer"
+*if: thoroughEmailValidationDomainExtension = "lamer"
 	*return
-*if: betterEmailValidationDomainExtension = "lancaster"
+*if: thoroughEmailValidationDomainExtension = "lancaster"
 	*return
-*if: betterEmailValidationDomainExtension = "lancia"
+*if: thoroughEmailValidationDomainExtension = "lancia"
 	*return
-*if: betterEmailValidationDomainExtension = "land"
+*if: thoroughEmailValidationDomainExtension = "land"
 	*return
-*if: betterEmailValidationDomainExtension = "landrover"
+*if: thoroughEmailValidationDomainExtension = "landrover"
 	*return
-*if: betterEmailValidationDomainExtension = "lanxess"
+*if: thoroughEmailValidationDomainExtension = "lanxess"
 	*return
-*if: betterEmailValidationDomainExtension = "lasalle"
+*if: thoroughEmailValidationDomainExtension = "lasalle"
 	*return
-*if: betterEmailValidationDomainExtension = "lat"
+*if: thoroughEmailValidationDomainExtension = "lat"
 	*return
-*if: betterEmailValidationDomainExtension = "latino"
+*if: thoroughEmailValidationDomainExtension = "latino"
 	*return
-*if: betterEmailValidationDomainExtension = "latrobe"
+*if: thoroughEmailValidationDomainExtension = "latrobe"
 	*return
-*if: betterEmailValidationDomainExtension = "law"
+*if: thoroughEmailValidationDomainExtension = "law"
 	*return
-*if: betterEmailValidationDomainExtension = "lawyer"
+*if: thoroughEmailValidationDomainExtension = "lawyer"
 	*return
-*if: betterEmailValidationDomainExtension = "lb"
+*if: thoroughEmailValidationDomainExtension = "lb"
 	*return
-*if: betterEmailValidationDomainExtension = "lc"
+*if: thoroughEmailValidationDomainExtension = "lc"
 	*return
-*if: betterEmailValidationDomainExtension = "lds"
+*if: thoroughEmailValidationDomainExtension = "lds"
 	*return
-*if: betterEmailValidationDomainExtension = "lease"
+*if: thoroughEmailValidationDomainExtension = "lease"
 	*return
-*if: betterEmailValidationDomainExtension = "leclerc"
+*if: thoroughEmailValidationDomainExtension = "leclerc"
 	*return
-*if: betterEmailValidationDomainExtension = "lefrak"
+*if: thoroughEmailValidationDomainExtension = "lefrak"
 	*return
-*if: betterEmailValidationDomainExtension = "legal"
+*if: thoroughEmailValidationDomainExtension = "legal"
 	*return
-*if: betterEmailValidationDomainExtension = "lego"
+*if: thoroughEmailValidationDomainExtension = "lego"
 	*return
-*if: betterEmailValidationDomainExtension = "lexus"
+*if: thoroughEmailValidationDomainExtension = "lexus"
 	*return
-*if: betterEmailValidationDomainExtension = "lgbt"
+*if: thoroughEmailValidationDomainExtension = "lgbt"
 	*return
-*if: betterEmailValidationDomainExtension = "li"
+*if: thoroughEmailValidationDomainExtension = "li"
 	*return
-*if: betterEmailValidationDomainExtension = "lidl"
+*if: thoroughEmailValidationDomainExtension = "lidl"
 	*return
-*if: betterEmailValidationDomainExtension = "life"
+*if: thoroughEmailValidationDomainExtension = "life"
 	*return
-*if: betterEmailValidationDomainExtension = "lifeinsurance"
+*if: thoroughEmailValidationDomainExtension = "lifeinsurance"
 	*return
-*if: betterEmailValidationDomainExtension = "lifestyle"
+*if: thoroughEmailValidationDomainExtension = "lifestyle"
 	*return
-*if: betterEmailValidationDomainExtension = "lighting"
+*if: thoroughEmailValidationDomainExtension = "lighting"
 	*return
-*if: betterEmailValidationDomainExtension = "like"
+*if: thoroughEmailValidationDomainExtension = "like"
 	*return
-*if: betterEmailValidationDomainExtension = "lilly"
+*if: thoroughEmailValidationDomainExtension = "lilly"
 	*return
-*if: betterEmailValidationDomainExtension = "limited"
+*if: thoroughEmailValidationDomainExtension = "limited"
 	*return
-*if: betterEmailValidationDomainExtension = "limo"
+*if: thoroughEmailValidationDomainExtension = "limo"
 	*return
-*if: betterEmailValidationDomainExtension = "lincoln"
+*if: thoroughEmailValidationDomainExtension = "lincoln"
 	*return
-*if: betterEmailValidationDomainExtension = "linde"
+*if: thoroughEmailValidationDomainExtension = "linde"
 	*return
-*if: betterEmailValidationDomainExtension = "link"
+*if: thoroughEmailValidationDomainExtension = "link"
 	*return
-*if: betterEmailValidationDomainExtension = "lipsy"
+*if: thoroughEmailValidationDomainExtension = "lipsy"
 	*return
-*if: betterEmailValidationDomainExtension = "live"
+*if: thoroughEmailValidationDomainExtension = "live"
 	*return
-*if: betterEmailValidationDomainExtension = "living"
+*if: thoroughEmailValidationDomainExtension = "living"
 	*return
-*if: betterEmailValidationDomainExtension = "lixil"
+*if: thoroughEmailValidationDomainExtension = "lixil"
 	*return
-*if: betterEmailValidationDomainExtension = "lk"
+*if: thoroughEmailValidationDomainExtension = "lk"
 	*return
-*if: betterEmailValidationDomainExtension = "llc"
+*if: thoroughEmailValidationDomainExtension = "llc"
 	*return
-*if: betterEmailValidationDomainExtension = "llp"
+*if: thoroughEmailValidationDomainExtension = "llp"
 	*return
-*if: betterEmailValidationDomainExtension = "loan"
+*if: thoroughEmailValidationDomainExtension = "loan"
 	*return
-*if: betterEmailValidationDomainExtension = "loans"
+*if: thoroughEmailValidationDomainExtension = "loans"
 	*return
-*if: betterEmailValidationDomainExtension = "locker"
+*if: thoroughEmailValidationDomainExtension = "locker"
 	*return
-*if: betterEmailValidationDomainExtension = "locus"
+*if: thoroughEmailValidationDomainExtension = "locus"
 	*return
-*if: betterEmailValidationDomainExtension = "loft"
+*if: thoroughEmailValidationDomainExtension = "loft"
 	*return
-*if: betterEmailValidationDomainExtension = "lol"
+*if: thoroughEmailValidationDomainExtension = "lol"
 	*return
-*if: betterEmailValidationDomainExtension = "london"
+*if: thoroughEmailValidationDomainExtension = "london"
 	*return
-*if: betterEmailValidationDomainExtension = "lotte"
+*if: thoroughEmailValidationDomainExtension = "lotte"
 	*return
-*if: betterEmailValidationDomainExtension = "lotto"
+*if: thoroughEmailValidationDomainExtension = "lotto"
 	*return
-*if: betterEmailValidationDomainExtension = "love"
+*if: thoroughEmailValidationDomainExtension = "love"
 	*return
-*if: betterEmailValidationDomainExtension = "lpl"
+*if: thoroughEmailValidationDomainExtension = "lpl"
 	*return
-*if: betterEmailValidationDomainExtension = "lplfinancial"
+*if: thoroughEmailValidationDomainExtension = "lplfinancial"
 	*return
-*if: betterEmailValidationDomainExtension = "lr"
+*if: thoroughEmailValidationDomainExtension = "lr"
 	*return
-*if: betterEmailValidationDomainExtension = "ls"
+*if: thoroughEmailValidationDomainExtension = "ls"
 	*return
-*if: betterEmailValidationDomainExtension = "lt"
+*if: thoroughEmailValidationDomainExtension = "lt"
 	*return
-*if: betterEmailValidationDomainExtension = "ltd"
+*if: thoroughEmailValidationDomainExtension = "ltd"
 	*return
-*if: betterEmailValidationDomainExtension = "ltda"
+*if: thoroughEmailValidationDomainExtension = "ltda"
 	*return
-*if: betterEmailValidationDomainExtension = "lu"
+*if: thoroughEmailValidationDomainExtension = "lu"
 	*return
-*if: betterEmailValidationDomainExtension = "lundbeck"
+*if: thoroughEmailValidationDomainExtension = "lundbeck"
 	*return
-*if: betterEmailValidationDomainExtension = "lupin"
+*if: thoroughEmailValidationDomainExtension = "lupin"
 	*return
-*if: betterEmailValidationDomainExtension = "luxe"
+*if: thoroughEmailValidationDomainExtension = "luxe"
 	*return
-*if: betterEmailValidationDomainExtension = "luxury"
+*if: thoroughEmailValidationDomainExtension = "luxury"
 	*return
-*if: betterEmailValidationDomainExtension = "lv"
+*if: thoroughEmailValidationDomainExtension = "lv"
 	*return
-*if: betterEmailValidationDomainExtension = "ly"
+*if: thoroughEmailValidationDomainExtension = "ly"
 	*return
-*if: betterEmailValidationDomainExtension = "ma"
+*if: thoroughEmailValidationDomainExtension = "ma"
 	*return
-*if: betterEmailValidationDomainExtension = "macys"
+*if: thoroughEmailValidationDomainExtension = "macys"
 	*return
-*if: betterEmailValidationDomainExtension = "madrid"
+*if: thoroughEmailValidationDomainExtension = "madrid"
 	*return
-*if: betterEmailValidationDomainExtension = "maif"
+*if: thoroughEmailValidationDomainExtension = "maif"
 	*return
-*if: betterEmailValidationDomainExtension = "maison"
+*if: thoroughEmailValidationDomainExtension = "maison"
 	*return
-*if: betterEmailValidationDomainExtension = "makeup"
+*if: thoroughEmailValidationDomainExtension = "makeup"
 	*return
-*if: betterEmailValidationDomainExtension = "man"
+*if: thoroughEmailValidationDomainExtension = "man"
 	*return
-*if: betterEmailValidationDomainExtension = "management"
+*if: thoroughEmailValidationDomainExtension = "management"
 	*return
-*if: betterEmailValidationDomainExtension = "mango"
+*if: thoroughEmailValidationDomainExtension = "mango"
 	*return
-*if: betterEmailValidationDomainExtension = "map"
+*if: thoroughEmailValidationDomainExtension = "map"
 	*return
-*if: betterEmailValidationDomainExtension = "market"
+*if: thoroughEmailValidationDomainExtension = "market"
 	*return
-*if: betterEmailValidationDomainExtension = "marketing"
+*if: thoroughEmailValidationDomainExtension = "marketing"
 	*return
-*if: betterEmailValidationDomainExtension = "markets"
+*if: thoroughEmailValidationDomainExtension = "markets"
 	*return
-*if: betterEmailValidationDomainExtension = "marriott"
+*if: thoroughEmailValidationDomainExtension = "marriott"
 	*return
-*if: betterEmailValidationDomainExtension = "marshalls"
+*if: thoroughEmailValidationDomainExtension = "marshalls"
 	*return
-*if: betterEmailValidationDomainExtension = "maserati"
+*if: thoroughEmailValidationDomainExtension = "maserati"
 	*return
-*if: betterEmailValidationDomainExtension = "mattel"
+*if: thoroughEmailValidationDomainExtension = "mattel"
 	*return
-*if: betterEmailValidationDomainExtension = "mba"
+*if: thoroughEmailValidationDomainExtension = "mba"
 	*return
-*if: betterEmailValidationDomainExtension = "mc"
+*if: thoroughEmailValidationDomainExtension = "mc"
 	*return
-*if: betterEmailValidationDomainExtension = "mckinsey"
+*if: thoroughEmailValidationDomainExtension = "mckinsey"
 	*return
-*if: betterEmailValidationDomainExtension = "md"
+*if: thoroughEmailValidationDomainExtension = "md"
 	*return
-*if: betterEmailValidationDomainExtension = "me"
+*if: thoroughEmailValidationDomainExtension = "me"
 	*return
-*if: betterEmailValidationDomainExtension = "med"
+*if: thoroughEmailValidationDomainExtension = "med"
 	*return
-*if: betterEmailValidationDomainExtension = "media"
+*if: thoroughEmailValidationDomainExtension = "media"
 	*return
-*if: betterEmailValidationDomainExtension = "meet"
+*if: thoroughEmailValidationDomainExtension = "meet"
 	*return
-*if: betterEmailValidationDomainExtension = "melbourne"
+*if: thoroughEmailValidationDomainExtension = "melbourne"
 	*return
-*if: betterEmailValidationDomainExtension = "meme"
+*if: thoroughEmailValidationDomainExtension = "meme"
 	*return
-*if: betterEmailValidationDomainExtension = "memorial"
+*if: thoroughEmailValidationDomainExtension = "memorial"
 	*return
-*if: betterEmailValidationDomainExtension = "men"
+*if: thoroughEmailValidationDomainExtension = "men"
 	*return
-*if: betterEmailValidationDomainExtension = "menu"
+*if: thoroughEmailValidationDomainExtension = "menu"
 	*return
-*if: betterEmailValidationDomainExtension = "merckmsd"
+*if: thoroughEmailValidationDomainExtension = "merckmsd"
 	*return
-*if: betterEmailValidationDomainExtension = "metlife"
+*if: thoroughEmailValidationDomainExtension = "metlife"
 	*return
-*if: betterEmailValidationDomainExtension = "mg"
+*if: thoroughEmailValidationDomainExtension = "mg"
 	*return
-*if: betterEmailValidationDomainExtension = "mh"
+*if: thoroughEmailValidationDomainExtension = "mh"
 	*return
-*if: betterEmailValidationDomainExtension = "miami"
+*if: thoroughEmailValidationDomainExtension = "miami"
 	*return
-*if: betterEmailValidationDomainExtension = "microsoft"
+*if: thoroughEmailValidationDomainExtension = "microsoft"
 	*return
-*if: betterEmailValidationDomainExtension = "mil"
+*if: thoroughEmailValidationDomainExtension = "mil"
 	*return
-*if: betterEmailValidationDomainExtension = "mini"
+*if: thoroughEmailValidationDomainExtension = "mini"
 	*return
-*if: betterEmailValidationDomainExtension = "mint"
+*if: thoroughEmailValidationDomainExtension = "mint"
 	*return
-*if: betterEmailValidationDomainExtension = "mit"
+*if: thoroughEmailValidationDomainExtension = "mit"
 	*return
-*if: betterEmailValidationDomainExtension = "mitsubishi"
+*if: thoroughEmailValidationDomainExtension = "mitsubishi"
 	*return
-*if: betterEmailValidationDomainExtension = "mk"
+*if: thoroughEmailValidationDomainExtension = "mk"
 	*return
-*if: betterEmailValidationDomainExtension = "ml"
+*if: thoroughEmailValidationDomainExtension = "ml"
 	*return
-*if: betterEmailValidationDomainExtension = "mlb"
+*if: thoroughEmailValidationDomainExtension = "mlb"
 	*return
-*if: betterEmailValidationDomainExtension = "mls"
+*if: thoroughEmailValidationDomainExtension = "mls"
 	*return
-*if: betterEmailValidationDomainExtension = "mm"
+*if: thoroughEmailValidationDomainExtension = "mm"
 	*return
-*if: betterEmailValidationDomainExtension = "mma"
+*if: thoroughEmailValidationDomainExtension = "mma"
 	*return
-*if: betterEmailValidationDomainExtension = "mn"
+*if: thoroughEmailValidationDomainExtension = "mn"
 	*return
-*if: betterEmailValidationDomainExtension = "mo"
+*if: thoroughEmailValidationDomainExtension = "mo"
 	*return
-*if: betterEmailValidationDomainExtension = "mobi"
+*if: thoroughEmailValidationDomainExtension = "mobi"
 	*return
-*if: betterEmailValidationDomainExtension = "mobile"
+*if: thoroughEmailValidationDomainExtension = "mobile"
 	*return
-*if: betterEmailValidationDomainExtension = "moda"
+*if: thoroughEmailValidationDomainExtension = "moda"
 	*return
-*if: betterEmailValidationDomainExtension = "moe"
+*if: thoroughEmailValidationDomainExtension = "moe"
 	*return
-*if: betterEmailValidationDomainExtension = "moi"
+*if: thoroughEmailValidationDomainExtension = "moi"
 	*return
-*if: betterEmailValidationDomainExtension = "mom"
+*if: thoroughEmailValidationDomainExtension = "mom"
 	*return
-*if: betterEmailValidationDomainExtension = "monash"
+*if: thoroughEmailValidationDomainExtension = "monash"
 	*return
-*if: betterEmailValidationDomainExtension = "money"
+*if: thoroughEmailValidationDomainExtension = "money"
 	*return
-*if: betterEmailValidationDomainExtension = "monster"
+*if: thoroughEmailValidationDomainExtension = "monster"
 	*return
-*if: betterEmailValidationDomainExtension = "mormon"
+*if: thoroughEmailValidationDomainExtension = "mormon"
 	*return
-*if: betterEmailValidationDomainExtension = "mortgage"
+*if: thoroughEmailValidationDomainExtension = "mortgage"
 	*return
-*if: betterEmailValidationDomainExtension = "moscow"
+*if: thoroughEmailValidationDomainExtension = "moscow"
 	*return
-*if: betterEmailValidationDomainExtension = "moto"
+*if: thoroughEmailValidationDomainExtension = "moto"
 	*return
-*if: betterEmailValidationDomainExtension = "motorcycles"
+*if: thoroughEmailValidationDomainExtension = "motorcycles"
 	*return
-*if: betterEmailValidationDomainExtension = "mov"
+*if: thoroughEmailValidationDomainExtension = "mov"
 	*return
-*if: betterEmailValidationDomainExtension = "movie"
+*if: thoroughEmailValidationDomainExtension = "movie"
 	*return
-*if: betterEmailValidationDomainExtension = "mp"
+*if: thoroughEmailValidationDomainExtension = "mp"
 	*return
-*if: betterEmailValidationDomainExtension = "mq"
+*if: thoroughEmailValidationDomainExtension = "mq"
 	*return
-*if: betterEmailValidationDomainExtension = "mr"
+*if: thoroughEmailValidationDomainExtension = "mr"
 	*return
-*if: betterEmailValidationDomainExtension = "ms"
+*if: thoroughEmailValidationDomainExtension = "ms"
 	*return
-*if: betterEmailValidationDomainExtension = "msd"
+*if: thoroughEmailValidationDomainExtension = "msd"
 	*return
-*if: betterEmailValidationDomainExtension = "mt"
+*if: thoroughEmailValidationDomainExtension = "mt"
 	*return
-*if: betterEmailValidationDomainExtension = "mtn"
+*if: thoroughEmailValidationDomainExtension = "mtn"
 	*return
-*if: betterEmailValidationDomainExtension = "mtr"
+*if: thoroughEmailValidationDomainExtension = "mtr"
 	*return
-*if: betterEmailValidationDomainExtension = "mu"
+*if: thoroughEmailValidationDomainExtension = "mu"
 	*return
-*if: betterEmailValidationDomainExtension = "museum"
+*if: thoroughEmailValidationDomainExtension = "museum"
 	*return
-*if: betterEmailValidationDomainExtension = "mutual"
+*if: thoroughEmailValidationDomainExtension = "mutual"
 	*return
-*if: betterEmailValidationDomainExtension = "mv"
+*if: thoroughEmailValidationDomainExtension = "mv"
 	*return
-*if: betterEmailValidationDomainExtension = "mw"
+*if: thoroughEmailValidationDomainExtension = "mw"
 	*return
-*if: betterEmailValidationDomainExtension = "mx"
+*if: thoroughEmailValidationDomainExtension = "mx"
 	*return
-*if: betterEmailValidationDomainExtension = "my"
+*if: thoroughEmailValidationDomainExtension = "my"
 	*return
-*if: betterEmailValidationDomainExtension = "mz"
+*if: thoroughEmailValidationDomainExtension = "mz"
 	*return
-*if: betterEmailValidationDomainExtension = "na"
+*if: thoroughEmailValidationDomainExtension = "na"
 	*return
-*if: betterEmailValidationDomainExtension = "nab"
+*if: thoroughEmailValidationDomainExtension = "nab"
 	*return
-*if: betterEmailValidationDomainExtension = "nagoya"
+*if: thoroughEmailValidationDomainExtension = "nagoya"
 	*return
-*if: betterEmailValidationDomainExtension = "name"
+*if: thoroughEmailValidationDomainExtension = "name"
 	*return
-*if: betterEmailValidationDomainExtension = "nationwide"
+*if: thoroughEmailValidationDomainExtension = "nationwide"
 	*return
-*if: betterEmailValidationDomainExtension = "natura"
+*if: thoroughEmailValidationDomainExtension = "natura"
 	*return
-*if: betterEmailValidationDomainExtension = "navy"
+*if: thoroughEmailValidationDomainExtension = "navy"
 	*return
-*if: betterEmailValidationDomainExtension = "nba"
+*if: thoroughEmailValidationDomainExtension = "nba"
 	*return
-*if: betterEmailValidationDomainExtension = "nc"
+*if: thoroughEmailValidationDomainExtension = "nc"
 	*return
-*if: betterEmailValidationDomainExtension = "ne"
+*if: thoroughEmailValidationDomainExtension = "ne"
 	*return
-*if: betterEmailValidationDomainExtension = "nec"
+*if: thoroughEmailValidationDomainExtension = "nec"
 	*return
-*if: betterEmailValidationDomainExtension = "net"
+*if: thoroughEmailValidationDomainExtension = "net"
 	*return
-*if: betterEmailValidationDomainExtension = "netbank"
+*if: thoroughEmailValidationDomainExtension = "netbank"
 	*return
-*if: betterEmailValidationDomainExtension = "netflix"
+*if: thoroughEmailValidationDomainExtension = "netflix"
 	*return
-*if: betterEmailValidationDomainExtension = "network"
+*if: thoroughEmailValidationDomainExtension = "network"
 	*return
-*if: betterEmailValidationDomainExtension = "neustar"
+*if: thoroughEmailValidationDomainExtension = "neustar"
 	*return
-*if: betterEmailValidationDomainExtension = "new"
+*if: thoroughEmailValidationDomainExtension = "new"
 	*return
-*if: betterEmailValidationDomainExtension = "newholland"
+*if: thoroughEmailValidationDomainExtension = "newholland"
 	*return
-*if: betterEmailValidationDomainExtension = "news"
+*if: thoroughEmailValidationDomainExtension = "news"
 	*return
-*if: betterEmailValidationDomainExtension = "next"
+*if: thoroughEmailValidationDomainExtension = "next"
 	*return
-*if: betterEmailValidationDomainExtension = "nextdirect"
+*if: thoroughEmailValidationDomainExtension = "nextdirect"
 	*return
-*if: betterEmailValidationDomainExtension = "nexus"
+*if: thoroughEmailValidationDomainExtension = "nexus"
 	*return
-*if: betterEmailValidationDomainExtension = "nf"
+*if: thoroughEmailValidationDomainExtension = "nf"
 	*return
-*if: betterEmailValidationDomainExtension = "nfl"
+*if: thoroughEmailValidationDomainExtension = "nfl"
 	*return
-*if: betterEmailValidationDomainExtension = "ng"
+*if: thoroughEmailValidationDomainExtension = "ng"
 	*return
-*if: betterEmailValidationDomainExtension = "ngo"
+*if: thoroughEmailValidationDomainExtension = "ngo"
 	*return
-*if: betterEmailValidationDomainExtension = "nhk"
+*if: thoroughEmailValidationDomainExtension = "nhk"
 	*return
-*if: betterEmailValidationDomainExtension = "ni"
+*if: thoroughEmailValidationDomainExtension = "ni"
 	*return
-*if: betterEmailValidationDomainExtension = "nico"
+*if: thoroughEmailValidationDomainExtension = "nico"
 	*return
-*if: betterEmailValidationDomainExtension = "nike"
+*if: thoroughEmailValidationDomainExtension = "nike"
 	*return
-*if: betterEmailValidationDomainExtension = "nikon"
+*if: thoroughEmailValidationDomainExtension = "nikon"
 	*return
-*if: betterEmailValidationDomainExtension = "ninja"
+*if: thoroughEmailValidationDomainExtension = "ninja"
 	*return
-*if: betterEmailValidationDomainExtension = "nissan"
+*if: thoroughEmailValidationDomainExtension = "nissan"
 	*return
-*if: betterEmailValidationDomainExtension = "nissay"
+*if: thoroughEmailValidationDomainExtension = "nissay"
 	*return
-*if: betterEmailValidationDomainExtension = "nl"
+*if: thoroughEmailValidationDomainExtension = "nl"
 	*return
-*if: betterEmailValidationDomainExtension = "no"
+*if: thoroughEmailValidationDomainExtension = "no"
 	*return
-*if: betterEmailValidationDomainExtension = "nokia"
+*if: thoroughEmailValidationDomainExtension = "nokia"
 	*return
-*if: betterEmailValidationDomainExtension = "northwesternmutual"
+*if: thoroughEmailValidationDomainExtension = "northwesternmutual"
 	*return
-*if: betterEmailValidationDomainExtension = "norton"
+*if: thoroughEmailValidationDomainExtension = "norton"
 	*return
-*if: betterEmailValidationDomainExtension = "now"
+*if: thoroughEmailValidationDomainExtension = "now"
 	*return
-*if: betterEmailValidationDomainExtension = "nowruz"
+*if: thoroughEmailValidationDomainExtension = "nowruz"
 	*return
-*if: betterEmailValidationDomainExtension = "nowtv"
+*if: thoroughEmailValidationDomainExtension = "nowtv"
 	*return
-*if: betterEmailValidationDomainExtension = "np"
+*if: thoroughEmailValidationDomainExtension = "np"
 	*return
-*if: betterEmailValidationDomainExtension = "nr"
+*if: thoroughEmailValidationDomainExtension = "nr"
 	*return
-*if: betterEmailValidationDomainExtension = "nra"
+*if: thoroughEmailValidationDomainExtension = "nra"
 	*return
-*if: betterEmailValidationDomainExtension = "nrw"
+*if: thoroughEmailValidationDomainExtension = "nrw"
 	*return
-*if: betterEmailValidationDomainExtension = "ntt"
+*if: thoroughEmailValidationDomainExtension = "ntt"
 	*return
-*if: betterEmailValidationDomainExtension = "nu"
+*if: thoroughEmailValidationDomainExtension = "nu"
 	*return
-*if: betterEmailValidationDomainExtension = "nyc"
+*if: thoroughEmailValidationDomainExtension = "nyc"
 	*return
-*if: betterEmailValidationDomainExtension = "nz"
+*if: thoroughEmailValidationDomainExtension = "nz"
 	*return
-*if: betterEmailValidationDomainExtension = "obi"
+*if: thoroughEmailValidationDomainExtension = "obi"
 	*return
-*if: betterEmailValidationDomainExtension = "observer"
+*if: thoroughEmailValidationDomainExtension = "observer"
 	*return
-*if: betterEmailValidationDomainExtension = "off"
+*if: thoroughEmailValidationDomainExtension = "off"
 	*return
-*if: betterEmailValidationDomainExtension = "office"
+*if: thoroughEmailValidationDomainExtension = "office"
 	*return
-*if: betterEmailValidationDomainExtension = "okinawa"
+*if: thoroughEmailValidationDomainExtension = "okinawa"
 	*return
-*if: betterEmailValidationDomainExtension = "olayan"
+*if: thoroughEmailValidationDomainExtension = "olayan"
 	*return
-*if: betterEmailValidationDomainExtension = "olayangroup"
+*if: thoroughEmailValidationDomainExtension = "olayangroup"
 	*return
-*if: betterEmailValidationDomainExtension = "oldnavy"
+*if: thoroughEmailValidationDomainExtension = "oldnavy"
 	*return
-*if: betterEmailValidationDomainExtension = "ollo"
+*if: thoroughEmailValidationDomainExtension = "ollo"
 	*return
-*if: betterEmailValidationDomainExtension = "om"
+*if: thoroughEmailValidationDomainExtension = "om"
 	*return
-*if: betterEmailValidationDomainExtension = "omega"
+*if: thoroughEmailValidationDomainExtension = "omega"
 	*return
-*if: betterEmailValidationDomainExtension = "one"
+*if: thoroughEmailValidationDomainExtension = "one"
 	*return
-*if: betterEmailValidationDomainExtension = "ong"
+*if: thoroughEmailValidationDomainExtension = "ong"
 	*return
-*if: betterEmailValidationDomainExtension = "onl"
+*if: thoroughEmailValidationDomainExtension = "onl"
 	*return
-*if: betterEmailValidationDomainExtension = "online"
+*if: thoroughEmailValidationDomainExtension = "online"
 	*return
-*if: betterEmailValidationDomainExtension = "onyourside"
+*if: thoroughEmailValidationDomainExtension = "onyourside"
 	*return
-*if: betterEmailValidationDomainExtension = "ooo"
+*if: thoroughEmailValidationDomainExtension = "ooo"
 	*return
-*if: betterEmailValidationDomainExtension = "open"
+*if: thoroughEmailValidationDomainExtension = "open"
 	*return
-*if: betterEmailValidationDomainExtension = "oracle"
+*if: thoroughEmailValidationDomainExtension = "oracle"
 	*return
-*if: betterEmailValidationDomainExtension = "orange"
+*if: thoroughEmailValidationDomainExtension = "orange"
 	*return
-*if: betterEmailValidationDomainExtension = "org"
+*if: thoroughEmailValidationDomainExtension = "org"
 	*return
-*if: betterEmailValidationDomainExtension = "organic"
+*if: thoroughEmailValidationDomainExtension = "organic"
 	*return
-*if: betterEmailValidationDomainExtension = "origins"
+*if: thoroughEmailValidationDomainExtension = "origins"
 	*return
-*if: betterEmailValidationDomainExtension = "osaka"
+*if: thoroughEmailValidationDomainExtension = "osaka"
 	*return
-*if: betterEmailValidationDomainExtension = "otsuka"
+*if: thoroughEmailValidationDomainExtension = "otsuka"
 	*return
-*if: betterEmailValidationDomainExtension = "ott"
+*if: thoroughEmailValidationDomainExtension = "ott"
 	*return
-*if: betterEmailValidationDomainExtension = "ovh"
+*if: thoroughEmailValidationDomainExtension = "ovh"
 	*return
-*if: betterEmailValidationDomainExtension = "pa"
+*if: thoroughEmailValidationDomainExtension = "pa"
 	*return
-*if: betterEmailValidationDomainExtension = "page"
+*if: thoroughEmailValidationDomainExtension = "page"
 	*return
-*if: betterEmailValidationDomainExtension = "panasonic"
+*if: thoroughEmailValidationDomainExtension = "panasonic"
 	*return
-*if: betterEmailValidationDomainExtension = "paris"
+*if: thoroughEmailValidationDomainExtension = "paris"
 	*return
-*if: betterEmailValidationDomainExtension = "pars"
+*if: thoroughEmailValidationDomainExtension = "pars"
 	*return
-*if: betterEmailValidationDomainExtension = "partners"
+*if: thoroughEmailValidationDomainExtension = "partners"
 	*return
-*if: betterEmailValidationDomainExtension = "parts"
+*if: thoroughEmailValidationDomainExtension = "parts"
 	*return
-*if: betterEmailValidationDomainExtension = "party"
+*if: thoroughEmailValidationDomainExtension = "party"
 	*return
-*if: betterEmailValidationDomainExtension = "passagens"
+*if: thoroughEmailValidationDomainExtension = "passagens"
 	*return
-*if: betterEmailValidationDomainExtension = "pay"
+*if: thoroughEmailValidationDomainExtension = "pay"
 	*return
-*if: betterEmailValidationDomainExtension = "pccw"
+*if: thoroughEmailValidationDomainExtension = "pccw"
 	*return
-*if: betterEmailValidationDomainExtension = "pe"
+*if: thoroughEmailValidationDomainExtension = "pe"
 	*return
-*if: betterEmailValidationDomainExtension = "pet"
+*if: thoroughEmailValidationDomainExtension = "pet"
 	*return
-*if: betterEmailValidationDomainExtension = "pf"
+*if: thoroughEmailValidationDomainExtension = "pf"
 	*return
-*if: betterEmailValidationDomainExtension = "pfizer"
+*if: thoroughEmailValidationDomainExtension = "pfizer"
 	*return
-*if: betterEmailValidationDomainExtension = "pg"
+*if: thoroughEmailValidationDomainExtension = "pg"
 	*return
-*if: betterEmailValidationDomainExtension = "ph"
+*if: thoroughEmailValidationDomainExtension = "ph"
 	*return
-*if: betterEmailValidationDomainExtension = "pharmacy"
+*if: thoroughEmailValidationDomainExtension = "pharmacy"
 	*return
-*if: betterEmailValidationDomainExtension = "phd"
+*if: thoroughEmailValidationDomainExtension = "phd"
 	*return
-*if: betterEmailValidationDomainExtension = "philips"
+*if: thoroughEmailValidationDomainExtension = "philips"
 	*return
-*if: betterEmailValidationDomainExtension = "phone"
+*if: thoroughEmailValidationDomainExtension = "phone"
 	*return
-*if: betterEmailValidationDomainExtension = "photo"
+*if: thoroughEmailValidationDomainExtension = "photo"
 	*return
-*if: betterEmailValidationDomainExtension = "photography"
+*if: thoroughEmailValidationDomainExtension = "photography"
 	*return
-*if: betterEmailValidationDomainExtension = "photos"
+*if: thoroughEmailValidationDomainExtension = "photos"
 	*return
-*if: betterEmailValidationDomainExtension = "physio"
+*if: thoroughEmailValidationDomainExtension = "physio"
 	*return
-*if: betterEmailValidationDomainExtension = "pics"
+*if: thoroughEmailValidationDomainExtension = "pics"
 	*return
-*if: betterEmailValidationDomainExtension = "pictet"
+*if: thoroughEmailValidationDomainExtension = "pictet"
 	*return
-*if: betterEmailValidationDomainExtension = "pictures"
+*if: thoroughEmailValidationDomainExtension = "pictures"
 	*return
-*if: betterEmailValidationDomainExtension = "pid"
+*if: thoroughEmailValidationDomainExtension = "pid"
 	*return
-*if: betterEmailValidationDomainExtension = "pin"
+*if: thoroughEmailValidationDomainExtension = "pin"
 	*return
-*if: betterEmailValidationDomainExtension = "ping"
+*if: thoroughEmailValidationDomainExtension = "ping"
 	*return
-*if: betterEmailValidationDomainExtension = "pink"
+*if: thoroughEmailValidationDomainExtension = "pink"
 	*return
-*if: betterEmailValidationDomainExtension = "pioneer"
+*if: thoroughEmailValidationDomainExtension = "pioneer"
 	*return
-*if: betterEmailValidationDomainExtension = "pizza"
+*if: thoroughEmailValidationDomainExtension = "pizza"
 	*return
-*if: betterEmailValidationDomainExtension = "pk"
+*if: thoroughEmailValidationDomainExtension = "pk"
 	*return
-*if: betterEmailValidationDomainExtension = "pl"
+*if: thoroughEmailValidationDomainExtension = "pl"
 	*return
-*if: betterEmailValidationDomainExtension = "place"
+*if: thoroughEmailValidationDomainExtension = "place"
 	*return
-*if: betterEmailValidationDomainExtension = "play"
+*if: thoroughEmailValidationDomainExtension = "play"
 	*return
-*if: betterEmailValidationDomainExtension = "playstation"
+*if: thoroughEmailValidationDomainExtension = "playstation"
 	*return
-*if: betterEmailValidationDomainExtension = "plumbing"
+*if: thoroughEmailValidationDomainExtension = "plumbing"
 	*return
-*if: betterEmailValidationDomainExtension = "plus"
+*if: thoroughEmailValidationDomainExtension = "plus"
 	*return
-*if: betterEmailValidationDomainExtension = "pm"
+*if: thoroughEmailValidationDomainExtension = "pm"
 	*return
-*if: betterEmailValidationDomainExtension = "pn"
+*if: thoroughEmailValidationDomainExtension = "pn"
 	*return
-*if: betterEmailValidationDomainExtension = "pnc"
+*if: thoroughEmailValidationDomainExtension = "pnc"
 	*return
-*if: betterEmailValidationDomainExtension = "pohl"
+*if: thoroughEmailValidationDomainExtension = "pohl"
 	*return
-*if: betterEmailValidationDomainExtension = "poker"
+*if: thoroughEmailValidationDomainExtension = "poker"
 	*return
-*if: betterEmailValidationDomainExtension = "politie"
+*if: thoroughEmailValidationDomainExtension = "politie"
 	*return
-*if: betterEmailValidationDomainExtension = "porn"
+*if: thoroughEmailValidationDomainExtension = "porn"
 	*return
-*if: betterEmailValidationDomainExtension = "post"
+*if: thoroughEmailValidationDomainExtension = "post"
 	*return
-*if: betterEmailValidationDomainExtension = "pr"
+*if: thoroughEmailValidationDomainExtension = "pr"
 	*return
-*if: betterEmailValidationDomainExtension = "pramerica"
+*if: thoroughEmailValidationDomainExtension = "pramerica"
 	*return
-*if: betterEmailValidationDomainExtension = "praxi"
+*if: thoroughEmailValidationDomainExtension = "praxi"
 	*return
-*if: betterEmailValidationDomainExtension = "press"
+*if: thoroughEmailValidationDomainExtension = "press"
 	*return
-*if: betterEmailValidationDomainExtension = "prime"
+*if: thoroughEmailValidationDomainExtension = "prime"
 	*return
-*if: betterEmailValidationDomainExtension = "pro"
+*if: thoroughEmailValidationDomainExtension = "pro"
 	*return
-*if: betterEmailValidationDomainExtension = "prod"
+*if: thoroughEmailValidationDomainExtension = "prod"
 	*return
-*if: betterEmailValidationDomainExtension = "productions"
+*if: thoroughEmailValidationDomainExtension = "productions"
 	*return
-*if: betterEmailValidationDomainExtension = "prof"
+*if: thoroughEmailValidationDomainExtension = "prof"
 	*return
-*if: betterEmailValidationDomainExtension = "progressive"
+*if: thoroughEmailValidationDomainExtension = "progressive"
 	*return
-*if: betterEmailValidationDomainExtension = "promo"
+*if: thoroughEmailValidationDomainExtension = "promo"
 	*return
-*if: betterEmailValidationDomainExtension = "properties"
+*if: thoroughEmailValidationDomainExtension = "properties"
 	*return
-*if: betterEmailValidationDomainExtension = "property"
+*if: thoroughEmailValidationDomainExtension = "property"
 	*return
-*if: betterEmailValidationDomainExtension = "protection"
+*if: thoroughEmailValidationDomainExtension = "protection"
 	*return
-*if: betterEmailValidationDomainExtension = "pru"
+*if: thoroughEmailValidationDomainExtension = "pru"
 	*return
-*if: betterEmailValidationDomainExtension = "prudential"
+*if: thoroughEmailValidationDomainExtension = "prudential"
 	*return
-*if: betterEmailValidationDomainExtension = "ps"
+*if: thoroughEmailValidationDomainExtension = "ps"
 	*return
-*if: betterEmailValidationDomainExtension = "pt"
+*if: thoroughEmailValidationDomainExtension = "pt"
 	*return
-*if: betterEmailValidationDomainExtension = "pub"
+*if: thoroughEmailValidationDomainExtension = "pub"
 	*return
-*if: betterEmailValidationDomainExtension = "pw"
+*if: thoroughEmailValidationDomainExtension = "pw"
 	*return
-*if: betterEmailValidationDomainExtension = "pwc"
+*if: thoroughEmailValidationDomainExtension = "pwc"
 	*return
-*if: betterEmailValidationDomainExtension = "py"
+*if: thoroughEmailValidationDomainExtension = "py"
 	*return
-*if: betterEmailValidationDomainExtension = "qa"
+*if: thoroughEmailValidationDomainExtension = "qa"
 	*return
-*if: betterEmailValidationDomainExtension = "qpon"
+*if: thoroughEmailValidationDomainExtension = "qpon"
 	*return
-*if: betterEmailValidationDomainExtension = "quebec"
+*if: thoroughEmailValidationDomainExtension = "quebec"
 	*return
-*if: betterEmailValidationDomainExtension = "quest"
+*if: thoroughEmailValidationDomainExtension = "quest"
 	*return
-*if: betterEmailValidationDomainExtension = "qvc"
+*if: thoroughEmailValidationDomainExtension = "qvc"
 	*return
-*if: betterEmailValidationDomainExtension = "racing"
+*if: thoroughEmailValidationDomainExtension = "racing"
 	*return
-*if: betterEmailValidationDomainExtension = "radio"
+*if: thoroughEmailValidationDomainExtension = "radio"
 	*return
-*if: betterEmailValidationDomainExtension = "raid"
+*if: thoroughEmailValidationDomainExtension = "raid"
 	*return
-*if: betterEmailValidationDomainExtension = "re"
+*if: thoroughEmailValidationDomainExtension = "re"
 	*return
-*if: betterEmailValidationDomainExtension = "read"
+*if: thoroughEmailValidationDomainExtension = "read"
 	*return
-*if: betterEmailValidationDomainExtension = "realestate"
+*if: thoroughEmailValidationDomainExtension = "realestate"
 	*return
-*if: betterEmailValidationDomainExtension = "realtor"
+*if: thoroughEmailValidationDomainExtension = "realtor"
 	*return
-*if: betterEmailValidationDomainExtension = "realty"
+*if: thoroughEmailValidationDomainExtension = "realty"
 	*return
-*if: betterEmailValidationDomainExtension = "recipes"
+*if: thoroughEmailValidationDomainExtension = "recipes"
 	*return
-*if: betterEmailValidationDomainExtension = "red"
+*if: thoroughEmailValidationDomainExtension = "red"
 	*return
-*if: betterEmailValidationDomainExtension = "redstone"
+*if: thoroughEmailValidationDomainExtension = "redstone"
 	*return
-*if: betterEmailValidationDomainExtension = "redumbrella"
+*if: thoroughEmailValidationDomainExtension = "redumbrella"
 	*return
-*if: betterEmailValidationDomainExtension = "rehab"
+*if: thoroughEmailValidationDomainExtension = "rehab"
 	*return
-*if: betterEmailValidationDomainExtension = "reise"
+*if: thoroughEmailValidationDomainExtension = "reise"
 	*return
-*if: betterEmailValidationDomainExtension = "reisen"
+*if: thoroughEmailValidationDomainExtension = "reisen"
 	*return
-*if: betterEmailValidationDomainExtension = "reit"
+*if: thoroughEmailValidationDomainExtension = "reit"
 	*return
-*if: betterEmailValidationDomainExtension = "reliance"
+*if: thoroughEmailValidationDomainExtension = "reliance"
 	*return
-*if: betterEmailValidationDomainExtension = "ren"
+*if: thoroughEmailValidationDomainExtension = "ren"
 	*return
-*if: betterEmailValidationDomainExtension = "rent"
+*if: thoroughEmailValidationDomainExtension = "rent"
 	*return
-*if: betterEmailValidationDomainExtension = "rentals"
+*if: thoroughEmailValidationDomainExtension = "rentals"
 	*return
-*if: betterEmailValidationDomainExtension = "repair"
+*if: thoroughEmailValidationDomainExtension = "repair"
 	*return
-*if: betterEmailValidationDomainExtension = "report"
+*if: thoroughEmailValidationDomainExtension = "report"
 	*return
-*if: betterEmailValidationDomainExtension = "republican"
+*if: thoroughEmailValidationDomainExtension = "republican"
 	*return
-*if: betterEmailValidationDomainExtension = "rest"
+*if: thoroughEmailValidationDomainExtension = "rest"
 	*return
-*if: betterEmailValidationDomainExtension = "restaurant"
+*if: thoroughEmailValidationDomainExtension = "restaurant"
 	*return
-*if: betterEmailValidationDomainExtension = "review"
+*if: thoroughEmailValidationDomainExtension = "review"
 	*return
-*if: betterEmailValidationDomainExtension = "reviews"
+*if: thoroughEmailValidationDomainExtension = "reviews"
 	*return
-*if: betterEmailValidationDomainExtension = "rexroth"
+*if: thoroughEmailValidationDomainExtension = "rexroth"
 	*return
-*if: betterEmailValidationDomainExtension = "rich"
+*if: thoroughEmailValidationDomainExtension = "rich"
 	*return
-*if: betterEmailValidationDomainExtension = "richardli"
+*if: thoroughEmailValidationDomainExtension = "richardli"
 	*return
-*if: betterEmailValidationDomainExtension = "ricoh"
+*if: thoroughEmailValidationDomainExtension = "ricoh"
 	*return
-*if: betterEmailValidationDomainExtension = "rightathome"
+*if: thoroughEmailValidationDomainExtension = "rightathome"
 	*return
-*if: betterEmailValidationDomainExtension = "ril"
+*if: thoroughEmailValidationDomainExtension = "ril"
 	*return
-*if: betterEmailValidationDomainExtension = "rio"
+*if: thoroughEmailValidationDomainExtension = "rio"
 	*return
-*if: betterEmailValidationDomainExtension = "rip"
+*if: thoroughEmailValidationDomainExtension = "rip"
 	*return
-*if: betterEmailValidationDomainExtension = "rmit"
+*if: thoroughEmailValidationDomainExtension = "rmit"
 	*return
-*if: betterEmailValidationDomainExtension = "ro"
+*if: thoroughEmailValidationDomainExtension = "ro"
 	*return
-*if: betterEmailValidationDomainExtension = "rocher"
+*if: thoroughEmailValidationDomainExtension = "rocher"
 	*return
-*if: betterEmailValidationDomainExtension = "rocks"
+*if: thoroughEmailValidationDomainExtension = "rocks"
 	*return
-*if: betterEmailValidationDomainExtension = "rodeo"
+*if: thoroughEmailValidationDomainExtension = "rodeo"
 	*return
-*if: betterEmailValidationDomainExtension = "rogers"
+*if: thoroughEmailValidationDomainExtension = "rogers"
 	*return
-*if: betterEmailValidationDomainExtension = "room"
+*if: thoroughEmailValidationDomainExtension = "room"
 	*return
-*if: betterEmailValidationDomainExtension = "rs"
+*if: thoroughEmailValidationDomainExtension = "rs"
 	*return
-*if: betterEmailValidationDomainExtension = "rsvp"
+*if: thoroughEmailValidationDomainExtension = "rsvp"
 	*return
-*if: betterEmailValidationDomainExtension = "ru"
+*if: thoroughEmailValidationDomainExtension = "ru"
 	*return
-*if: betterEmailValidationDomainExtension = "rugby"
+*if: thoroughEmailValidationDomainExtension = "rugby"
 	*return
-*if: betterEmailValidationDomainExtension = "ruhr"
+*if: thoroughEmailValidationDomainExtension = "ruhr"
 	*return
-*if: betterEmailValidationDomainExtension = "run"
+*if: thoroughEmailValidationDomainExtension = "run"
 	*return
-*if: betterEmailValidationDomainExtension = "rw"
+*if: thoroughEmailValidationDomainExtension = "rw"
 	*return
-*if: betterEmailValidationDomainExtension = "rwe"
+*if: thoroughEmailValidationDomainExtension = "rwe"
 	*return
-*if: betterEmailValidationDomainExtension = "ryukyu"
+*if: thoroughEmailValidationDomainExtension = "ryukyu"
 	*return
-*if: betterEmailValidationDomainExtension = "sa"
+*if: thoroughEmailValidationDomainExtension = "sa"
 	*return
-*if: betterEmailValidationDomainExtension = "saarland"
+*if: thoroughEmailValidationDomainExtension = "saarland"
 	*return
-*if: betterEmailValidationDomainExtension = "safe"
+*if: thoroughEmailValidationDomainExtension = "safe"
 	*return
-*if: betterEmailValidationDomainExtension = "safety"
+*if: thoroughEmailValidationDomainExtension = "safety"
 	*return
-*if: betterEmailValidationDomainExtension = "sakura"
+*if: thoroughEmailValidationDomainExtension = "sakura"
 	*return
-*if: betterEmailValidationDomainExtension = "sale"
+*if: thoroughEmailValidationDomainExtension = "sale"
 	*return
-*if: betterEmailValidationDomainExtension = "salon"
+*if: thoroughEmailValidationDomainExtension = "salon"
 	*return
-*if: betterEmailValidationDomainExtension = "samsclub"
+*if: thoroughEmailValidationDomainExtension = "samsclub"
 	*return
-*if: betterEmailValidationDomainExtension = "samsung"
+*if: thoroughEmailValidationDomainExtension = "samsung"
 	*return
-*if: betterEmailValidationDomainExtension = "sandvik"
+*if: thoroughEmailValidationDomainExtension = "sandvik"
 	*return
-*if: betterEmailValidationDomainExtension = "sandvikcoromant"
+*if: thoroughEmailValidationDomainExtension = "sandvikcoromant"
 	*return
-*if: betterEmailValidationDomainExtension = "sanofi"
+*if: thoroughEmailValidationDomainExtension = "sanofi"
 	*return
-*if: betterEmailValidationDomainExtension = "sap"
+*if: thoroughEmailValidationDomainExtension = "sap"
 	*return
-*if: betterEmailValidationDomainExtension = "sarl"
+*if: thoroughEmailValidationDomainExtension = "sarl"
 	*return
-*if: betterEmailValidationDomainExtension = "sas"
+*if: thoroughEmailValidationDomainExtension = "sas"
 	*return
-*if: betterEmailValidationDomainExtension = "save"
+*if: thoroughEmailValidationDomainExtension = "save"
 	*return
-*if: betterEmailValidationDomainExtension = "saxo"
+*if: thoroughEmailValidationDomainExtension = "saxo"
 	*return
-*if: betterEmailValidationDomainExtension = "sb"
+*if: thoroughEmailValidationDomainExtension = "sb"
 	*return
-*if: betterEmailValidationDomainExtension = "sbi"
+*if: thoroughEmailValidationDomainExtension = "sbi"
 	*return
-*if: betterEmailValidationDomainExtension = "sbs"
+*if: thoroughEmailValidationDomainExtension = "sbs"
 	*return
-*if: betterEmailValidationDomainExtension = "sc"
+*if: thoroughEmailValidationDomainExtension = "sc"
 	*return
-*if: betterEmailValidationDomainExtension = "sca"
+*if: thoroughEmailValidationDomainExtension = "sca"
 	*return
-*if: betterEmailValidationDomainExtension = "scb"
+*if: thoroughEmailValidationDomainExtension = "scb"
 	*return
-*if: betterEmailValidationDomainExtension = "schaeffler"
+*if: thoroughEmailValidationDomainExtension = "schaeffler"
 	*return
-*if: betterEmailValidationDomainExtension = "schmidt"
+*if: thoroughEmailValidationDomainExtension = "schmidt"
 	*return
-*if: betterEmailValidationDomainExtension = "scholarships"
+*if: thoroughEmailValidationDomainExtension = "scholarships"
 	*return
-*if: betterEmailValidationDomainExtension = "school"
+*if: thoroughEmailValidationDomainExtension = "school"
 	*return
-*if: betterEmailValidationDomainExtension = "schule"
+*if: thoroughEmailValidationDomainExtension = "schule"
 	*return
-*if: betterEmailValidationDomainExtension = "schwarz"
+*if: thoroughEmailValidationDomainExtension = "schwarz"
 	*return
-*if: betterEmailValidationDomainExtension = "science"
+*if: thoroughEmailValidationDomainExtension = "science"
 	*return
-*if: betterEmailValidationDomainExtension = "scjohnson"
+*if: thoroughEmailValidationDomainExtension = "scjohnson"
 	*return
-*if: betterEmailValidationDomainExtension = "scor"
+*if: thoroughEmailValidationDomainExtension = "scor"
 	*return
-*if: betterEmailValidationDomainExtension = "scot"
+*if: thoroughEmailValidationDomainExtension = "scot"
 	*return
-*if: betterEmailValidationDomainExtension = "sd"
+*if: thoroughEmailValidationDomainExtension = "sd"
 	*return
-*if: betterEmailValidationDomainExtension = "se"
+*if: thoroughEmailValidationDomainExtension = "se"
 	*return
-*if: betterEmailValidationDomainExtension = "search"
+*if: thoroughEmailValidationDomainExtension = "search"
 	*return
-*if: betterEmailValidationDomainExtension = "seat"
+*if: thoroughEmailValidationDomainExtension = "seat"
 	*return
-*if: betterEmailValidationDomainExtension = "secure"
+*if: thoroughEmailValidationDomainExtension = "secure"
 	*return
-*if: betterEmailValidationDomainExtension = "security"
+*if: thoroughEmailValidationDomainExtension = "security"
 	*return
-*if: betterEmailValidationDomainExtension = "seek"
+*if: thoroughEmailValidationDomainExtension = "seek"
 	*return
-*if: betterEmailValidationDomainExtension = "select"
+*if: thoroughEmailValidationDomainExtension = "select"
 	*return
-*if: betterEmailValidationDomainExtension = "sener"
+*if: thoroughEmailValidationDomainExtension = "sener"
 	*return
-*if: betterEmailValidationDomainExtension = "services"
+*if: thoroughEmailValidationDomainExtension = "services"
 	*return
-*if: betterEmailValidationDomainExtension = "ses"
+*if: thoroughEmailValidationDomainExtension = "ses"
 	*return
-*if: betterEmailValidationDomainExtension = "seven"
+*if: thoroughEmailValidationDomainExtension = "seven"
 	*return
-*if: betterEmailValidationDomainExtension = "sew"
+*if: thoroughEmailValidationDomainExtension = "sew"
 	*return
-*if: betterEmailValidationDomainExtension = "sex"
+*if: thoroughEmailValidationDomainExtension = "sex"
 	*return
-*if: betterEmailValidationDomainExtension = "sexy"
+*if: thoroughEmailValidationDomainExtension = "sexy"
 	*return
-*if: betterEmailValidationDomainExtension = "sfr"
+*if: thoroughEmailValidationDomainExtension = "sfr"
 	*return
-*if: betterEmailValidationDomainExtension = "sg"
+*if: thoroughEmailValidationDomainExtension = "sg"
 	*return
-*if: betterEmailValidationDomainExtension = "sh"
+*if: thoroughEmailValidationDomainExtension = "sh"
 	*return
-*if: betterEmailValidationDomainExtension = "shangrila"
+*if: thoroughEmailValidationDomainExtension = "shangrila"
 	*return
-*if: betterEmailValidationDomainExtension = "sharp"
+*if: thoroughEmailValidationDomainExtension = "sharp"
 	*return
-*if: betterEmailValidationDomainExtension = "shaw"
+*if: thoroughEmailValidationDomainExtension = "shaw"
 	*return
-*if: betterEmailValidationDomainExtension = "shell"
+*if: thoroughEmailValidationDomainExtension = "shell"
 	*return
-*if: betterEmailValidationDomainExtension = "shia"
+*if: thoroughEmailValidationDomainExtension = "shia"
 	*return
-*if: betterEmailValidationDomainExtension = "shiksha"
+*if: thoroughEmailValidationDomainExtension = "shiksha"
 	*return
-*if: betterEmailValidationDomainExtension = "shoes"
+*if: thoroughEmailValidationDomainExtension = "shoes"
 	*return
-*if: betterEmailValidationDomainExtension = "shop"
+*if: thoroughEmailValidationDomainExtension = "shop"
 	*return
-*if: betterEmailValidationDomainExtension = "shopping"
+*if: thoroughEmailValidationDomainExtension = "shopping"
 	*return
-*if: betterEmailValidationDomainExtension = "shouji"
+*if: thoroughEmailValidationDomainExtension = "shouji"
 	*return
-*if: betterEmailValidationDomainExtension = "show"
+*if: thoroughEmailValidationDomainExtension = "show"
 	*return
-*if: betterEmailValidationDomainExtension = "showtime"
+*if: thoroughEmailValidationDomainExtension = "showtime"
 	*return
-*if: betterEmailValidationDomainExtension = "shriram"
+*if: thoroughEmailValidationDomainExtension = "shriram"
 	*return
-*if: betterEmailValidationDomainExtension = "si"
+*if: thoroughEmailValidationDomainExtension = "si"
 	*return
-*if: betterEmailValidationDomainExtension = "silk"
+*if: thoroughEmailValidationDomainExtension = "silk"
 	*return
-*if: betterEmailValidationDomainExtension = "sina"
+*if: thoroughEmailValidationDomainExtension = "sina"
 	*return
-*if: betterEmailValidationDomainExtension = "singles"
+*if: thoroughEmailValidationDomainExtension = "singles"
 	*return
-*if: betterEmailValidationDomainExtension = "site"
+*if: thoroughEmailValidationDomainExtension = "site"
 	*return
-*if: betterEmailValidationDomainExtension = "sj"
+*if: thoroughEmailValidationDomainExtension = "sj"
 	*return
-*if: betterEmailValidationDomainExtension = "sk"
+*if: thoroughEmailValidationDomainExtension = "sk"
 	*return
-*if: betterEmailValidationDomainExtension = "ski"
+*if: thoroughEmailValidationDomainExtension = "ski"
 	*return
-*if: betterEmailValidationDomainExtension = "skin"
+*if: thoroughEmailValidationDomainExtension = "skin"
 	*return
-*if: betterEmailValidationDomainExtension = "sky"
+*if: thoroughEmailValidationDomainExtension = "sky"
 	*return
-*if: betterEmailValidationDomainExtension = "skype"
+*if: thoroughEmailValidationDomainExtension = "skype"
 	*return
-*if: betterEmailValidationDomainExtension = "sl"
+*if: thoroughEmailValidationDomainExtension = "sl"
 	*return
-*if: betterEmailValidationDomainExtension = "sling"
+*if: thoroughEmailValidationDomainExtension = "sling"
 	*return
-*if: betterEmailValidationDomainExtension = "sm"
+*if: thoroughEmailValidationDomainExtension = "sm"
 	*return
-*if: betterEmailValidationDomainExtension = "smart"
+*if: thoroughEmailValidationDomainExtension = "smart"
 	*return
-*if: betterEmailValidationDomainExtension = "smile"
+*if: thoroughEmailValidationDomainExtension = "smile"
 	*return
-*if: betterEmailValidationDomainExtension = "sn"
+*if: thoroughEmailValidationDomainExtension = "sn"
 	*return
-*if: betterEmailValidationDomainExtension = "sncf"
+*if: thoroughEmailValidationDomainExtension = "sncf"
 	*return
-*if: betterEmailValidationDomainExtension = "so"
+*if: thoroughEmailValidationDomainExtension = "so"
 	*return
-*if: betterEmailValidationDomainExtension = "soccer"
+*if: thoroughEmailValidationDomainExtension = "soccer"
 	*return
-*if: betterEmailValidationDomainExtension = "social"
+*if: thoroughEmailValidationDomainExtension = "social"
 	*return
-*if: betterEmailValidationDomainExtension = "softbank"
+*if: thoroughEmailValidationDomainExtension = "softbank"
 	*return
-*if: betterEmailValidationDomainExtension = "software"
+*if: thoroughEmailValidationDomainExtension = "software"
 	*return
-*if: betterEmailValidationDomainExtension = "sohu"
+*if: thoroughEmailValidationDomainExtension = "sohu"
 	*return
-*if: betterEmailValidationDomainExtension = "solar"
+*if: thoroughEmailValidationDomainExtension = "solar"
 	*return
-*if: betterEmailValidationDomainExtension = "solutions"
+*if: thoroughEmailValidationDomainExtension = "solutions"
 	*return
-*if: betterEmailValidationDomainExtension = "song"
+*if: thoroughEmailValidationDomainExtension = "song"
 	*return
-*if: betterEmailValidationDomainExtension = "sony"
+*if: thoroughEmailValidationDomainExtension = "sony"
 	*return
-*if: betterEmailValidationDomainExtension = "soy"
+*if: thoroughEmailValidationDomainExtension = "soy"
 	*return
-*if: betterEmailValidationDomainExtension = "space"
+*if: thoroughEmailValidationDomainExtension = "space"
 	*return
-*if: betterEmailValidationDomainExtension = "sport"
+*if: thoroughEmailValidationDomainExtension = "sport"
 	*return
-*if: betterEmailValidationDomainExtension = "spot"
+*if: thoroughEmailValidationDomainExtension = "spot"
 	*return
-*if: betterEmailValidationDomainExtension = "spreadbetting"
+*if: thoroughEmailValidationDomainExtension = "spreadbetting"
 	*return
-*if: betterEmailValidationDomainExtension = "sr"
+*if: thoroughEmailValidationDomainExtension = "sr"
 	*return
-*if: betterEmailValidationDomainExtension = "srl"
+*if: thoroughEmailValidationDomainExtension = "srl"
 	*return
-*if: betterEmailValidationDomainExtension = "ss"
+*if: thoroughEmailValidationDomainExtension = "ss"
 	*return
-*if: betterEmailValidationDomainExtension = "st"
+*if: thoroughEmailValidationDomainExtension = "st"
 	*return
-*if: betterEmailValidationDomainExtension = "stada"
+*if: thoroughEmailValidationDomainExtension = "stada"
 	*return
-*if: betterEmailValidationDomainExtension = "staples"
+*if: thoroughEmailValidationDomainExtension = "staples"
 	*return
-*if: betterEmailValidationDomainExtension = "star"
+*if: thoroughEmailValidationDomainExtension = "star"
 	*return
-*if: betterEmailValidationDomainExtension = "statebank"
+*if: thoroughEmailValidationDomainExtension = "statebank"
 	*return
-*if: betterEmailValidationDomainExtension = "statefarm"
+*if: thoroughEmailValidationDomainExtension = "statefarm"
 	*return
-*if: betterEmailValidationDomainExtension = "stc"
+*if: thoroughEmailValidationDomainExtension = "stc"
 	*return
-*if: betterEmailValidationDomainExtension = "stcgroup"
+*if: thoroughEmailValidationDomainExtension = "stcgroup"
 	*return
-*if: betterEmailValidationDomainExtension = "stockholm"
+*if: thoroughEmailValidationDomainExtension = "stockholm"
 	*return
-*if: betterEmailValidationDomainExtension = "storage"
+*if: thoroughEmailValidationDomainExtension = "storage"
 	*return
-*if: betterEmailValidationDomainExtension = "store"
+*if: thoroughEmailValidationDomainExtension = "store"
 	*return
-*if: betterEmailValidationDomainExtension = "stream"
+*if: thoroughEmailValidationDomainExtension = "stream"
 	*return
-*if: betterEmailValidationDomainExtension = "studio"
+*if: thoroughEmailValidationDomainExtension = "studio"
 	*return
-*if: betterEmailValidationDomainExtension = "study"
+*if: thoroughEmailValidationDomainExtension = "study"
 	*return
-*if: betterEmailValidationDomainExtension = "style"
+*if: thoroughEmailValidationDomainExtension = "style"
 	*return
-*if: betterEmailValidationDomainExtension = "su"
+*if: thoroughEmailValidationDomainExtension = "su"
 	*return
-*if: betterEmailValidationDomainExtension = "sucks"
+*if: thoroughEmailValidationDomainExtension = "sucks"
 	*return
-*if: betterEmailValidationDomainExtension = "supplies"
+*if: thoroughEmailValidationDomainExtension = "supplies"
 	*return
-*if: betterEmailValidationDomainExtension = "supply"
+*if: thoroughEmailValidationDomainExtension = "supply"
 	*return
-*if: betterEmailValidationDomainExtension = "support"
+*if: thoroughEmailValidationDomainExtension = "support"
 	*return
-*if: betterEmailValidationDomainExtension = "surf"
+*if: thoroughEmailValidationDomainExtension = "surf"
 	*return
-*if: betterEmailValidationDomainExtension = "surgery"
+*if: thoroughEmailValidationDomainExtension = "surgery"
 	*return
-*if: betterEmailValidationDomainExtension = "suzuki"
+*if: thoroughEmailValidationDomainExtension = "suzuki"
 	*return
-*if: betterEmailValidationDomainExtension = "sv"
+*if: thoroughEmailValidationDomainExtension = "sv"
 	*return
-*if: betterEmailValidationDomainExtension = "swatch"
+*if: thoroughEmailValidationDomainExtension = "swatch"
 	*return
-*if: betterEmailValidationDomainExtension = "swiftcover"
+*if: thoroughEmailValidationDomainExtension = "swiftcover"
 	*return
-*if: betterEmailValidationDomainExtension = "swiss"
+*if: thoroughEmailValidationDomainExtension = "swiss"
 	*return
-*if: betterEmailValidationDomainExtension = "sx"
+*if: thoroughEmailValidationDomainExtension = "sx"
 	*return
-*if: betterEmailValidationDomainExtension = "sy"
+*if: thoroughEmailValidationDomainExtension = "sy"
 	*return
-*if: betterEmailValidationDomainExtension = "sydney"
+*if: thoroughEmailValidationDomainExtension = "sydney"
 	*return
-*if: betterEmailValidationDomainExtension = "symantec"
+*if: thoroughEmailValidationDomainExtension = "symantec"
 	*return
-*if: betterEmailValidationDomainExtension = "systems"
+*if: thoroughEmailValidationDomainExtension = "systems"
 	*return
-*if: betterEmailValidationDomainExtension = "sz"
+*if: thoroughEmailValidationDomainExtension = "sz"
 	*return
-*if: betterEmailValidationDomainExtension = "tab"
+*if: thoroughEmailValidationDomainExtension = "tab"
 	*return
-*if: betterEmailValidationDomainExtension = "taipei"
+*if: thoroughEmailValidationDomainExtension = "taipei"
 	*return
-*if: betterEmailValidationDomainExtension = "talk"
+*if: thoroughEmailValidationDomainExtension = "talk"
 	*return
-*if: betterEmailValidationDomainExtension = "taobao"
+*if: thoroughEmailValidationDomainExtension = "taobao"
 	*return
-*if: betterEmailValidationDomainExtension = "target"
+*if: thoroughEmailValidationDomainExtension = "target"
 	*return
-*if: betterEmailValidationDomainExtension = "tatamotors"
+*if: thoroughEmailValidationDomainExtension = "tatamotors"
 	*return
-*if: betterEmailValidationDomainExtension = "tatar"
+*if: thoroughEmailValidationDomainExtension = "tatar"
 	*return
-*if: betterEmailValidationDomainExtension = "tattoo"
+*if: thoroughEmailValidationDomainExtension = "tattoo"
 	*return
-*if: betterEmailValidationDomainExtension = "tax"
+*if: thoroughEmailValidationDomainExtension = "tax"
 	*return
-*if: betterEmailValidationDomainExtension = "taxi"
+*if: thoroughEmailValidationDomainExtension = "taxi"
 	*return
-*if: betterEmailValidationDomainExtension = "tc"
+*if: thoroughEmailValidationDomainExtension = "tc"
 	*return
-*if: betterEmailValidationDomainExtension = "tci"
+*if: thoroughEmailValidationDomainExtension = "tci"
 	*return
-*if: betterEmailValidationDomainExtension = "td"
+*if: thoroughEmailValidationDomainExtension = "td"
 	*return
-*if: betterEmailValidationDomainExtension = "tdk"
+*if: thoroughEmailValidationDomainExtension = "tdk"
 	*return
-*if: betterEmailValidationDomainExtension = "team"
+*if: thoroughEmailValidationDomainExtension = "team"
 	*return
-*if: betterEmailValidationDomainExtension = "tech"
+*if: thoroughEmailValidationDomainExtension = "tech"
 	*return
-*if: betterEmailValidationDomainExtension = "technology"
+*if: thoroughEmailValidationDomainExtension = "technology"
 	*return
-*if: betterEmailValidationDomainExtension = "tel"
+*if: thoroughEmailValidationDomainExtension = "tel"
 	*return
-*if: betterEmailValidationDomainExtension = "temasek"
+*if: thoroughEmailValidationDomainExtension = "temasek"
 	*return
-*if: betterEmailValidationDomainExtension = "tennis"
+*if: thoroughEmailValidationDomainExtension = "tennis"
 	*return
-*if: betterEmailValidationDomainExtension = "teva"
+*if: thoroughEmailValidationDomainExtension = "teva"
 	*return
-*if: betterEmailValidationDomainExtension = "tf"
+*if: thoroughEmailValidationDomainExtension = "tf"
 	*return
-*if: betterEmailValidationDomainExtension = "tg"
+*if: thoroughEmailValidationDomainExtension = "tg"
 	*return
-*if: betterEmailValidationDomainExtension = "th"
+*if: thoroughEmailValidationDomainExtension = "th"
 	*return
-*if: betterEmailValidationDomainExtension = "thd"
+*if: thoroughEmailValidationDomainExtension = "thd"
 	*return
-*if: betterEmailValidationDomainExtension = "theater"
+*if: thoroughEmailValidationDomainExtension = "theater"
 	*return
-*if: betterEmailValidationDomainExtension = "theatre"
+*if: thoroughEmailValidationDomainExtension = "theatre"
 	*return
-*if: betterEmailValidationDomainExtension = "tiaa"
+*if: thoroughEmailValidationDomainExtension = "tiaa"
 	*return
-*if: betterEmailValidationDomainExtension = "tickets"
+*if: thoroughEmailValidationDomainExtension = "tickets"
 	*return
-*if: betterEmailValidationDomainExtension = "tienda"
+*if: thoroughEmailValidationDomainExtension = "tienda"
 	*return
-*if: betterEmailValidationDomainExtension = "tiffany"
+*if: thoroughEmailValidationDomainExtension = "tiffany"
 	*return
-*if: betterEmailValidationDomainExtension = "tips"
+*if: thoroughEmailValidationDomainExtension = "tips"
 	*return
-*if: betterEmailValidationDomainExtension = "tires"
+*if: thoroughEmailValidationDomainExtension = "tires"
 	*return
-*if: betterEmailValidationDomainExtension = "tirol"
+*if: thoroughEmailValidationDomainExtension = "tirol"
 	*return
-*if: betterEmailValidationDomainExtension = "tj"
+*if: thoroughEmailValidationDomainExtension = "tj"
 	*return
-*if: betterEmailValidationDomainExtension = "tjmaxx"
+*if: thoroughEmailValidationDomainExtension = "tjmaxx"
 	*return
-*if: betterEmailValidationDomainExtension = "tjx"
+*if: thoroughEmailValidationDomainExtension = "tjx"
 	*return
-*if: betterEmailValidationDomainExtension = "tk"
+*if: thoroughEmailValidationDomainExtension = "tk"
 	*return
-*if: betterEmailValidationDomainExtension = "tkmaxx"
+*if: thoroughEmailValidationDomainExtension = "tkmaxx"
 	*return
-*if: betterEmailValidationDomainExtension = "tl"
+*if: thoroughEmailValidationDomainExtension = "tl"
 	*return
-*if: betterEmailValidationDomainExtension = "tm"
+*if: thoroughEmailValidationDomainExtension = "tm"
 	*return
-*if: betterEmailValidationDomainExtension = "tmall"
+*if: thoroughEmailValidationDomainExtension = "tmall"
 	*return
-*if: betterEmailValidationDomainExtension = "tn"
+*if: thoroughEmailValidationDomainExtension = "tn"
 	*return
-*if: betterEmailValidationDomainExtension = "to"
+*if: thoroughEmailValidationDomainExtension = "to"
 	*return
-*if: betterEmailValidationDomainExtension = "today"
+*if: thoroughEmailValidationDomainExtension = "today"
 	*return
-*if: betterEmailValidationDomainExtension = "tokyo"
+*if: thoroughEmailValidationDomainExtension = "tokyo"
 	*return
-*if: betterEmailValidationDomainExtension = "tools"
+*if: thoroughEmailValidationDomainExtension = "tools"
 	*return
-*if: betterEmailValidationDomainExtension = "top"
+*if: thoroughEmailValidationDomainExtension = "top"
 	*return
-*if: betterEmailValidationDomainExtension = "toray"
+*if: thoroughEmailValidationDomainExtension = "toray"
 	*return
-*if: betterEmailValidationDomainExtension = "toshiba"
+*if: thoroughEmailValidationDomainExtension = "toshiba"
 	*return
-*if: betterEmailValidationDomainExtension = "total"
+*if: thoroughEmailValidationDomainExtension = "total"
 	*return
-*if: betterEmailValidationDomainExtension = "tours"
+*if: thoroughEmailValidationDomainExtension = "tours"
 	*return
-*if: betterEmailValidationDomainExtension = "town"
+*if: thoroughEmailValidationDomainExtension = "town"
 	*return
-*if: betterEmailValidationDomainExtension = "toyota"
+*if: thoroughEmailValidationDomainExtension = "toyota"
 	*return
-*if: betterEmailValidationDomainExtension = "toys"
+*if: thoroughEmailValidationDomainExtension = "toys"
 	*return
-*if: betterEmailValidationDomainExtension = "tr"
+*if: thoroughEmailValidationDomainExtension = "tr"
 	*return
-*if: betterEmailValidationDomainExtension = "trade"
+*if: thoroughEmailValidationDomainExtension = "trade"
 	*return
-*if: betterEmailValidationDomainExtension = "trading"
+*if: thoroughEmailValidationDomainExtension = "trading"
 	*return
-*if: betterEmailValidationDomainExtension = "training"
+*if: thoroughEmailValidationDomainExtension = "training"
 	*return
-*if: betterEmailValidationDomainExtension = "travel"
+*if: thoroughEmailValidationDomainExtension = "travel"
 	*return
-*if: betterEmailValidationDomainExtension = "travelchannel"
+*if: thoroughEmailValidationDomainExtension = "travelchannel"
 	*return
-*if: betterEmailValidationDomainExtension = "travelers"
+*if: thoroughEmailValidationDomainExtension = "travelers"
 	*return
-*if: betterEmailValidationDomainExtension = "travelersinsurance"
+*if: thoroughEmailValidationDomainExtension = "travelersinsurance"
 	*return
-*if: betterEmailValidationDomainExtension = "trust"
+*if: thoroughEmailValidationDomainExtension = "trust"
 	*return
-*if: betterEmailValidationDomainExtension = "trv"
+*if: thoroughEmailValidationDomainExtension = "trv"
 	*return
-*if: betterEmailValidationDomainExtension = "tt"
+*if: thoroughEmailValidationDomainExtension = "tt"
 	*return
-*if: betterEmailValidationDomainExtension = "tube"
+*if: thoroughEmailValidationDomainExtension = "tube"
 	*return
-*if: betterEmailValidationDomainExtension = "tui"
+*if: thoroughEmailValidationDomainExtension = "tui"
 	*return
-*if: betterEmailValidationDomainExtension = "tunes"
+*if: thoroughEmailValidationDomainExtension = "tunes"
 	*return
-*if: betterEmailValidationDomainExtension = "tushu"
+*if: thoroughEmailValidationDomainExtension = "tushu"
 	*return
-*if: betterEmailValidationDomainExtension = "tv"
+*if: thoroughEmailValidationDomainExtension = "tv"
 	*return
-*if: betterEmailValidationDomainExtension = "tvs"
+*if: thoroughEmailValidationDomainExtension = "tvs"
 	*return
-*if: betterEmailValidationDomainExtension = "tw"
+*if: thoroughEmailValidationDomainExtension = "tw"
 	*return
-*if: betterEmailValidationDomainExtension = "tz"
+*if: thoroughEmailValidationDomainExtension = "tz"
 	*return
-*if: betterEmailValidationDomainExtension = "ua"
+*if: thoroughEmailValidationDomainExtension = "ua"
 	*return
-*if: betterEmailValidationDomainExtension = "ubank"
+*if: thoroughEmailValidationDomainExtension = "ubank"
 	*return
-*if: betterEmailValidationDomainExtension = "ubs"
+*if: thoroughEmailValidationDomainExtension = "ubs"
 	*return
-*if: betterEmailValidationDomainExtension = "ug"
+*if: thoroughEmailValidationDomainExtension = "ug"
 	*return
-*if: betterEmailValidationDomainExtension = "uk"
+*if: thoroughEmailValidationDomainExtension = "uk"
 	*return
-*if: betterEmailValidationDomainExtension = "unicom"
+*if: thoroughEmailValidationDomainExtension = "unicom"
 	*return
-*if: betterEmailValidationDomainExtension = "university"
+*if: thoroughEmailValidationDomainExtension = "university"
 	*return
-*if: betterEmailValidationDomainExtension = "uno"
+*if: thoroughEmailValidationDomainExtension = "uno"
 	*return
-*if: betterEmailValidationDomainExtension = "uol"
+*if: thoroughEmailValidationDomainExtension = "uol"
 	*return
-*if: betterEmailValidationDomainExtension = "ups"
+*if: thoroughEmailValidationDomainExtension = "ups"
 	*return
-*if: betterEmailValidationDomainExtension = "us"
+*if: thoroughEmailValidationDomainExtension = "us"
 	*return
-*if: betterEmailValidationDomainExtension = "uy"
+*if: thoroughEmailValidationDomainExtension = "uy"
 	*return
-*if: betterEmailValidationDomainExtension = "uz"
+*if: thoroughEmailValidationDomainExtension = "uz"
 	*return
-*if: betterEmailValidationDomainExtension = "va"
+*if: thoroughEmailValidationDomainExtension = "va"
 	*return
-*if: betterEmailValidationDomainExtension = "vacations"
+*if: thoroughEmailValidationDomainExtension = "vacations"
 	*return
-*if: betterEmailValidationDomainExtension = "vana"
+*if: thoroughEmailValidationDomainExtension = "vana"
 	*return
-*if: betterEmailValidationDomainExtension = "vanguard"
+*if: thoroughEmailValidationDomainExtension = "vanguard"
 	*return
-*if: betterEmailValidationDomainExtension = "vc"
+*if: thoroughEmailValidationDomainExtension = "vc"
 	*return
-*if: betterEmailValidationDomainExtension = "ve"
+*if: thoroughEmailValidationDomainExtension = "ve"
 	*return
-*if: betterEmailValidationDomainExtension = "vegas"
+*if: thoroughEmailValidationDomainExtension = "vegas"
 	*return
-*if: betterEmailValidationDomainExtension = "ventures"
+*if: thoroughEmailValidationDomainExtension = "ventures"
 	*return
-*if: betterEmailValidationDomainExtension = "verisign"
+*if: thoroughEmailValidationDomainExtension = "verisign"
 	*return
-*if: betterEmailValidationDomainExtension = "versicherung"
+*if: thoroughEmailValidationDomainExtension = "versicherung"
 	*return
-*if: betterEmailValidationDomainExtension = "vet"
+*if: thoroughEmailValidationDomainExtension = "vet"
 	*return
-*if: betterEmailValidationDomainExtension = "vg"
+*if: thoroughEmailValidationDomainExtension = "vg"
 	*return
-*if: betterEmailValidationDomainExtension = "vi"
+*if: thoroughEmailValidationDomainExtension = "vi"
 	*return
-*if: betterEmailValidationDomainExtension = "viajes"
+*if: thoroughEmailValidationDomainExtension = "viajes"
 	*return
-*if: betterEmailValidationDomainExtension = "video"
+*if: thoroughEmailValidationDomainExtension = "video"
 	*return
-*if: betterEmailValidationDomainExtension = "vig"
+*if: thoroughEmailValidationDomainExtension = "vig"
 	*return
-*if: betterEmailValidationDomainExtension = "viking"
+*if: thoroughEmailValidationDomainExtension = "viking"
 	*return
-*if: betterEmailValidationDomainExtension = "villas"
+*if: thoroughEmailValidationDomainExtension = "villas"
 	*return
-*if: betterEmailValidationDomainExtension = "vin"
+*if: thoroughEmailValidationDomainExtension = "vin"
 	*return
-*if: betterEmailValidationDomainExtension = "vip"
+*if: thoroughEmailValidationDomainExtension = "vip"
 	*return
-*if: betterEmailValidationDomainExtension = "virgin"
+*if: thoroughEmailValidationDomainExtension = "virgin"
 	*return
-*if: betterEmailValidationDomainExtension = "visa"
+*if: thoroughEmailValidationDomainExtension = "visa"
 	*return
-*if: betterEmailValidationDomainExtension = "vision"
+*if: thoroughEmailValidationDomainExtension = "vision"
 	*return
-*if: betterEmailValidationDomainExtension = "viva"
+*if: thoroughEmailValidationDomainExtension = "viva"
 	*return
-*if: betterEmailValidationDomainExtension = "vivo"
+*if: thoroughEmailValidationDomainExtension = "vivo"
 	*return
-*if: betterEmailValidationDomainExtension = "vlaanderen"
+*if: thoroughEmailValidationDomainExtension = "vlaanderen"
 	*return
-*if: betterEmailValidationDomainExtension = "vn"
+*if: thoroughEmailValidationDomainExtension = "vn"
 	*return
-*if: betterEmailValidationDomainExtension = "vodka"
+*if: thoroughEmailValidationDomainExtension = "vodka"
 	*return
-*if: betterEmailValidationDomainExtension = "volkswagen"
+*if: thoroughEmailValidationDomainExtension = "volkswagen"
 	*return
-*if: betterEmailValidationDomainExtension = "volvo"
+*if: thoroughEmailValidationDomainExtension = "volvo"
 	*return
-*if: betterEmailValidationDomainExtension = "vote"
+*if: thoroughEmailValidationDomainExtension = "vote"
 	*return
-*if: betterEmailValidationDomainExtension = "voting"
+*if: thoroughEmailValidationDomainExtension = "voting"
 	*return
-*if: betterEmailValidationDomainExtension = "voto"
+*if: thoroughEmailValidationDomainExtension = "voto"
 	*return
-*if: betterEmailValidationDomainExtension = "voyage"
+*if: thoroughEmailValidationDomainExtension = "voyage"
 	*return
-*if: betterEmailValidationDomainExtension = "vu"
+*if: thoroughEmailValidationDomainExtension = "vu"
 	*return
-*if: betterEmailValidationDomainExtension = "vuelos"
+*if: thoroughEmailValidationDomainExtension = "vuelos"
 	*return
-*if: betterEmailValidationDomainExtension = "wales"
+*if: thoroughEmailValidationDomainExtension = "wales"
 	*return
-*if: betterEmailValidationDomainExtension = "walmart"
+*if: thoroughEmailValidationDomainExtension = "walmart"
 	*return
-*if: betterEmailValidationDomainExtension = "walter"
+*if: thoroughEmailValidationDomainExtension = "walter"
 	*return
-*if: betterEmailValidationDomainExtension = "wang"
+*if: thoroughEmailValidationDomainExtension = "wang"
 	*return
-*if: betterEmailValidationDomainExtension = "wanggou"
+*if: thoroughEmailValidationDomainExtension = "wanggou"
 	*return
-*if: betterEmailValidationDomainExtension = "watch"
+*if: thoroughEmailValidationDomainExtension = "watch"
 	*return
-*if: betterEmailValidationDomainExtension = "watches"
+*if: thoroughEmailValidationDomainExtension = "watches"
 	*return
-*if: betterEmailValidationDomainExtension = "weather"
+*if: thoroughEmailValidationDomainExtension = "weather"
 	*return
-*if: betterEmailValidationDomainExtension = "weatherchannel"
+*if: thoroughEmailValidationDomainExtension = "weatherchannel"
 	*return
-*if: betterEmailValidationDomainExtension = "webcam"
+*if: thoroughEmailValidationDomainExtension = "webcam"
 	*return
-*if: betterEmailValidationDomainExtension = "weber"
+*if: thoroughEmailValidationDomainExtension = "weber"
 	*return
-*if: betterEmailValidationDomainExtension = "website"
+*if: thoroughEmailValidationDomainExtension = "website"
 	*return
-*if: betterEmailValidationDomainExtension = "wed"
+*if: thoroughEmailValidationDomainExtension = "wed"
 	*return
-*if: betterEmailValidationDomainExtension = "wedding"
+*if: thoroughEmailValidationDomainExtension = "wedding"
 	*return
-*if: betterEmailValidationDomainExtension = "weibo"
+*if: thoroughEmailValidationDomainExtension = "weibo"
 	*return
-*if: betterEmailValidationDomainExtension = "weir"
+*if: thoroughEmailValidationDomainExtension = "weir"
 	*return
-*if: betterEmailValidationDomainExtension = "wf"
+*if: thoroughEmailValidationDomainExtension = "wf"
 	*return
-*if: betterEmailValidationDomainExtension = "whoswho"
+*if: thoroughEmailValidationDomainExtension = "whoswho"
 	*return
-*if: betterEmailValidationDomainExtension = "wien"
+*if: thoroughEmailValidationDomainExtension = "wien"
 	*return
-*if: betterEmailValidationDomainExtension = "wiki"
+*if: thoroughEmailValidationDomainExtension = "wiki"
 	*return
-*if: betterEmailValidationDomainExtension = "williamhill"
+*if: thoroughEmailValidationDomainExtension = "williamhill"
 	*return
-*if: betterEmailValidationDomainExtension = "win"
+*if: thoroughEmailValidationDomainExtension = "win"
 	*return
-*if: betterEmailValidationDomainExtension = "windows"
+*if: thoroughEmailValidationDomainExtension = "windows"
 	*return
-*if: betterEmailValidationDomainExtension = "wine"
+*if: thoroughEmailValidationDomainExtension = "wine"
 	*return
-*if: betterEmailValidationDomainExtension = "winners"
+*if: thoroughEmailValidationDomainExtension = "winners"
 	*return
-*if: betterEmailValidationDomainExtension = "wme"
+*if: thoroughEmailValidationDomainExtension = "wme"
 	*return
-*if: betterEmailValidationDomainExtension = "wolterskluwer"
+*if: thoroughEmailValidationDomainExtension = "wolterskluwer"
 	*return
-*if: betterEmailValidationDomainExtension = "woodside"
+*if: thoroughEmailValidationDomainExtension = "woodside"
 	*return
-*if: betterEmailValidationDomainExtension = "work"
+*if: thoroughEmailValidationDomainExtension = "work"
 	*return
-*if: betterEmailValidationDomainExtension = "works"
+*if: thoroughEmailValidationDomainExtension = "works"
 	*return
-*if: betterEmailValidationDomainExtension = "world"
+*if: thoroughEmailValidationDomainExtension = "world"
 	*return
-*if: betterEmailValidationDomainExtension = "wow"
+*if: thoroughEmailValidationDomainExtension = "wow"
 	*return
-*if: betterEmailValidationDomainExtension = "ws"
+*if: thoroughEmailValidationDomainExtension = "ws"
 	*return
-*if: betterEmailValidationDomainExtension = "wtc"
+*if: thoroughEmailValidationDomainExtension = "wtc"
 	*return
-*if: betterEmailValidationDomainExtension = "wtf"
+*if: thoroughEmailValidationDomainExtension = "wtf"
 	*return
-*if: betterEmailValidationDomainExtension = "xbox"
+*if: thoroughEmailValidationDomainExtension = "xbox"
 	*return
-*if: betterEmailValidationDomainExtension = "xerox"
+*if: thoroughEmailValidationDomainExtension = "xerox"
 	*return
-*if: betterEmailValidationDomainExtension = "xfinity"
+*if: thoroughEmailValidationDomainExtension = "xfinity"
 	*return
-*if: betterEmailValidationDomainExtension = "xihuan"
+*if: thoroughEmailValidationDomainExtension = "xihuan"
 	*return
-*if: betterEmailValidationDomainExtension = "xin"
+*if: thoroughEmailValidationDomainExtension = "xin"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--11b4c3d"
+*if: thoroughEmailValidationDomainExtension = "xn--11b4c3d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--1ck2e1b"
+*if: thoroughEmailValidationDomainExtension = "xn--1ck2e1b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--1qqw23a"
+*if: thoroughEmailValidationDomainExtension = "xn--1qqw23a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--2scrj9c"
+*if: thoroughEmailValidationDomainExtension = "xn--2scrj9c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--30rr7y"
+*if: thoroughEmailValidationDomainExtension = "xn--30rr7y"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--3bst00m"
+*if: thoroughEmailValidationDomainExtension = "xn--3bst00m"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--3ds443g"
+*if: thoroughEmailValidationDomainExtension = "xn--3ds443g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--3e0b707e"
+*if: thoroughEmailValidationDomainExtension = "xn--3e0b707e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--3hcrj9c"
+*if: thoroughEmailValidationDomainExtension = "xn--3hcrj9c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--3oq18vl8pn36a"
+*if: thoroughEmailValidationDomainExtension = "xn--3oq18vl8pn36a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--3pxu8k"
+*if: thoroughEmailValidationDomainExtension = "xn--3pxu8k"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--42c2d9a"
+*if: thoroughEmailValidationDomainExtension = "xn--42c2d9a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--45br5cyl"
+*if: thoroughEmailValidationDomainExtension = "xn--45br5cyl"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--45brj9c"
+*if: thoroughEmailValidationDomainExtension = "xn--45brj9c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--45q11c"
+*if: thoroughEmailValidationDomainExtension = "xn--45q11c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--4gbrim"
+*if: thoroughEmailValidationDomainExtension = "xn--4gbrim"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--54b7fta0cc"
+*if: thoroughEmailValidationDomainExtension = "xn--54b7fta0cc"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--55qw42g"
+*if: thoroughEmailValidationDomainExtension = "xn--55qw42g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--55qx5d"
+*if: thoroughEmailValidationDomainExtension = "xn--55qx5d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--5su34j936bgsg"
+*if: thoroughEmailValidationDomainExtension = "xn--5su34j936bgsg"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--5tzm5g"
+*if: thoroughEmailValidationDomainExtension = "xn--5tzm5g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--6frz82g"
+*if: thoroughEmailValidationDomainExtension = "xn--6frz82g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--6qq986b3xl"
+*if: thoroughEmailValidationDomainExtension = "xn--6qq986b3xl"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--80adxhks"
+*if: thoroughEmailValidationDomainExtension = "xn--80adxhks"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--80ao21a"
+*if: thoroughEmailValidationDomainExtension = "xn--80ao21a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--80aqecdr1a"
+*if: thoroughEmailValidationDomainExtension = "xn--80aqecdr1a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--80asehdb"
+*if: thoroughEmailValidationDomainExtension = "xn--80asehdb"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--80aswg"
+*if: thoroughEmailValidationDomainExtension = "xn--80aswg"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--8y0a063a"
+*if: thoroughEmailValidationDomainExtension = "xn--8y0a063a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--90a3ac"
+*if: thoroughEmailValidationDomainExtension = "xn--90a3ac"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--90ae"
+*if: thoroughEmailValidationDomainExtension = "xn--90ae"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--90ais"
+*if: thoroughEmailValidationDomainExtension = "xn--90ais"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--9dbq2a"
+*if: thoroughEmailValidationDomainExtension = "xn--9dbq2a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--9et52u"
+*if: thoroughEmailValidationDomainExtension = "xn--9et52u"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--9krt00a"
+*if: thoroughEmailValidationDomainExtension = "xn--9krt00a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--b4w605ferd"
+*if: thoroughEmailValidationDomainExtension = "xn--b4w605ferd"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--bck1b9a5dre4c"
+*if: thoroughEmailValidationDomainExtension = "xn--bck1b9a5dre4c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--c1avg"
+*if: thoroughEmailValidationDomainExtension = "xn--c1avg"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--c2br7g"
+*if: thoroughEmailValidationDomainExtension = "xn--c2br7g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--cck2b3b"
+*if: thoroughEmailValidationDomainExtension = "xn--cck2b3b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--cg4bki"
+*if: thoroughEmailValidationDomainExtension = "xn--cg4bki"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--clchc0ea0b2g2a9gcd"
+*if: thoroughEmailValidationDomainExtension = "xn--clchc0ea0b2g2a9gcd"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--czr694b"
+*if: thoroughEmailValidationDomainExtension = "xn--czr694b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--czrs0t"
+*if: thoroughEmailValidationDomainExtension = "xn--czrs0t"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--czru2d"
+*if: thoroughEmailValidationDomainExtension = "xn--czru2d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--d1acj3b"
+*if: thoroughEmailValidationDomainExtension = "xn--d1acj3b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--d1alf"
+*if: thoroughEmailValidationDomainExtension = "xn--d1alf"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--e1a4c"
+*if: thoroughEmailValidationDomainExtension = "xn--e1a4c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--eckvdtc9d"
+*if: thoroughEmailValidationDomainExtension = "xn--eckvdtc9d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--efvy88h"
+*if: thoroughEmailValidationDomainExtension = "xn--efvy88h"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fct429k"
+*if: thoroughEmailValidationDomainExtension = "xn--fct429k"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fhbei"
+*if: thoroughEmailValidationDomainExtension = "xn--fhbei"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fiq228c5hs"
+*if: thoroughEmailValidationDomainExtension = "xn--fiq228c5hs"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fiq64b"
+*if: thoroughEmailValidationDomainExtension = "xn--fiq64b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fiqs8s"
+*if: thoroughEmailValidationDomainExtension = "xn--fiqs8s"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fiqz9s"
+*if: thoroughEmailValidationDomainExtension = "xn--fiqz9s"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fjq720a"
+*if: thoroughEmailValidationDomainExtension = "xn--fjq720a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--flw351e"
+*if: thoroughEmailValidationDomainExtension = "xn--flw351e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fpcrj9c3d"
+*if: thoroughEmailValidationDomainExtension = "xn--fpcrj9c3d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fzc2c9e2c"
+*if: thoroughEmailValidationDomainExtension = "xn--fzc2c9e2c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--fzys8d69uvgm"
+*if: thoroughEmailValidationDomainExtension = "xn--fzys8d69uvgm"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--g2xx48c"
+*if: thoroughEmailValidationDomainExtension = "xn--g2xx48c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--gckr3f0f"
+*if: thoroughEmailValidationDomainExtension = "xn--gckr3f0f"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--gecrj9c"
+*if: thoroughEmailValidationDomainExtension = "xn--gecrj9c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--gk3at1e"
+*if: thoroughEmailValidationDomainExtension = "xn--gk3at1e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--h2breg3eve"
+*if: thoroughEmailValidationDomainExtension = "xn--h2breg3eve"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--h2brj9c"
+*if: thoroughEmailValidationDomainExtension = "xn--h2brj9c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--h2brj9c8c"
+*if: thoroughEmailValidationDomainExtension = "xn--h2brj9c8c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--hxt814e"
+*if: thoroughEmailValidationDomainExtension = "xn--hxt814e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--i1b6b1a6a2e"
+*if: thoroughEmailValidationDomainExtension = "xn--i1b6b1a6a2e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--imr513n"
+*if: thoroughEmailValidationDomainExtension = "xn--imr513n"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--io0a7i"
+*if: thoroughEmailValidationDomainExtension = "xn--io0a7i"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--j1aef"
+*if: thoroughEmailValidationDomainExtension = "xn--j1aef"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--j1amh"
+*if: thoroughEmailValidationDomainExtension = "xn--j1amh"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--j6w193g"
+*if: thoroughEmailValidationDomainExtension = "xn--j6w193g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--jlq61u9w7b"
+*if: thoroughEmailValidationDomainExtension = "xn--jlq61u9w7b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--jvr189m"
+*if: thoroughEmailValidationDomainExtension = "xn--jvr189m"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--kcrx77d1x4a"
+*if: thoroughEmailValidationDomainExtension = "xn--kcrx77d1x4a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--kprw13d"
+*if: thoroughEmailValidationDomainExtension = "xn--kprw13d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--kpry57d"
+*if: thoroughEmailValidationDomainExtension = "xn--kpry57d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--kpu716f"
+*if: thoroughEmailValidationDomainExtension = "xn--kpu716f"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--kput3i"
+*if: thoroughEmailValidationDomainExtension = "xn--kput3i"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--l1acc"
+*if: thoroughEmailValidationDomainExtension = "xn--l1acc"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--lgbbat1ad8j"
+*if: thoroughEmailValidationDomainExtension = "xn--lgbbat1ad8j"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgb9awbf"
+*if: thoroughEmailValidationDomainExtension = "xn--mgb9awbf"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgba3a3ejt"
+*if: thoroughEmailValidationDomainExtension = "xn--mgba3a3ejt"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgba3a4f16a"
+*if: thoroughEmailValidationDomainExtension = "xn--mgba3a4f16a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgba7c0bbn0a"
+*if: thoroughEmailValidationDomainExtension = "xn--mgba7c0bbn0a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbaakc7dvf"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbaakc7dvf"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbaam7a8h"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbaam7a8h"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbab2bd"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbab2bd"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbah1a3hjkrd"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbah1a3hjkrd"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbai9azgqp6j"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbai9azgqp6j"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbayh7gpa"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbayh7gpa"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbbh1a"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbbh1a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbbh1a71e"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbbh1a71e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbc0a9azcg"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbc0a9azcg"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbca7dzdo"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbca7dzdo"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbcpq6gpa1a"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbcpq6gpa1a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgberp4a5d4ar"
+*if: thoroughEmailValidationDomainExtension = "xn--mgberp4a5d4ar"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbgu82a"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbgu82a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbi4ecexp"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbi4ecexp"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbpl2fh"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbpl2fh"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbt3dhd"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbt3dhd"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbtx2b"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbtx2b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mgbx4cd0ab"
+*if: thoroughEmailValidationDomainExtension = "xn--mgbx4cd0ab"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mix891f"
+*if: thoroughEmailValidationDomainExtension = "xn--mix891f"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mk1bu44c"
+*if: thoroughEmailValidationDomainExtension = "xn--mk1bu44c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--mxtq1m"
+*if: thoroughEmailValidationDomainExtension = "xn--mxtq1m"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--ngbc5azd"
+*if: thoroughEmailValidationDomainExtension = "xn--ngbc5azd"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--ngbe9e0a"
+*if: thoroughEmailValidationDomainExtension = "xn--ngbe9e0a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--ngbrx"
+*if: thoroughEmailValidationDomainExtension = "xn--ngbrx"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--node"
+*if: thoroughEmailValidationDomainExtension = "xn--node"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--nqv7f"
+*if: thoroughEmailValidationDomainExtension = "xn--nqv7f"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--nqv7fs00ema"
+*if: thoroughEmailValidationDomainExtension = "xn--nqv7fs00ema"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--nyqy26a"
+*if: thoroughEmailValidationDomainExtension = "xn--nyqy26a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--o3cw4h"
+*if: thoroughEmailValidationDomainExtension = "xn--o3cw4h"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--ogbpf8fl"
+*if: thoroughEmailValidationDomainExtension = "xn--ogbpf8fl"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--otu796d"
+*if: thoroughEmailValidationDomainExtension = "xn--otu796d"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--p1acf"
+*if: thoroughEmailValidationDomainExtension = "xn--p1acf"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--p1ai"
+*if: thoroughEmailValidationDomainExtension = "xn--p1ai"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--pbt977c"
+*if: thoroughEmailValidationDomainExtension = "xn--pbt977c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--pgbs0dh"
+*if: thoroughEmailValidationDomainExtension = "xn--pgbs0dh"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--pssy2u"
+*if: thoroughEmailValidationDomainExtension = "xn--pssy2u"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--q7ce6a"
+*if: thoroughEmailValidationDomainExtension = "xn--q7ce6a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--q9jyb4c"
+*if: thoroughEmailValidationDomainExtension = "xn--q9jyb4c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--qcka1pmc"
+*if: thoroughEmailValidationDomainExtension = "xn--qcka1pmc"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--qxa6a"
+*if: thoroughEmailValidationDomainExtension = "xn--qxa6a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--qxam"
+*if: thoroughEmailValidationDomainExtension = "xn--qxam"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--rhqv96g"
+*if: thoroughEmailValidationDomainExtension = "xn--rhqv96g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--rovu88b"
+*if: thoroughEmailValidationDomainExtension = "xn--rovu88b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--rvc1e0am3e"
+*if: thoroughEmailValidationDomainExtension = "xn--rvc1e0am3e"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--s9brj9c"
+*if: thoroughEmailValidationDomainExtension = "xn--s9brj9c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--ses554g"
+*if: thoroughEmailValidationDomainExtension = "xn--ses554g"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--t60b56a"
+*if: thoroughEmailValidationDomainExtension = "xn--t60b56a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--tckwe"
+*if: thoroughEmailValidationDomainExtension = "xn--tckwe"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--tiq49xqyj"
+*if: thoroughEmailValidationDomainExtension = "xn--tiq49xqyj"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--unup4y"
+*if: thoroughEmailValidationDomainExtension = "xn--unup4y"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--vermgensberater-ctb"
+*if: thoroughEmailValidationDomainExtension = "xn--vermgensberater-ctb"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--vermgensberatung-pwb"
+*if: thoroughEmailValidationDomainExtension = "xn--vermgensberatung-pwb"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--vhquv"
+*if: thoroughEmailValidationDomainExtension = "xn--vhquv"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--vuq861b"
+*if: thoroughEmailValidationDomainExtension = "xn--vuq861b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--w4r85el8fhu5dnra"
+*if: thoroughEmailValidationDomainExtension = "xn--w4r85el8fhu5dnra"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--w4rs40l"
+*if: thoroughEmailValidationDomainExtension = "xn--w4rs40l"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--wgbh1c"
+*if: thoroughEmailValidationDomainExtension = "xn--wgbh1c"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--wgbl6a"
+*if: thoroughEmailValidationDomainExtension = "xn--wgbl6a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--xhq521b"
+*if: thoroughEmailValidationDomainExtension = "xn--xhq521b"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--xkc2al3hye2a"
+*if: thoroughEmailValidationDomainExtension = "xn--xkc2al3hye2a"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--xkc2dl3a5ee0h"
+*if: thoroughEmailValidationDomainExtension = "xn--xkc2dl3a5ee0h"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--y9a3aq"
+*if: thoroughEmailValidationDomainExtension = "xn--y9a3aq"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--yfro4i67o"
+*if: thoroughEmailValidationDomainExtension = "xn--yfro4i67o"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--ygbi2ammx"
+*if: thoroughEmailValidationDomainExtension = "xn--ygbi2ammx"
 	*return
-*if: betterEmailValidationDomainExtension = "xn--zfr164b"
+*if: thoroughEmailValidationDomainExtension = "xn--zfr164b"
 	*return
-*if: betterEmailValidationDomainExtension = "xxx"
+*if: thoroughEmailValidationDomainExtension = "xxx"
 	*return
-*if: betterEmailValidationDomainExtension = "xyz"
+*if: thoroughEmailValidationDomainExtension = "xyz"
 	*return
-*if: betterEmailValidationDomainExtension = "yachts"
+*if: thoroughEmailValidationDomainExtension = "yachts"
 	*return
-*if: betterEmailValidationDomainExtension = "yahoo"
+*if: thoroughEmailValidationDomainExtension = "yahoo"
 	*return
-*if: betterEmailValidationDomainExtension = "yamaxun"
+*if: thoroughEmailValidationDomainExtension = "yamaxun"
 	*return
-*if: betterEmailValidationDomainExtension = "yandex"
+*if: thoroughEmailValidationDomainExtension = "yandex"
 	*return
-*if: betterEmailValidationDomainExtension = "ye"
+*if: thoroughEmailValidationDomainExtension = "ye"
 	*return
-*if: betterEmailValidationDomainExtension = "yodobashi"
+*if: thoroughEmailValidationDomainExtension = "yodobashi"
 	*return
-*if: betterEmailValidationDomainExtension = "yoga"
+*if: thoroughEmailValidationDomainExtension = "yoga"
 	*return
-*if: betterEmailValidationDomainExtension = "yokohama"
+*if: thoroughEmailValidationDomainExtension = "yokohama"
 	*return
-*if: betterEmailValidationDomainExtension = "you"
+*if: thoroughEmailValidationDomainExtension = "you"
 	*return
-*if: betterEmailValidationDomainExtension = "youtube"
+*if: thoroughEmailValidationDomainExtension = "youtube"
 	*return
-*if: betterEmailValidationDomainExtension = "yt"
+*if: thoroughEmailValidationDomainExtension = "yt"
 	*return
-*if: betterEmailValidationDomainExtension = "yun"
+*if: thoroughEmailValidationDomainExtension = "yun"
 	*return
-*if: betterEmailValidationDomainExtension = "za"
+*if: thoroughEmailValidationDomainExtension = "za"
 	*return
-*if: betterEmailValidationDomainExtension = "zappos"
+*if: thoroughEmailValidationDomainExtension = "zappos"
 	*return
-*if: betterEmailValidationDomainExtension = "zara"
+*if: thoroughEmailValidationDomainExtension = "zara"
 	*return
-*if: betterEmailValidationDomainExtension = "zero"
+*if: thoroughEmailValidationDomainExtension = "zero"
 	*return
-*if: betterEmailValidationDomainExtension = "zip"
+*if: thoroughEmailValidationDomainExtension = "zip"
 	*return
-*if: betterEmailValidationDomainExtension = "zm"
+*if: thoroughEmailValidationDomainExtension = "zm"
 	*return
-*if: betterEmailValidationDomainExtension = "zone"
+*if: thoroughEmailValidationDomainExtension = "zone"
 	*return
-*if: betterEmailValidationDomainExtension = "zuerich"
+*if: thoroughEmailValidationDomainExtension = "zuerich"
 	*return
-*if: betterEmailValidationDomainExtension = "zw"
+*if: thoroughEmailValidationDomainExtension = "zw"
 	*return
 
->> betterEmailValidationOutput = "no"
->> betterEmailValidationFailPhase = "domain"
->> betterEmailValidationFailIndex = 1
->> betterEmailValidationFailChar = ""
->> betterEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+>> thoroughEmailValidatorUpperToLower = ""
+>> thoroughEmailValidationOutput = "no"
+>> thoroughEmailValidationFailPhase = "domain"
+>> thoroughEmailValidationFailIndex = 1
+>> thoroughEmailValidationFailChar = ""
+>> thoroughEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
 *return

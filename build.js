@@ -11,7 +11,7 @@ async function build(){
 
 	let topLevelConditionals = topLevelDomains.map(function(tld){
 		return `
-			*if: betterEmailValidationDomainExtension = "${tld}"
+			*if: thoroughEmailValidationDomainExtension = "${tld}"
 				*return
 		`.trim()
 	}).join("\n")
@@ -43,18 +43,18 @@ async function build(){
 		return `
 			>> email = "${email}"
 			>> shouldPass = "${shouldPass ? "yes" : "no"}"
-			>> betterEmailValidationInput = email
-			*program: Better Email Validation
+			>> thoroughEmailValidationInput = email
+			*program: Thorough Email Validation (COPY)
 
-			*if: betterEmailValidationOutput = shouldPass
+			*if: thoroughEmailValidationOutput = shouldPass
 				*component
 					*classes: alert alert-success
-					PASSED "${email}"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+					PASSED "${email}"! (handle: "{thoroughEmailValidationHandle}", domain: "{thoroughEmailValidationDomain}", extension: "{thoroughEmailValidationDomainExtension}", message: "{thoroughEmailValidationFailMessage}")
 
-			*if: not (betterEmailValidationOutput = shouldPass)
+			*if: not (thoroughEmailValidationOutput = shouldPass)
 				*component
 					*classes: alert alert-danger
-					FAILED "${email}"! (handle: "{betterEmailValidationHandle}", domain: "{betterEmailValidationDomain}", extension: "{betterEmailValidationDomainExtension}", message: "{betterEmailValidationFailMessage}")
+					FAILED "${email}"! (handle: "{thoroughEmailValidationHandle}", domain: "{thoroughEmailValidationDomain}", extension: "{thoroughEmailValidationDomainExtension}", message: "{thoroughEmailValidationFailMessage}")
 		`
 	}).join("\n\n")
 
