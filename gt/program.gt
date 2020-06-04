@@ -1,0 +1,3166 @@
+---------------------------------------------------
+-- RULES (given the form "handle@domain.extension")
+---------------------------------------------------
+-- the whole address must contain @ and .
+-- the handle must contain at least one character
+-- the domain must contain at least one character
+-- the domain must contain at least one .
+-- any characters are valid in the handle (except spaces)
+-- any characters are valid in the domain (except spaces)
+-- the domain extension must be in the list of top level domains (unless the "domain" is an IP address? could that even work?)
+
+*if: not thoroughEmailValidationInput
+	*page
+		*component
+			*classes: alert alert-warning
+			ERROR: An email address is required for validation!
+
+>> thoroughEmailValidatorUpperToLower = {"A"->"a","B"->"b","C"->"c","D"->"d","E"->"e","F"->"f","G"->"g","H"->"h","I"->"i","J"->"j","K"->"k","L"->"l","M"->"m","N"->"n","O"->"o","P"->"p","Q"->"q","R"->"r","S"->"s","T"->"t","U"->"u","V"->"v","W"->"w","X"->"x","Y"->"y","Z"->"z"}
+>> thoroughEmailValidationCounter = 1
+>> thoroughEmailValidationHandle = ""
+>> thoroughEmailValidationDomain = ""
+>> thoroughEmailValidationDomainExtension = ""
+>> thoroughEmailValidationPhase = "handle"
+>> thoroughEmailValidationOutput = "yes"
+>> thoroughEmailValidationFailPhase = "none"
+>> thoroughEmailValidationFailIndex = -1
+>> thoroughEmailValidationFailChar = ""
+>> thoroughEmailValidationFailMessage = ""
+
+-- check that the email address isn't longer than 254 characters
+*if: thoroughEmailValidationInput.size > 254
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "Email addresses cannot be longer than 254 characters."
+	*return
+
+-- check that there are no spaces in the address
+>> stringSplitterInput = {"string" -> thoroughEmailValidationInput, "delimiter" -> " "}
+*program: String Splitter
+
+*if: stringSplitterOutput.size > 1
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "Email addresses cannot contain spaces."
+	*return
+
+-- break address into handle and domain
+>> stringSplitterInput = {"string" -> thoroughEmailValidationInput, "delimiter" -> "@"}
+*program: String Splitter
+
+*if: stringSplitterOutput.size < 2
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered did not contain an '@' character."
+	*return
+
+*if: stringSplitterOutput.size > 2
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "all"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "An email address must be in the form 'handle@domain.extension'. The email address you entered contained more than one '@' character."
+	*return
+
+>> thoroughEmailValidationHandle = stringSplitterOutput[1]
+>> thoroughEmailValidationDomain = stringSplitterOutput[2]
+
+*if: thoroughEmailValidationHandle.size = 0
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "handle"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The handle of an email address (the part before the '@' character) must contain at least one character."
+	*return
+
+*if: thoroughEmailValidationDomain.size < 3
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain at least three characters, at least one of which must be a period."
+	*return
+
+-- break domain into subdomain(s) + domain and extension
+>> stringSplitterInput = {"string" -> thoroughEmailValidationDomain, "delimiter" -> "."}
+*program: String Splitter
+
+*if: stringSplitterOutput.size < 2
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The domain of an email address (the part after the '@' character) must contain a period."
+	*return
+
+*if: stringSplitterOutput[1].size = 0
+	>> thoroughEmailValidatorUpperToLower = ""
+	>> thoroughEmailValidationOutput = "no"
+	>> thoroughEmailValidationFailPhase = "domain"
+	>> thoroughEmailValidationFailIndex = 1
+	>> thoroughEmailValidationFailChar = ""
+	>> thoroughEmailValidationFailMessage = "The second-level domain of an email address (the part after the '@' character that comes before the final extension (like '.com' or '.org')) must be at least one character in length."
+	*return
+
+-- convert extension to lowercase
+>> thoroughEmailValidationDomainExtension = stringSplitterOutput[stringSplitterOutput.size]
+>> thoroughEmailValidationCounter = 1
+>> thoroughEmailValidationDomainExtensionTemp = ""
+
+*while: thoroughEmailValidationCounter <= thoroughEmailValidationDomainExtension.size
+	*if: thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]]
+		>> thoroughEmailValidationDomainExtensionTemp = "{thoroughEmailValidationDomainExtensionTemp}{thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]]}"
+	*if: not (thoroughEmailValidatorUpperToLower[thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]])
+		>> thoroughEmailValidationDomainExtensionTemp = "{thoroughEmailValidationDomainExtensionTemp}{thoroughEmailValidationDomainExtension[thoroughEmailValidationCounter]}"
+	>> thoroughEmailValidationCounter = thoroughEmailValidationCounter + 1
+
+>> thoroughEmailValidationDomainExtension = thoroughEmailValidationDomainExtensionTemp
+
+-- confirm that the extension is a valid top-level domain
+*if: thoroughEmailValidationDomainExtension = "aaa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aarp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abarth"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abbott"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abbvie"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "able"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abogado"
+	*return
+*if: thoroughEmailValidationDomainExtension = "abudhabi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ac"
+	*return
+*if: thoroughEmailValidationDomainExtension = "academy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "accenture"
+	*return
+*if: thoroughEmailValidationDomainExtension = "accountant"
+	*return
+*if: thoroughEmailValidationDomainExtension = "accountants"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aco"
+	*return
+*if: thoroughEmailValidationDomainExtension = "actor"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ad"
+	*return
+*if: thoroughEmailValidationDomainExtension = "adac"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ads"
+	*return
+*if: thoroughEmailValidationDomainExtension = "adult"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ae"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aeg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aero"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aetna"
+	*return
+*if: thoroughEmailValidationDomainExtension = "af"
+	*return
+*if: thoroughEmailValidationDomainExtension = "afamilycompany"
+	*return
+*if: thoroughEmailValidationDomainExtension = "afl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "africa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ag"
+	*return
+*if: thoroughEmailValidationDomainExtension = "agakhan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "agency"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ai"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aig"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aigo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "airbus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "airforce"
+	*return
+*if: thoroughEmailValidationDomainExtension = "airtel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "akdn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "al"
+	*return
+*if: thoroughEmailValidationDomainExtension = "alfaromeo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "alibaba"
+	*return
+*if: thoroughEmailValidationDomainExtension = "alipay"
+	*return
+*if: thoroughEmailValidationDomainExtension = "allfinanz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "allstate"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ally"
+	*return
+*if: thoroughEmailValidationDomainExtension = "alsace"
+	*return
+*if: thoroughEmailValidationDomainExtension = "alstom"
+	*return
+*if: thoroughEmailValidationDomainExtension = "am"
+	*return
+*if: thoroughEmailValidationDomainExtension = "americanexpress"
+	*return
+*if: thoroughEmailValidationDomainExtension = "americanfamily"
+	*return
+*if: thoroughEmailValidationDomainExtension = "amex"
+	*return
+*if: thoroughEmailValidationDomainExtension = "amfam"
+	*return
+*if: thoroughEmailValidationDomainExtension = "amica"
+	*return
+*if: thoroughEmailValidationDomainExtension = "amsterdam"
+	*return
+*if: thoroughEmailValidationDomainExtension = "analytics"
+	*return
+*if: thoroughEmailValidationDomainExtension = "android"
+	*return
+*if: thoroughEmailValidationDomainExtension = "anquan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "anz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ao"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aol"
+	*return
+*if: thoroughEmailValidationDomainExtension = "apartments"
+	*return
+*if: thoroughEmailValidationDomainExtension = "app"
+	*return
+*if: thoroughEmailValidationDomainExtension = "apple"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aq"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aquarelle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "arab"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aramco"
+	*return
+*if: thoroughEmailValidationDomainExtension = "archi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "army"
+	*return
+*if: thoroughEmailValidationDomainExtension = "arpa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "art"
+	*return
+*if: thoroughEmailValidationDomainExtension = "arte"
+	*return
+*if: thoroughEmailValidationDomainExtension = "as"
+	*return
+*if: thoroughEmailValidationDomainExtension = "asda"
+	*return
+*if: thoroughEmailValidationDomainExtension = "asia"
+	*return
+*if: thoroughEmailValidationDomainExtension = "associates"
+	*return
+*if: thoroughEmailValidationDomainExtension = "at"
+	*return
+*if: thoroughEmailValidationDomainExtension = "athleta"
+	*return
+*if: thoroughEmailValidationDomainExtension = "attorney"
+	*return
+*if: thoroughEmailValidationDomainExtension = "au"
+	*return
+*if: thoroughEmailValidationDomainExtension = "auction"
+	*return
+*if: thoroughEmailValidationDomainExtension = "audi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "audible"
+	*return
+*if: thoroughEmailValidationDomainExtension = "audio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "auspost"
+	*return
+*if: thoroughEmailValidationDomainExtension = "author"
+	*return
+*if: thoroughEmailValidationDomainExtension = "auto"
+	*return
+*if: thoroughEmailValidationDomainExtension = "autos"
+	*return
+*if: thoroughEmailValidationDomainExtension = "avianca"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "aws"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ax"
+	*return
+*if: thoroughEmailValidationDomainExtension = "axa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "az"
+	*return
+*if: thoroughEmailValidationDomainExtension = "azure"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ba"
+	*return
+*if: thoroughEmailValidationDomainExtension = "baby"
+	*return
+*if: thoroughEmailValidationDomainExtension = "baidu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "banamex"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bananarepublic"
+	*return
+*if: thoroughEmailValidationDomainExtension = "band"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "barcelona"
+	*return
+*if: thoroughEmailValidationDomainExtension = "barclaycard"
+	*return
+*if: thoroughEmailValidationDomainExtension = "barclays"
+	*return
+*if: thoroughEmailValidationDomainExtension = "barefoot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bargains"
+	*return
+*if: thoroughEmailValidationDomainExtension = "baseball"
+	*return
+*if: thoroughEmailValidationDomainExtension = "basketball"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bauhaus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bayern"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bbc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bbt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bbva"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bcg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bcn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "be"
+	*return
+*if: thoroughEmailValidationDomainExtension = "beats"
+	*return
+*if: thoroughEmailValidationDomainExtension = "beauty"
+	*return
+*if: thoroughEmailValidationDomainExtension = "beer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bentley"
+	*return
+*if: thoroughEmailValidationDomainExtension = "berlin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "best"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bestbuy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bet"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bharti"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bible"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bid"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bike"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bingo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "biz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "black"
+	*return
+*if: thoroughEmailValidationDomainExtension = "blackfriday"
+	*return
+*if: thoroughEmailValidationDomainExtension = "blockbuster"
+	*return
+*if: thoroughEmailValidationDomainExtension = "blog"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bloomberg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "blue"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bms"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bmw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bnpparibas"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "boats"
+	*return
+*if: thoroughEmailValidationDomainExtension = "boehringer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bofa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bom"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bond"
+	*return
+*if: thoroughEmailValidationDomainExtension = "boo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "book"
+	*return
+*if: thoroughEmailValidationDomainExtension = "booking"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bosch"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bostik"
+	*return
+*if: thoroughEmailValidationDomainExtension = "boston"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "boutique"
+	*return
+*if: thoroughEmailValidationDomainExtension = "box"
+	*return
+*if: thoroughEmailValidationDomainExtension = "br"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bradesco"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bridgestone"
+	*return
+*if: thoroughEmailValidationDomainExtension = "broadway"
+	*return
+*if: thoroughEmailValidationDomainExtension = "broker"
+	*return
+*if: thoroughEmailValidationDomainExtension = "brother"
+	*return
+*if: thoroughEmailValidationDomainExtension = "brussels"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "budapest"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bugatti"
+	*return
+*if: thoroughEmailValidationDomainExtension = "build"
+	*return
+*if: thoroughEmailValidationDomainExtension = "builders"
+	*return
+*if: thoroughEmailValidationDomainExtension = "business"
+	*return
+*if: thoroughEmailValidationDomainExtension = "buy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "buzz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "by"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "bzh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ca"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cab"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cafe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cal"
+	*return
+*if: thoroughEmailValidationDomainExtension = "call"
+	*return
+*if: thoroughEmailValidationDomainExtension = "calvinklein"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cam"
+	*return
+*if: thoroughEmailValidationDomainExtension = "camera"
+	*return
+*if: thoroughEmailValidationDomainExtension = "camp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cancerresearch"
+	*return
+*if: thoroughEmailValidationDomainExtension = "canon"
+	*return
+*if: thoroughEmailValidationDomainExtension = "capetown"
+	*return
+*if: thoroughEmailValidationDomainExtension = "capital"
+	*return
+*if: thoroughEmailValidationDomainExtension = "capitalone"
+	*return
+*if: thoroughEmailValidationDomainExtension = "car"
+	*return
+*if: thoroughEmailValidationDomainExtension = "caravan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cards"
+	*return
+*if: thoroughEmailValidationDomainExtension = "care"
+	*return
+*if: thoroughEmailValidationDomainExtension = "career"
+	*return
+*if: thoroughEmailValidationDomainExtension = "careers"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cars"
+	*return
+*if: thoroughEmailValidationDomainExtension = "casa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "case"
+	*return
+*if: thoroughEmailValidationDomainExtension = "caseih"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cash"
+	*return
+*if: thoroughEmailValidationDomainExtension = "casino"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "catering"
+	*return
+*if: thoroughEmailValidationDomainExtension = "catholic"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cba"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cbn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cbre"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cbs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ceb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "center"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ceo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cern"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cfa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cfd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ch"
+	*return
+*if: thoroughEmailValidationDomainExtension = "chanel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "channel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "charity"
+	*return
+*if: thoroughEmailValidationDomainExtension = "chase"
+	*return
+*if: thoroughEmailValidationDomainExtension = "chat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cheap"
+	*return
+*if: thoroughEmailValidationDomainExtension = "chintai"
+	*return
+*if: thoroughEmailValidationDomainExtension = "christmas"
+	*return
+*if: thoroughEmailValidationDomainExtension = "chrome"
+	*return
+*if: thoroughEmailValidationDomainExtension = "church"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ci"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cipriani"
+	*return
+*if: thoroughEmailValidationDomainExtension = "circle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cisco"
+	*return
+*if: thoroughEmailValidationDomainExtension = "citadel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "citi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "citic"
+	*return
+*if: thoroughEmailValidationDomainExtension = "city"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cityeats"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ck"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "claims"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cleaning"
+	*return
+*if: thoroughEmailValidationDomainExtension = "click"
+	*return
+*if: thoroughEmailValidationDomainExtension = "clinic"
+	*return
+*if: thoroughEmailValidationDomainExtension = "clinique"
+	*return
+*if: thoroughEmailValidationDomainExtension = "clothing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cloud"
+	*return
+*if: thoroughEmailValidationDomainExtension = "club"
+	*return
+*if: thoroughEmailValidationDomainExtension = "clubmed"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "co"
+	*return
+*if: thoroughEmailValidationDomainExtension = "coach"
+	*return
+*if: thoroughEmailValidationDomainExtension = "codes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "coffee"
+	*return
+*if: thoroughEmailValidationDomainExtension = "college"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cologne"
+	*return
+*if: thoroughEmailValidationDomainExtension = "com"
+	*return
+*if: thoroughEmailValidationDomainExtension = "comcast"
+	*return
+*if: thoroughEmailValidationDomainExtension = "commbank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "community"
+	*return
+*if: thoroughEmailValidationDomainExtension = "company"
+	*return
+*if: thoroughEmailValidationDomainExtension = "compare"
+	*return
+*if: thoroughEmailValidationDomainExtension = "computer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "comsec"
+	*return
+*if: thoroughEmailValidationDomainExtension = "condos"
+	*return
+*if: thoroughEmailValidationDomainExtension = "construction"
+	*return
+*if: thoroughEmailValidationDomainExtension = "consulting"
+	*return
+*if: thoroughEmailValidationDomainExtension = "contact"
+	*return
+*if: thoroughEmailValidationDomainExtension = "contractors"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cooking"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cookingchannel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cool"
+	*return
+*if: thoroughEmailValidationDomainExtension = "coop"
+	*return
+*if: thoroughEmailValidationDomainExtension = "corsica"
+	*return
+*if: thoroughEmailValidationDomainExtension = "country"
+	*return
+*if: thoroughEmailValidationDomainExtension = "coupon"
+	*return
+*if: thoroughEmailValidationDomainExtension = "coupons"
+	*return
+*if: thoroughEmailValidationDomainExtension = "courses"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cpa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "credit"
+	*return
+*if: thoroughEmailValidationDomainExtension = "creditcard"
+	*return
+*if: thoroughEmailValidationDomainExtension = "creditunion"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cricket"
+	*return
+*if: thoroughEmailValidationDomainExtension = "crown"
+	*return
+*if: thoroughEmailValidationDomainExtension = "crs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cruise"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cruises"
+	*return
+*if: thoroughEmailValidationDomainExtension = "csc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cuisinella"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cymru"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cyou"
+	*return
+*if: thoroughEmailValidationDomainExtension = "cz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dabur"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dad"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "data"
+	*return
+*if: thoroughEmailValidationDomainExtension = "date"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dating"
+	*return
+*if: thoroughEmailValidationDomainExtension = "datsun"
+	*return
+*if: thoroughEmailValidationDomainExtension = "day"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dclk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dds"
+	*return
+*if: thoroughEmailValidationDomainExtension = "de"
+	*return
+*if: thoroughEmailValidationDomainExtension = "deal"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dealer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "deals"
+	*return
+*if: thoroughEmailValidationDomainExtension = "degree"
+	*return
+*if: thoroughEmailValidationDomainExtension = "delivery"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dell"
+	*return
+*if: thoroughEmailValidationDomainExtension = "deloitte"
+	*return
+*if: thoroughEmailValidationDomainExtension = "delta"
+	*return
+*if: thoroughEmailValidationDomainExtension = "democrat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dental"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dentist"
+	*return
+*if: thoroughEmailValidationDomainExtension = "desi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "design"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dev"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dhl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "diamonds"
+	*return
+*if: thoroughEmailValidationDomainExtension = "diet"
+	*return
+*if: thoroughEmailValidationDomainExtension = "digital"
+	*return
+*if: thoroughEmailValidationDomainExtension = "direct"
+	*return
+*if: thoroughEmailValidationDomainExtension = "directory"
+	*return
+*if: thoroughEmailValidationDomainExtension = "discount"
+	*return
+*if: thoroughEmailValidationDomainExtension = "discover"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dish"
+	*return
+*if: thoroughEmailValidationDomainExtension = "diy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dnp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "do"
+	*return
+*if: thoroughEmailValidationDomainExtension = "docs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "doctor"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dog"
+	*return
+*if: thoroughEmailValidationDomainExtension = "domains"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "download"
+	*return
+*if: thoroughEmailValidationDomainExtension = "drive"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dtv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dubai"
+	*return
+*if: thoroughEmailValidationDomainExtension = "duck"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dunlop"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dupont"
+	*return
+*if: thoroughEmailValidationDomainExtension = "durban"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dvag"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dvr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "dz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "earth"
+	*return
+*if: thoroughEmailValidationDomainExtension = "eat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ec"
+	*return
+*if: thoroughEmailValidationDomainExtension = "eco"
+	*return
+*if: thoroughEmailValidationDomainExtension = "edeka"
+	*return
+*if: thoroughEmailValidationDomainExtension = "edu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "education"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ee"
+	*return
+*if: thoroughEmailValidationDomainExtension = "eg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "email"
+	*return
+*if: thoroughEmailValidationDomainExtension = "emerck"
+	*return
+*if: thoroughEmailValidationDomainExtension = "energy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "engineer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "engineering"
+	*return
+*if: thoroughEmailValidationDomainExtension = "enterprises"
+	*return
+*if: thoroughEmailValidationDomainExtension = "epson"
+	*return
+*if: thoroughEmailValidationDomainExtension = "equipment"
+	*return
+*if: thoroughEmailValidationDomainExtension = "er"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ericsson"
+	*return
+*if: thoroughEmailValidationDomainExtension = "erni"
+	*return
+*if: thoroughEmailValidationDomainExtension = "es"
+	*return
+*if: thoroughEmailValidationDomainExtension = "esq"
+	*return
+*if: thoroughEmailValidationDomainExtension = "estate"
+	*return
+*if: thoroughEmailValidationDomainExtension = "esurance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "et"
+	*return
+*if: thoroughEmailValidationDomainExtension = "etisalat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "eu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "eurovision"
+	*return
+*if: thoroughEmailValidationDomainExtension = "eus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "events"
+	*return
+*if: thoroughEmailValidationDomainExtension = "exchange"
+	*return
+*if: thoroughEmailValidationDomainExtension = "expert"
+	*return
+*if: thoroughEmailValidationDomainExtension = "exposed"
+	*return
+*if: thoroughEmailValidationDomainExtension = "express"
+	*return
+*if: thoroughEmailValidationDomainExtension = "extraspace"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fage"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fail"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fairwinds"
+	*return
+*if: thoroughEmailValidationDomainExtension = "faith"
+	*return
+*if: thoroughEmailValidationDomainExtension = "family"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fans"
+	*return
+*if: thoroughEmailValidationDomainExtension = "farm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "farmers"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fashion"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fast"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fedex"
+	*return
+*if: thoroughEmailValidationDomainExtension = "feedback"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ferrari"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ferrero"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fiat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fidelity"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fido"
+	*return
+*if: thoroughEmailValidationDomainExtension = "film"
+	*return
+*if: thoroughEmailValidationDomainExtension = "final"
+	*return
+*if: thoroughEmailValidationDomainExtension = "finance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "financial"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fire"
+	*return
+*if: thoroughEmailValidationDomainExtension = "firestone"
+	*return
+*if: thoroughEmailValidationDomainExtension = "firmdale"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fish"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fishing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fit"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fitness"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "flickr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "flights"
+	*return
+*if: thoroughEmailValidationDomainExtension = "flir"
+	*return
+*if: thoroughEmailValidationDomainExtension = "florist"
+	*return
+*if: thoroughEmailValidationDomainExtension = "flowers"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fly"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "foo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "food"
+	*return
+*if: thoroughEmailValidationDomainExtension = "foodnetwork"
+	*return
+*if: thoroughEmailValidationDomainExtension = "football"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ford"
+	*return
+*if: thoroughEmailValidationDomainExtension = "forex"
+	*return
+*if: thoroughEmailValidationDomainExtension = "forsale"
+	*return
+*if: thoroughEmailValidationDomainExtension = "forum"
+	*return
+*if: thoroughEmailValidationDomainExtension = "foundation"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fox"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "free"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fresenius"
+	*return
+*if: thoroughEmailValidationDomainExtension = "frl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "frogans"
+	*return
+*if: thoroughEmailValidationDomainExtension = "frontdoor"
+	*return
+*if: thoroughEmailValidationDomainExtension = "frontier"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ftr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fujitsu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fujixerox"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fun"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fund"
+	*return
+*if: thoroughEmailValidationDomainExtension = "furniture"
+	*return
+*if: thoroughEmailValidationDomainExtension = "futbol"
+	*return
+*if: thoroughEmailValidationDomainExtension = "fyi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ga"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gal"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gallery"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gallo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gallup"
+	*return
+*if: thoroughEmailValidationDomainExtension = "game"
+	*return
+*if: thoroughEmailValidationDomainExtension = "games"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gap"
+	*return
+*if: thoroughEmailValidationDomainExtension = "garden"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gay"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gbiz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gdn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ge"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gea"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gent"
+	*return
+*if: thoroughEmailValidationDomainExtension = "genting"
+	*return
+*if: thoroughEmailValidationDomainExtension = "george"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ggee"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gift"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gifts"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gives"
+	*return
+*if: thoroughEmailValidationDomainExtension = "giving"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "glade"
+	*return
+*if: thoroughEmailValidationDomainExtension = "glass"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "global"
+	*return
+*if: thoroughEmailValidationDomainExtension = "globo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gmail"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gmbh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gmo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gmx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "godaddy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gold"
+	*return
+*if: thoroughEmailValidationDomainExtension = "goldpoint"
+	*return
+*if: thoroughEmailValidationDomainExtension = "golf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "goo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "goodyear"
+	*return
+*if: thoroughEmailValidationDomainExtension = "goog"
+	*return
+*if: thoroughEmailValidationDomainExtension = "google"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gop"
+	*return
+*if: thoroughEmailValidationDomainExtension = "got"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gov"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gq"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "grainger"
+	*return
+*if: thoroughEmailValidationDomainExtension = "graphics"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gratis"
+	*return
+*if: thoroughEmailValidationDomainExtension = "green"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gripe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "grocery"
+	*return
+*if: thoroughEmailValidationDomainExtension = "group"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "guardian"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gucci"
+	*return
+*if: thoroughEmailValidationDomainExtension = "guge"
+	*return
+*if: thoroughEmailValidationDomainExtension = "guide"
+	*return
+*if: thoroughEmailValidationDomainExtension = "guitars"
+	*return
+*if: thoroughEmailValidationDomainExtension = "guru"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "gy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hair"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hamburg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hangout"
+	*return
+*if: thoroughEmailValidationDomainExtension = "haus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hbo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hdfc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hdfcbank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "health"
+	*return
+*if: thoroughEmailValidationDomainExtension = "healthcare"
+	*return
+*if: thoroughEmailValidationDomainExtension = "help"
+	*return
+*if: thoroughEmailValidationDomainExtension = "helsinki"
+	*return
+*if: thoroughEmailValidationDomainExtension = "here"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hermes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hgtv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hiphop"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hisamitsu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hitachi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hiv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hkt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hockey"
+	*return
+*if: thoroughEmailValidationDomainExtension = "holdings"
+	*return
+*if: thoroughEmailValidationDomainExtension = "holiday"
+	*return
+*if: thoroughEmailValidationDomainExtension = "homedepot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "homegoods"
+	*return
+*if: thoroughEmailValidationDomainExtension = "homes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "homesense"
+	*return
+*if: thoroughEmailValidationDomainExtension = "honda"
+	*return
+*if: thoroughEmailValidationDomainExtension = "horse"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hospital"
+	*return
+*if: thoroughEmailValidationDomainExtension = "host"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hosting"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hoteles"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hotels"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hotmail"
+	*return
+*if: thoroughEmailValidationDomainExtension = "house"
+	*return
+*if: thoroughEmailValidationDomainExtension = "how"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hsbc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ht"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hughes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hyatt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "hyundai"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ibm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "icbc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ice"
+	*return
+*if: thoroughEmailValidationDomainExtension = "icu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "id"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ie"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ieee"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ifm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ikano"
+	*return
+*if: thoroughEmailValidationDomainExtension = "il"
+	*return
+*if: thoroughEmailValidationDomainExtension = "im"
+	*return
+*if: thoroughEmailValidationDomainExtension = "imamat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "imdb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "immo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "immobilien"
+	*return
+*if: thoroughEmailValidationDomainExtension = "in"
+	*return
+*if: thoroughEmailValidationDomainExtension = "inc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "industries"
+	*return
+*if: thoroughEmailValidationDomainExtension = "infiniti"
+	*return
+*if: thoroughEmailValidationDomainExtension = "info"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ink"
+	*return
+*if: thoroughEmailValidationDomainExtension = "institute"
+	*return
+*if: thoroughEmailValidationDomainExtension = "insurance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "insure"
+	*return
+*if: thoroughEmailValidationDomainExtension = "int"
+	*return
+*if: thoroughEmailValidationDomainExtension = "intel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "international"
+	*return
+*if: thoroughEmailValidationDomainExtension = "intuit"
+	*return
+*if: thoroughEmailValidationDomainExtension = "investments"
+	*return
+*if: thoroughEmailValidationDomainExtension = "io"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ipiranga"
+	*return
+*if: thoroughEmailValidationDomainExtension = "iq"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ir"
+	*return
+*if: thoroughEmailValidationDomainExtension = "irish"
+	*return
+*if: thoroughEmailValidationDomainExtension = "is"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ismaili"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ist"
+	*return
+*if: thoroughEmailValidationDomainExtension = "istanbul"
+	*return
+*if: thoroughEmailValidationDomainExtension = "it"
+	*return
+*if: thoroughEmailValidationDomainExtension = "itau"
+	*return
+*if: thoroughEmailValidationDomainExtension = "itv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "iveco"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jaguar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "java"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jcb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jcp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "je"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jeep"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jetzt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jewelry"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jll"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jmp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jnj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jobs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "joburg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "joy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jpmorgan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "jprs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "juegos"
+	*return
+*if: thoroughEmailValidationDomainExtension = "juniper"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kaufen"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kddi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ke"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kerryhotels"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kerrylogistics"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kerryproperties"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kfh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ki"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kia"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kim"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kinder"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kindle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kitchen"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kiwi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "km"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "koeln"
+	*return
+*if: thoroughEmailValidationDomainExtension = "komatsu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kosher"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kpmg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kpn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "krd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kred"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kuokgroup"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ky"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kyoto"
+	*return
+*if: thoroughEmailValidationDomainExtension = "kz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "la"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lacaixa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lamborghini"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lamer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lancaster"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lancia"
+	*return
+*if: thoroughEmailValidationDomainExtension = "land"
+	*return
+*if: thoroughEmailValidationDomainExtension = "landrover"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lanxess"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lasalle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "latino"
+	*return
+*if: thoroughEmailValidationDomainExtension = "latrobe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "law"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lawyer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lds"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lease"
+	*return
+*if: thoroughEmailValidationDomainExtension = "leclerc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lefrak"
+	*return
+*if: thoroughEmailValidationDomainExtension = "legal"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lego"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lexus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lgbt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "li"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lidl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "life"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lifeinsurance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lifestyle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lighting"
+	*return
+*if: thoroughEmailValidationDomainExtension = "like"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lilly"
+	*return
+*if: thoroughEmailValidationDomainExtension = "limited"
+	*return
+*if: thoroughEmailValidationDomainExtension = "limo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lincoln"
+	*return
+*if: thoroughEmailValidationDomainExtension = "linde"
+	*return
+*if: thoroughEmailValidationDomainExtension = "link"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lipsy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "live"
+	*return
+*if: thoroughEmailValidationDomainExtension = "living"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lixil"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "llc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "llp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "loan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "loans"
+	*return
+*if: thoroughEmailValidationDomainExtension = "locker"
+	*return
+*if: thoroughEmailValidationDomainExtension = "locus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "loft"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lol"
+	*return
+*if: thoroughEmailValidationDomainExtension = "london"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lotte"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lotto"
+	*return
+*if: thoroughEmailValidationDomainExtension = "love"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lpl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lplfinancial"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ls"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ltd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ltda"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lundbeck"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lupin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "luxe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "luxury"
+	*return
+*if: thoroughEmailValidationDomainExtension = "lv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ly"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ma"
+	*return
+*if: thoroughEmailValidationDomainExtension = "macys"
+	*return
+*if: thoroughEmailValidationDomainExtension = "madrid"
+	*return
+*if: thoroughEmailValidationDomainExtension = "maif"
+	*return
+*if: thoroughEmailValidationDomainExtension = "maison"
+	*return
+*if: thoroughEmailValidationDomainExtension = "makeup"
+	*return
+*if: thoroughEmailValidationDomainExtension = "man"
+	*return
+*if: thoroughEmailValidationDomainExtension = "management"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mango"
+	*return
+*if: thoroughEmailValidationDomainExtension = "map"
+	*return
+*if: thoroughEmailValidationDomainExtension = "market"
+	*return
+*if: thoroughEmailValidationDomainExtension = "marketing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "markets"
+	*return
+*if: thoroughEmailValidationDomainExtension = "marriott"
+	*return
+*if: thoroughEmailValidationDomainExtension = "marshalls"
+	*return
+*if: thoroughEmailValidationDomainExtension = "maserati"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mattel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mba"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mckinsey"
+	*return
+*if: thoroughEmailValidationDomainExtension = "md"
+	*return
+*if: thoroughEmailValidationDomainExtension = "me"
+	*return
+*if: thoroughEmailValidationDomainExtension = "med"
+	*return
+*if: thoroughEmailValidationDomainExtension = "media"
+	*return
+*if: thoroughEmailValidationDomainExtension = "meet"
+	*return
+*if: thoroughEmailValidationDomainExtension = "melbourne"
+	*return
+*if: thoroughEmailValidationDomainExtension = "meme"
+	*return
+*if: thoroughEmailValidationDomainExtension = "memorial"
+	*return
+*if: thoroughEmailValidationDomainExtension = "men"
+	*return
+*if: thoroughEmailValidationDomainExtension = "menu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "merckmsd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "metlife"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "miami"
+	*return
+*if: thoroughEmailValidationDomainExtension = "microsoft"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mil"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mini"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mint"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mit"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mitsubishi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ml"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mlb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mls"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mma"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mobi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mobile"
+	*return
+*if: thoroughEmailValidationDomainExtension = "moda"
+	*return
+*if: thoroughEmailValidationDomainExtension = "moe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "moi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mom"
+	*return
+*if: thoroughEmailValidationDomainExtension = "monash"
+	*return
+*if: thoroughEmailValidationDomainExtension = "money"
+	*return
+*if: thoroughEmailValidationDomainExtension = "monster"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mormon"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mortgage"
+	*return
+*if: thoroughEmailValidationDomainExtension = "moscow"
+	*return
+*if: thoroughEmailValidationDomainExtension = "moto"
+	*return
+*if: thoroughEmailValidationDomainExtension = "motorcycles"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mov"
+	*return
+*if: thoroughEmailValidationDomainExtension = "movie"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mq"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ms"
+	*return
+*if: thoroughEmailValidationDomainExtension = "msd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mtn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mtr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "museum"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mutual"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "my"
+	*return
+*if: thoroughEmailValidationDomainExtension = "mz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "na"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nab"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nagoya"
+	*return
+*if: thoroughEmailValidationDomainExtension = "name"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nationwide"
+	*return
+*if: thoroughEmailValidationDomainExtension = "natura"
+	*return
+*if: thoroughEmailValidationDomainExtension = "navy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nba"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ne"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nec"
+	*return
+*if: thoroughEmailValidationDomainExtension = "net"
+	*return
+*if: thoroughEmailValidationDomainExtension = "netbank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "netflix"
+	*return
+*if: thoroughEmailValidationDomainExtension = "network"
+	*return
+*if: thoroughEmailValidationDomainExtension = "neustar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "new"
+	*return
+*if: thoroughEmailValidationDomainExtension = "newholland"
+	*return
+*if: thoroughEmailValidationDomainExtension = "news"
+	*return
+*if: thoroughEmailValidationDomainExtension = "next"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nextdirect"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nexus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nfl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ng"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ngo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nhk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ni"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nico"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nike"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nikon"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ninja"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nissan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nissay"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "no"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nokia"
+	*return
+*if: thoroughEmailValidationDomainExtension = "northwesternmutual"
+	*return
+*if: thoroughEmailValidationDomainExtension = "norton"
+	*return
+*if: thoroughEmailValidationDomainExtension = "now"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nowruz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nowtv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "np"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nra"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nrw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ntt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nyc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "nz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "obi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "observer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "off"
+	*return
+*if: thoroughEmailValidationDomainExtension = "office"
+	*return
+*if: thoroughEmailValidationDomainExtension = "okinawa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "olayan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "olayangroup"
+	*return
+*if: thoroughEmailValidationDomainExtension = "oldnavy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ollo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "om"
+	*return
+*if: thoroughEmailValidationDomainExtension = "omega"
+	*return
+*if: thoroughEmailValidationDomainExtension = "one"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ong"
+	*return
+*if: thoroughEmailValidationDomainExtension = "onl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "online"
+	*return
+*if: thoroughEmailValidationDomainExtension = "onyourside"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ooo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "open"
+	*return
+*if: thoroughEmailValidationDomainExtension = "oracle"
+	*return
+*if: thoroughEmailValidationDomainExtension = "orange"
+	*return
+*if: thoroughEmailValidationDomainExtension = "org"
+	*return
+*if: thoroughEmailValidationDomainExtension = "organic"
+	*return
+*if: thoroughEmailValidationDomainExtension = "origins"
+	*return
+*if: thoroughEmailValidationDomainExtension = "osaka"
+	*return
+*if: thoroughEmailValidationDomainExtension = "otsuka"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ott"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ovh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "page"
+	*return
+*if: thoroughEmailValidationDomainExtension = "panasonic"
+	*return
+*if: thoroughEmailValidationDomainExtension = "paris"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pars"
+	*return
+*if: thoroughEmailValidationDomainExtension = "partners"
+	*return
+*if: thoroughEmailValidationDomainExtension = "parts"
+	*return
+*if: thoroughEmailValidationDomainExtension = "party"
+	*return
+*if: thoroughEmailValidationDomainExtension = "passagens"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pay"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pccw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pet"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pfizer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ph"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pharmacy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "phd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "philips"
+	*return
+*if: thoroughEmailValidationDomainExtension = "phone"
+	*return
+*if: thoroughEmailValidationDomainExtension = "photo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "photography"
+	*return
+*if: thoroughEmailValidationDomainExtension = "photos"
+	*return
+*if: thoroughEmailValidationDomainExtension = "physio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pics"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pictet"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pictures"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pid"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ping"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pink"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pioneer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pizza"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "place"
+	*return
+*if: thoroughEmailValidationDomainExtension = "play"
+	*return
+*if: thoroughEmailValidationDomainExtension = "playstation"
+	*return
+*if: thoroughEmailValidationDomainExtension = "plumbing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "plus"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pnc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pohl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "poker"
+	*return
+*if: thoroughEmailValidationDomainExtension = "politie"
+	*return
+*if: thoroughEmailValidationDomainExtension = "porn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "post"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pramerica"
+	*return
+*if: thoroughEmailValidationDomainExtension = "praxi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "press"
+	*return
+*if: thoroughEmailValidationDomainExtension = "prime"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pro"
+	*return
+*if: thoroughEmailValidationDomainExtension = "prod"
+	*return
+*if: thoroughEmailValidationDomainExtension = "productions"
+	*return
+*if: thoroughEmailValidationDomainExtension = "prof"
+	*return
+*if: thoroughEmailValidationDomainExtension = "progressive"
+	*return
+*if: thoroughEmailValidationDomainExtension = "promo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "properties"
+	*return
+*if: thoroughEmailValidationDomainExtension = "property"
+	*return
+*if: thoroughEmailValidationDomainExtension = "protection"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pru"
+	*return
+*if: thoroughEmailValidationDomainExtension = "prudential"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ps"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pub"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "pwc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "py"
+	*return
+*if: thoroughEmailValidationDomainExtension = "qa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "qpon"
+	*return
+*if: thoroughEmailValidationDomainExtension = "quebec"
+	*return
+*if: thoroughEmailValidationDomainExtension = "quest"
+	*return
+*if: thoroughEmailValidationDomainExtension = "qvc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "racing"
+	*return
+*if: thoroughEmailValidationDomainExtension = "radio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "raid"
+	*return
+*if: thoroughEmailValidationDomainExtension = "re"
+	*return
+*if: thoroughEmailValidationDomainExtension = "read"
+	*return
+*if: thoroughEmailValidationDomainExtension = "realestate"
+	*return
+*if: thoroughEmailValidationDomainExtension = "realtor"
+	*return
+*if: thoroughEmailValidationDomainExtension = "realty"
+	*return
+*if: thoroughEmailValidationDomainExtension = "recipes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "red"
+	*return
+*if: thoroughEmailValidationDomainExtension = "redstone"
+	*return
+*if: thoroughEmailValidationDomainExtension = "redumbrella"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rehab"
+	*return
+*if: thoroughEmailValidationDomainExtension = "reise"
+	*return
+*if: thoroughEmailValidationDomainExtension = "reisen"
+	*return
+*if: thoroughEmailValidationDomainExtension = "reit"
+	*return
+*if: thoroughEmailValidationDomainExtension = "reliance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ren"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rent"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rentals"
+	*return
+*if: thoroughEmailValidationDomainExtension = "repair"
+	*return
+*if: thoroughEmailValidationDomainExtension = "report"
+	*return
+*if: thoroughEmailValidationDomainExtension = "republican"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rest"
+	*return
+*if: thoroughEmailValidationDomainExtension = "restaurant"
+	*return
+*if: thoroughEmailValidationDomainExtension = "review"
+	*return
+*if: thoroughEmailValidationDomainExtension = "reviews"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rexroth"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rich"
+	*return
+*if: thoroughEmailValidationDomainExtension = "richardli"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ricoh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rightathome"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ril"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rip"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rmit"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ro"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rocher"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rocks"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rodeo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rogers"
+	*return
+*if: thoroughEmailValidationDomainExtension = "room"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rsvp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ru"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rugby"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ruhr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "run"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "rwe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ryukyu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "saarland"
+	*return
+*if: thoroughEmailValidationDomainExtension = "safe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "safety"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sakura"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sale"
+	*return
+*if: thoroughEmailValidationDomainExtension = "salon"
+	*return
+*if: thoroughEmailValidationDomainExtension = "samsclub"
+	*return
+*if: thoroughEmailValidationDomainExtension = "samsung"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sandvik"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sandvikcoromant"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sanofi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sap"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sarl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sas"
+	*return
+*if: thoroughEmailValidationDomainExtension = "save"
+	*return
+*if: thoroughEmailValidationDomainExtension = "saxo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sbi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sbs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sca"
+	*return
+*if: thoroughEmailValidationDomainExtension = "scb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "schaeffler"
+	*return
+*if: thoroughEmailValidationDomainExtension = "schmidt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "scholarships"
+	*return
+*if: thoroughEmailValidationDomainExtension = "school"
+	*return
+*if: thoroughEmailValidationDomainExtension = "schule"
+	*return
+*if: thoroughEmailValidationDomainExtension = "schwarz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "science"
+	*return
+*if: thoroughEmailValidationDomainExtension = "scjohnson"
+	*return
+*if: thoroughEmailValidationDomainExtension = "scor"
+	*return
+*if: thoroughEmailValidationDomainExtension = "scot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "se"
+	*return
+*if: thoroughEmailValidationDomainExtension = "search"
+	*return
+*if: thoroughEmailValidationDomainExtension = "seat"
+	*return
+*if: thoroughEmailValidationDomainExtension = "secure"
+	*return
+*if: thoroughEmailValidationDomainExtension = "security"
+	*return
+*if: thoroughEmailValidationDomainExtension = "seek"
+	*return
+*if: thoroughEmailValidationDomainExtension = "select"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sener"
+	*return
+*if: thoroughEmailValidationDomainExtension = "services"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ses"
+	*return
+*if: thoroughEmailValidationDomainExtension = "seven"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sew"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sex"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sexy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sfr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shangrila"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sharp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shaw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shell"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shia"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shiksha"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shoes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shop"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shopping"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shouji"
+	*return
+*if: thoroughEmailValidationDomainExtension = "show"
+	*return
+*if: thoroughEmailValidationDomainExtension = "showtime"
+	*return
+*if: thoroughEmailValidationDomainExtension = "shriram"
+	*return
+*if: thoroughEmailValidationDomainExtension = "si"
+	*return
+*if: thoroughEmailValidationDomainExtension = "silk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sina"
+	*return
+*if: thoroughEmailValidationDomainExtension = "singles"
+	*return
+*if: thoroughEmailValidationDomainExtension = "site"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ski"
+	*return
+*if: thoroughEmailValidationDomainExtension = "skin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sky"
+	*return
+*if: thoroughEmailValidationDomainExtension = "skype"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sling"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "smart"
+	*return
+*if: thoroughEmailValidationDomainExtension = "smile"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sncf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "so"
+	*return
+*if: thoroughEmailValidationDomainExtension = "soccer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "social"
+	*return
+*if: thoroughEmailValidationDomainExtension = "softbank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "software"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sohu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "solar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "solutions"
+	*return
+*if: thoroughEmailValidationDomainExtension = "song"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sony"
+	*return
+*if: thoroughEmailValidationDomainExtension = "soy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "space"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sport"
+	*return
+*if: thoroughEmailValidationDomainExtension = "spot"
+	*return
+*if: thoroughEmailValidationDomainExtension = "spreadbetting"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "srl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ss"
+	*return
+*if: thoroughEmailValidationDomainExtension = "st"
+	*return
+*if: thoroughEmailValidationDomainExtension = "stada"
+	*return
+*if: thoroughEmailValidationDomainExtension = "staples"
+	*return
+*if: thoroughEmailValidationDomainExtension = "star"
+	*return
+*if: thoroughEmailValidationDomainExtension = "statebank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "statefarm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "stc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "stcgroup"
+	*return
+*if: thoroughEmailValidationDomainExtension = "stockholm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "storage"
+	*return
+*if: thoroughEmailValidationDomainExtension = "store"
+	*return
+*if: thoroughEmailValidationDomainExtension = "stream"
+	*return
+*if: thoroughEmailValidationDomainExtension = "studio"
+	*return
+*if: thoroughEmailValidationDomainExtension = "study"
+	*return
+*if: thoroughEmailValidationDomainExtension = "style"
+	*return
+*if: thoroughEmailValidationDomainExtension = "su"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sucks"
+	*return
+*if: thoroughEmailValidationDomainExtension = "supplies"
+	*return
+*if: thoroughEmailValidationDomainExtension = "supply"
+	*return
+*if: thoroughEmailValidationDomainExtension = "support"
+	*return
+*if: thoroughEmailValidationDomainExtension = "surf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "surgery"
+	*return
+*if: thoroughEmailValidationDomainExtension = "suzuki"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "swatch"
+	*return
+*if: thoroughEmailValidationDomainExtension = "swiftcover"
+	*return
+*if: thoroughEmailValidationDomainExtension = "swiss"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sydney"
+	*return
+*if: thoroughEmailValidationDomainExtension = "symantec"
+	*return
+*if: thoroughEmailValidationDomainExtension = "systems"
+	*return
+*if: thoroughEmailValidationDomainExtension = "sz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tab"
+	*return
+*if: thoroughEmailValidationDomainExtension = "taipei"
+	*return
+*if: thoroughEmailValidationDomainExtension = "talk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "taobao"
+	*return
+*if: thoroughEmailValidationDomainExtension = "target"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tatamotors"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tatar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tattoo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tax"
+	*return
+*if: thoroughEmailValidationDomainExtension = "taxi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tci"
+	*return
+*if: thoroughEmailValidationDomainExtension = "td"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tdk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "team"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tech"
+	*return
+*if: thoroughEmailValidationDomainExtension = "technology"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "temasek"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tennis"
+	*return
+*if: thoroughEmailValidationDomainExtension = "teva"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "th"
+	*return
+*if: thoroughEmailValidationDomainExtension = "thd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "theater"
+	*return
+*if: thoroughEmailValidationDomainExtension = "theatre"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tiaa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tickets"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tienda"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tiffany"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tips"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tires"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tirol"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tjmaxx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tjx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tkmaxx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tmall"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "to"
+	*return
+*if: thoroughEmailValidationDomainExtension = "today"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tokyo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tools"
+	*return
+*if: thoroughEmailValidationDomainExtension = "top"
+	*return
+*if: thoroughEmailValidationDomainExtension = "toray"
+	*return
+*if: thoroughEmailValidationDomainExtension = "toshiba"
+	*return
+*if: thoroughEmailValidationDomainExtension = "total"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tours"
+	*return
+*if: thoroughEmailValidationDomainExtension = "town"
+	*return
+*if: thoroughEmailValidationDomainExtension = "toyota"
+	*return
+*if: thoroughEmailValidationDomainExtension = "toys"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tr"
+	*return
+*if: thoroughEmailValidationDomainExtension = "trade"
+	*return
+*if: thoroughEmailValidationDomainExtension = "trading"
+	*return
+*if: thoroughEmailValidationDomainExtension = "training"
+	*return
+*if: thoroughEmailValidationDomainExtension = "travel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "travelchannel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "travelers"
+	*return
+*if: thoroughEmailValidationDomainExtension = "travelersinsurance"
+	*return
+*if: thoroughEmailValidationDomainExtension = "trust"
+	*return
+*if: thoroughEmailValidationDomainExtension = "trv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tube"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tui"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tunes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tushu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tvs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tw"
+	*return
+*if: thoroughEmailValidationDomainExtension = "tz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ua"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ubank"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ubs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ug"
+	*return
+*if: thoroughEmailValidationDomainExtension = "uk"
+	*return
+*if: thoroughEmailValidationDomainExtension = "unicom"
+	*return
+*if: thoroughEmailValidationDomainExtension = "university"
+	*return
+*if: thoroughEmailValidationDomainExtension = "uno"
+	*return
+*if: thoroughEmailValidationDomainExtension = "uol"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ups"
+	*return
+*if: thoroughEmailValidationDomainExtension = "us"
+	*return
+*if: thoroughEmailValidationDomainExtension = "uy"
+	*return
+*if: thoroughEmailValidationDomainExtension = "uz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "va"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vacations"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vana"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vanguard"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ve"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vegas"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ventures"
+	*return
+*if: thoroughEmailValidationDomainExtension = "verisign"
+	*return
+*if: thoroughEmailValidationDomainExtension = "versicherung"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vet"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "viajes"
+	*return
+*if: thoroughEmailValidationDomainExtension = "video"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vig"
+	*return
+*if: thoroughEmailValidationDomainExtension = "viking"
+	*return
+*if: thoroughEmailValidationDomainExtension = "villas"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vip"
+	*return
+*if: thoroughEmailValidationDomainExtension = "virgin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "visa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vision"
+	*return
+*if: thoroughEmailValidationDomainExtension = "viva"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vivo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vlaanderen"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vn"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vodka"
+	*return
+*if: thoroughEmailValidationDomainExtension = "volkswagen"
+	*return
+*if: thoroughEmailValidationDomainExtension = "volvo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vote"
+	*return
+*if: thoroughEmailValidationDomainExtension = "voting"
+	*return
+*if: thoroughEmailValidationDomainExtension = "voto"
+	*return
+*if: thoroughEmailValidationDomainExtension = "voyage"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vu"
+	*return
+*if: thoroughEmailValidationDomainExtension = "vuelos"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wales"
+	*return
+*if: thoroughEmailValidationDomainExtension = "walmart"
+	*return
+*if: thoroughEmailValidationDomainExtension = "walter"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wang"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wanggou"
+	*return
+*if: thoroughEmailValidationDomainExtension = "watch"
+	*return
+*if: thoroughEmailValidationDomainExtension = "watches"
+	*return
+*if: thoroughEmailValidationDomainExtension = "weather"
+	*return
+*if: thoroughEmailValidationDomainExtension = "weatherchannel"
+	*return
+*if: thoroughEmailValidationDomainExtension = "webcam"
+	*return
+*if: thoroughEmailValidationDomainExtension = "weber"
+	*return
+*if: thoroughEmailValidationDomainExtension = "website"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wed"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wedding"
+	*return
+*if: thoroughEmailValidationDomainExtension = "weibo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "weir"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "whoswho"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wien"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wiki"
+	*return
+*if: thoroughEmailValidationDomainExtension = "williamhill"
+	*return
+*if: thoroughEmailValidationDomainExtension = "win"
+	*return
+*if: thoroughEmailValidationDomainExtension = "windows"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wine"
+	*return
+*if: thoroughEmailValidationDomainExtension = "winners"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wme"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wolterskluwer"
+	*return
+*if: thoroughEmailValidationDomainExtension = "woodside"
+	*return
+*if: thoroughEmailValidationDomainExtension = "work"
+	*return
+*if: thoroughEmailValidationDomainExtension = "works"
+	*return
+*if: thoroughEmailValidationDomainExtension = "world"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wow"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ws"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wtc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "wtf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xbox"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xerox"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xfinity"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xihuan"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xin"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--11b4c3d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--1ck2e1b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--1qqw23a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--2scrj9c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--30rr7y"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--3bst00m"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--3ds443g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--3e0b707e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--3hcrj9c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--3oq18vl8pn36a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--3pxu8k"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--42c2d9a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--45br5cyl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--45brj9c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--45q11c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--4gbrim"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--54b7fta0cc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--55qw42g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--55qx5d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--5su34j936bgsg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--5tzm5g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--6frz82g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--6qq986b3xl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--80adxhks"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--80ao21a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--80aqecdr1a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--80asehdb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--80aswg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--8y0a063a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--90a3ac"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--90ae"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--90ais"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--9dbq2a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--9et52u"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--9krt00a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--b4w605ferd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--bck1b9a5dre4c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--c1avg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--c2br7g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--cck2b3b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--cg4bki"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--clchc0ea0b2g2a9gcd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--czr694b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--czrs0t"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--czru2d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--d1acj3b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--d1alf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--e1a4c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--eckvdtc9d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--efvy88h"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fct429k"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fhbei"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fiq228c5hs"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fiq64b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fiqs8s"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fiqz9s"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fjq720a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--flw351e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fpcrj9c3d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fzc2c9e2c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--fzys8d69uvgm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--g2xx48c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--gckr3f0f"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--gecrj9c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--gk3at1e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--h2breg3eve"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--h2brj9c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--h2brj9c8c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--hxt814e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--i1b6b1a6a2e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--imr513n"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--io0a7i"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--j1aef"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--j1amh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--j6w193g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--jlq61u9w7b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--jvr189m"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--kcrx77d1x4a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--kprw13d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--kpry57d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--kpu716f"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--kput3i"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--l1acc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--lgbbat1ad8j"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgb9awbf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgba3a3ejt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgba3a4f16a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgba7c0bbn0a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbaakc7dvf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbaam7a8h"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbab2bd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbah1a3hjkrd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbai9azgqp6j"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbayh7gpa"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbbh1a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbbh1a71e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbc0a9azcg"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbca7dzdo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbcpq6gpa1a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgberp4a5d4ar"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbgu82a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbi4ecexp"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbpl2fh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbt3dhd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbtx2b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mgbx4cd0ab"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mix891f"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mk1bu44c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--mxtq1m"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--ngbc5azd"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--ngbe9e0a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--ngbrx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--node"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--nqv7f"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--nqv7fs00ema"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--nyqy26a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--o3cw4h"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--ogbpf8fl"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--otu796d"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--p1acf"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--p1ai"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--pbt977c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--pgbs0dh"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--pssy2u"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--q7ce6a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--q9jyb4c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--qcka1pmc"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--qxa6a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--qxam"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--rhqv96g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--rovu88b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--rvc1e0am3e"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--s9brj9c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--ses554g"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--t60b56a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--tckwe"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--tiq49xqyj"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--unup4y"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--vermgensberater-ctb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--vermgensberatung-pwb"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--vhquv"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--vuq861b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--w4r85el8fhu5dnra"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--w4rs40l"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--wgbh1c"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--wgbl6a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--xhq521b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--xkc2al3hye2a"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--xkc2dl3a5ee0h"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--y9a3aq"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--yfro4i67o"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--ygbi2ammx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xn--zfr164b"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xxx"
+	*return
+*if: thoroughEmailValidationDomainExtension = "xyz"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yachts"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yahoo"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yamaxun"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yandex"
+	*return
+*if: thoroughEmailValidationDomainExtension = "ye"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yodobashi"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yoga"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yokohama"
+	*return
+*if: thoroughEmailValidationDomainExtension = "you"
+	*return
+*if: thoroughEmailValidationDomainExtension = "youtube"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yt"
+	*return
+*if: thoroughEmailValidationDomainExtension = "yun"
+	*return
+*if: thoroughEmailValidationDomainExtension = "za"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zappos"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zara"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zero"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zip"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zm"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zone"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zuerich"
+	*return
+*if: thoroughEmailValidationDomainExtension = "zw"
+	*return
+
+>> thoroughEmailValidatorUpperToLower = ""
+>> thoroughEmailValidationOutput = "no"
+>> thoroughEmailValidationFailPhase = "domain"
+>> thoroughEmailValidationFailIndex = 1
+>> thoroughEmailValidationFailChar = ""
+>> thoroughEmailValidationFailMessage = "The domain extension in this email address is not a valid extension. Valid domain extensions are things like '.com' or '.org'. The full list of valid domain name extensions is available here: http://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+*return
